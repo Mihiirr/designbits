@@ -12,6 +12,7 @@ import SearchBox from './SearchBox';
 import Button from './Button';
 import UploadIcon from './icons/Upload';
 import CategoriesNav from './CategoriesNav';
+import { NavLink } from 'remix';
 
 const user = {
     name: 'Tom Cook',
@@ -26,10 +27,10 @@ const iconProps = {
 }
 
 const navigation = [
-    { name: 'Explore', href: '/explore', current: true, icon: <ExploreIcon {...iconProps} /> },
-    { name: 'Collections', href: '/collections', current: false, icon: <CollectionsIcon {...iconProps} /> },
-    { name: 'Liked', href: '/liked', current: false, icon: <LikeIcon {...iconProps} /> },
-    { name: 'My Uploads', href: '/my-uploads', current: false, icon: <GalleryIcon {...iconProps} /> },
+    { name: 'Explore', href: '/explore', icon: <ExploreIcon {...iconProps} /> },
+    { name: 'Collections', href: '/collections', icon: <CollectionsIcon {...iconProps} /> },
+    { name: 'Liked', href: '/liked', icon: <LikeIcon {...iconProps} /> },
+    { name: 'My Uploads', href: '/my-uploads', icon: <GalleryIcon {...iconProps} /> },
 ];
 
 const userNavigation = [
@@ -55,20 +56,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                         </div>
                                         <nav role="navigation" aria-label="main-nav" className="hidden sm:-my-px sm:flex sm:space-x-8">
                                             {navigation.map((item) => (
-                                                <Link
+                                                <NavLink
                                                     key={item.name}
                                                     to={item.href}
-                                                    className={classNames(
-                                                        item.current
+                                                    className={({ isActive }) => classNames(
+                                                        isActive
                                                             ? 'border-indigo-700 text-indigo-700 font-semibold'
                                                             : 'border-transparent text-gray-500 hover:text-indigo-500',
                                                         'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium space-x-2'
                                                     )}
-                                                    aria-current={item.current ? 'page' : undefined}
                                                 >
                                                     {item.icon}
                                                     <span>{item.name}</span>
-                                                </Link>
+                                                </NavLink>
                                             ))}
                                         </nav>
                                     </div>
@@ -137,17 +137,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                     {navigation.map((item) => (
                                         <Disclosure.Button
                                             key={item.name}
-                                            as="a"
-                                            href={item.href}
-                                            className={classNames(
-                                                item.current
-                                                    ? 'bg-indigo-50 border-indigo-500 text-indigo-700'
-                                                    : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800',
-                                                'block pl-3 pr-4 py-2 border-l-4 text-base font-medium'
-                                            )}
-                                            aria-current={item.current ? 'page' : undefined}
+                                            as="div"
                                         >
-                                            {item.name}
+                                            <NavLink
+                                                to={item.href}
+                                                className={({ isActive }) => classNames(
+                                                    isActive
+                                                        ? 'bg-indigo-50 border-indigo-500 text-indigo-700'
+                                                        : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800',
+                                                    'block pl-3 pr-4 py-2 border-l-4 text-base font-medium'
+                                                )}
+                                            >
+                                                {item.name}
+                                            </NavLink>
                                         </Disclosure.Button>
                                     ))}
                                 </div>
@@ -188,25 +190,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
 
                 <div className="py-10 flex">
-                    <div className="w-56 flex-shrink-0">
-                        <CategoriesNav />
-                    </div>
-                    <div className="flex-1 flex-col">
-                        <header>
-                            <div className="px-4 sm:px-6 lg:px-8">
-                                <h1 className="text-3xl font-bold leading-tight text-gray-900">All interactions</h1>
-                            </div>
-                        </header>
-                        <main>
-                            <div className="sm:px-6 lg:px-8">
-                                {/* Replace with your content */}
-                                <div className="px-4 py-8 sm:px-0">
-                                    <div className="border-4 border-dashed border-gray-200 rounded-lg h-96" />
-                                </div>
-                                {/* /End replace */}
-                            </div>
-                        </main>
-                    </div>
+                    {children}
                 </div>
             </div>
         </>

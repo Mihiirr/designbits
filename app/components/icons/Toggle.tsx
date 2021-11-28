@@ -11,13 +11,11 @@ const ToggleIcon = (props: React.SVGProps<SVGSVGElement>) => {
             {...props}
         >
             <path
-                fill="#1F2937"
                 fillRule="evenodd"
                 d="M8 11.007a1 1 0 100 2 1 1 0 000-2zm-3 1a3 3 0 116 0 3 3 0 01-6 0z"
                 clipRule="evenodd"
             ></path>
             <path
-                fill="#1F2937"
                 fillRule="evenodd"
                 d="M8 7a5 5 0 000 10h8a5 5 0 000-10H8zm-7 5a7 7 0 017-7h8a7 7 0 110 14H8a7 7 0 01-7-7z"
                 clipRule="evenodd"

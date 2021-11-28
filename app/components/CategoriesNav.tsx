@@ -1,7 +1,7 @@
 import { BellIcon, ViewListIcon } from '@heroicons/react/outline'
 import React from 'react'
 import StackIcon from './icons/Stack'
-import Link from './Link'
+import { NavLink } from 'remix';
 import classNames from '../utils/classnames';
 import DataDisplayIcon from './icons/DataDisplay';
 import NavigationIcon from './icons/Navigation';
@@ -23,7 +23,7 @@ const routePrefix = "/explore";
 const navItems = [
     {
         name: 'All',
-        to: "/all",
+        to: "/",
         icon: <StackIcon width="24" height="24" role="presentation" />,
         active: true
     },
@@ -92,11 +92,15 @@ const navItems = [
 const CategoriesNav = (props: Props) => {
     return (
         <nav className="space-y-2 text-sm">
-            {navItems.map(({ name, to, icon, active }) =>
-                <Link key={name} to={routePrefix + to} className={classNames("flex items-center space-x-2 px-2 py-2.5 mx-4 rounded-md font-medium text-gray-500 hover:bg-indigo-50", active ? "bg-indigo-100 text-indigo-700 font-semibold" : "")}>
+            {navItems.map(({ name, to, icon }) =>
+                <NavLink
+                    key={name}
+                    to={routePrefix + to}
+                    className={({ isActive }) => classNames("flex items-center space-x-2 px-2 py-2.5 mx-4 rounded-md font-medium text-gray-500 hover:bg-indigo-50 hover:text-gray-700", isActive ? "bg-indigo-100 text-indigo-700 font-semibold" : "")}
+                >
                     {icon}
                     <span>{name}</span>
-                </Link>
+                </NavLink>
             )}
         </nav>
     )
