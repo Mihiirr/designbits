@@ -17,5 +17,8 @@ module.exports = {
   tabWidth: 2,
   trailingComma: "all",
   useTabs: false,
-  plugins: [require("prettier-plugin-tailwind")],
+  // Disable till this is resolved https://github.com/Acidic9/prettier-plugin-tailwind/issues/44
+  // plugins: [
+  // require("prettier-plugin-tailwind")
+  // ],
 }

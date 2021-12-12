@@ -1,4 +1,4 @@
-import React from "react"
+import InteractionCard from "~/components/interaction-card"
 
 interface Props {}
 
@@ -13,7 +13,9 @@ const ExploreIndexRoute: React.FC<Props> = ({ children }) => {
         </div>
       </header>
       <main>
-        <div className="sm:px-6 lg:px-8">{children}</div>
+        <div className="sm:px-6 lg:px-8">
+          <InteractionCard />
+        </div>
       </main>
     </>
   )

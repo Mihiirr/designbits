@@ -12,3 +12,6 @@ api/build
 
 # dotenv-linter
 bin/dotenv-linter
+
+# Docker
+.docker

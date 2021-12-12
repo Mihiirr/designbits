@@ -1,11 +1,6 @@
 module.exports = {
-  mode: process.env.NODE_ENV ? "jit" : undefined,
-  purge: ["./app/**/*.{ts,tsx}"],
-  darkMode: false, // or 'media' or 'class'
+  content: ["./app/**/*.{ts,tsx}"],
   theme: {
-    extend: {},
-  },
-  variants: {
     extend: {},
   },
   plugins: [require("@tailwindcss/forms")],

@@ -15,7 +15,16 @@ import Link from "./components/Link"
 
 // https://remix.run/api/app#links
 export const links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: styles }]
+  return [
+    {
+      rel: "stylesheet",
+      href: "https://rsms.me/inter/inter.css",
+    },
+    {
+      rel: "stylesheet",
+      href: styles,
+    },
+  ]
 }
 
 // https://remix.run/api/conventions#default-export
