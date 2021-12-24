@@ -9,3 +9,56 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id             String         @id @default(cuid())
+  email          String         @unique
+  slug           String         @unique
+  passwordHash   String
+  name           String?
+  createdAt      DateTime       @default(now())
+  modifiedAt     DateTime       @default(now())
+  Post           Post[]
+  PostViews      PostView[]
+  ReactedOnPosts PostReaction[]
+}
+
+model Post {
+  id         String   @id @default(cuid())
+  title      String
+  slug       String   @unique
+  createdBy  String
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @default(now())
+  CreatedBy  User     @relation(fields: [createdBy], references: [id])
+  Source     Source   @relation(fields: [sourceId], references: [id])
+  sourceId   String
+}
+
+model Source {
+  id       String @id @default(cuid())
+  name     String
+  url      String
+  imageSrc String
+  Post     Post[]
+}
+
+model PostView {
+  id       String   @id
+  viewedBy String   @map("userId")
+  viewedAt DateTime @default(now())
+  ViewedBy User     @relation(fields: [viewedBy], references: [id])
+}
+
+enum PostReactionTypes {
+  LIKE
+  DISLIKE
+}
+
+model PostReaction {
+  id        String            @id
+  reaction  PostReactionTypes @default(LIKE)
+  reactedBy String            @map("userId")
+  viewedAt  DateTime          @default(now())
+  ReactedBy User              @relation(fields: [reactedBy], references: [id])
+}

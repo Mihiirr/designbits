@@ -1,4 +1,4 @@
-export default function DesignBitsLogo() {
+export default function DesignBitsLogo(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -6,6 +6,7 @@ export default function DesignBitsLogo() {
       fill="none"
       viewBox="0 0 102 24"
       height="32"
+      {...props}
     >
       <title id="design-bits-logo-title">DesignBits logo</title>
       <path

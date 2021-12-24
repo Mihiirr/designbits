@@ -1,17 +1,10 @@
-import {
-  Links,
-  LiveReload,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  useCatch,
-} from "remix"
+import { Outlet, useCatch } from "remix"
 import type { LinksFunction } from "remix"
 
 import styles from "./styles/tailwind.css"
 import Layout from "./components/Layout"
 import Link from "./components/Link"
+import Document from "./components/common/Document"
 
 // https://remix.run/api/app#links
 export const links: LinksFunction = () => {
@@ -32,9 +25,7 @@ export const links: LinksFunction = () => {
 export default function App() {
   return (
     <Document>
-      <Layout>
-        <Outlet />
-      </Layout>
+      <Outlet />
     </Document>
   )
 }
@@ -119,31 +110,5 @@ export function CatchBoundary() {
         </div>
       </Layout>
     </Document>
-  )
-}
-
-function Document({
-  children,
-  title,
-}: {
-  children: React.ReactNode
-  title?: string
-}) {
-  return (
-    <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        {title ? <title>{title}</title> : null}
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
-        {process.env.NODE_ENV === "development" && <LiveReload />}
-      </body>
-    </html>
   )
 }
