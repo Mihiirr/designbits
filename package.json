@@ -27,14 +27,14 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "remix": "^1.0.6",
-    "zod": "^3.11.6"
+    "zod": "^3.11.6",
+    "@headlessui/react": "^1.4.2",
+    "@heroicons/react": "^1.0.5"
   },
   "prisma": {
     "seed": "node --require esbuild-register prisma/seed.ts"
   },
   "devDependencies": {
-    "@headlessui/react": "^1.4.2",
-    "@heroicons/react": "^1.0.5",
     "@remix-run/dev": "^1.0.6",
     "@tailwindcss/forms": "^0.4.0",
     "@types/bcrypt": "^5.0.0",

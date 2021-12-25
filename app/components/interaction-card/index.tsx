@@ -6,7 +6,7 @@ const articles = [
   {
     id: 1,
     title: "Bottom navigation drag utility",
-    href: "/1",
+    href: "/interaction/1",
     source: {
       logo: "https://basecamp.com/basecamp-icon-196x196.png",
       name: "Basecamp",
@@ -25,7 +25,7 @@ const articles = [
   {
     id: 2,
     title: "Collapse side navigation on-hover",
-    href: "/2",
+    href: "/interaction/2",
     source: {
       logo: "//logo.clearbit.com/loom.com",
       name: "Loom",
@@ -44,7 +44,7 @@ const articles = [
   {
     id: 3,
     title: "Icon transition micro animation",
-    href: "/3",
+    href: "/interaction/3",
     source: {
       logo: "//logo.clearbit.com/telegram.org",
       name: "Telegram",
@@ -63,7 +63,7 @@ const articles = [
   {
     id: 4,
     title: "Swipe down to refresh animation",
-    href: "4",
+    href: "/interaction/4",
     source: {
       logo: "//logo.clearbit.com/dribbble.com/",
       name: "Dribbble",
