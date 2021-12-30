@@ -13,12 +13,26 @@ datasource db {
   referentialIntegrity = "prisma"
 }
 
+enum UserStatus {
+  INVITED
+  ACTIVE
+  DELETED
+  BLOCKED
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
 model User {
   id             String         @id @default(cuid())
   email          String         @unique
   slug           String         @unique
   passwordHash   String
   name           String?
+  UserStatus     UserStatus     @default(ACTIVE)
+  role           UserRole       @default(USER)
   createdAt      DateTime       @default(now())
   modifiedAt     DateTime       @default(now())
   Post           Post[]
