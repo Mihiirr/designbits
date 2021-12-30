@@ -4,21 +4,26 @@
   "description": "",
   "license": "",
   "scripts": {
-    "build": "npm run build:css && remix build",
-    "build:css": "tailwindcss -o ./app/styles/tailwind.css",
-    "dev": "concurrently \"npm run dev:css\" \"remix dev\"",
+    "prepare": "husky install",
+    "postinstall": "remix setup node && npm run install:dotenv-linter",
+    "dev": "concurrently -n \"TailwindCSS,Remix Dev\"  -c \"#bef264.bold,#10b981.bold\" \"npm run dev:css\" \"remix dev\"",
     "dev:css": "tailwindcss -o ./app/styles/tailwind.css --watch",
     "dev:remix": "remix dev",
-    "postinstall": "remix setup node && npm run install:dotenv-linter",
+    "build": "npm run build:css && remix build",
+    "build:css": "tailwindcss -o ./app/styles/tailwind.css",
     "start": "remix-serve build",
+    "connect:databases": "concurrently -c \"#10b981.bold,#bada55.bold\" \"npm:connect:database:*\"",
+    "connect:database:develop": "pscale connect designbits develop --port ${DATABASE_PORT:-3309}",
+    "connect:database:shadow": "pscale connect designbits shadow --port ${SHADOW_DATABASE_PORT:-3310}",
     "lint": "eslint --fix --cache --cache-location ./node_modules/.cache/.eslintcache --ext js,jsx,ts,tsx .",
     "lint:staged": "eslint --fix --no-error-on-unmatched-pattern --cache --cache-location ./node_modules/.cache/.eslintcache",
     "typecheck": "concurrently --raw npm:typecheck:*",
     "typecheck:app": "tsc --noEmit",
-    "install:dotenv-linter": "curl -sSfL https://raw.githubusercontent.com/dotenv-linter/dotenv-linter/master/install.sh | sh -s",
-    "prepare": "husky install"
+    "install:dotenv-linter": "curl -sSfL https://raw.githubusercontent.com/dotenv-linter/dotenv-linter/master/install.sh | sh -s"
   },
   "dependencies": {
+    "@headlessui/react": "^1.4.2",
+    "@heroicons/react": "^1.0.5",
     "@prisma/client": "^3.5.0",
     "@remix-run/react": "^1.0.6",
     "@remix-run/serve": "^1.0.6",
@@ -27,9 +32,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "remix": "^1.0.6",
-    "zod": "^3.11.6",
-    "@headlessui/react": "^1.4.2",
-    "@heroicons/react": "^1.0.5"
+    "zod": "^3.11.6"
   },
   "prisma": {
     "seed": "node --require esbuild-register prisma/seed.ts"
@@ -43,6 +46,7 @@
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "concurrently": "^6.4.0",
+    "dotenv-run-script": "^0.2.0",
     "esbuild-register": "^3.2.1",
     "eslint": "^7.32.0",
     "eslint-config-kentcdodds": "^19.2.0",
