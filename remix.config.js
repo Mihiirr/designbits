@@ -2,8 +2,8 @@
  * @type {import('@remix-run/dev/config').AppConfig}
  */
 module.exports = {
-  appDirectory: "app",
+  appDirectory: "src/app",
   browserBuildDirectory: "public/build",
   publicPath: "/build/",
-  serverBuildDirectory: "api/build",
+  serverBuildDirectory: "src/api/build",
 }

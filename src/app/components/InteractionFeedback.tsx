@@ -1,6 +1,6 @@
 import { RadioGroup } from "@headlessui/react"
 import { useState } from "react"
-import classNames from "~/utils/classnames"
+import classNames from "../utils/classnames"
 import Button from "./Button"
 
 interface Props {}

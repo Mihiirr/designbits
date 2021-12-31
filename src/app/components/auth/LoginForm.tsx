@@ -1,6 +1,6 @@
 import React from "react"
 import { Form, Link } from "remix"
-import { LoginActionData } from "~/routes/auth/login"
+import { LoginActionData } from "../../routes/auth/login"
 
 interface Props {
   searchParams: URLSearchParams

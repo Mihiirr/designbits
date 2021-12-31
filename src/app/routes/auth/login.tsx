@@ -1,7 +1,7 @@
 import { json, useActionData, useSearchParams } from "remix"
 import type { ActionFunction } from "remix"
 import AuthHeading from "~/components/auth/AuthHeading"
-import { createUserSession, login } from "~/utils/session.server"
+import { createUserSession, login } from "../../utils/session.server"
 import LoginForm from "~/components/auth/LoginForm"
 import AuthLayout from "~/components/AuthLayout"
 import { z, ZodError } from "zod"

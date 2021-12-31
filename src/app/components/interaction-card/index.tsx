@@ -1,6 +1,7 @@
-import LikeIcon from "~/components/icons/Like"
-import classNames from "~/utils/classnames"
+import LikeIcon from "../icons/Like"
+import classNames from "../../utils/classnames"
 import CommentIcon from "../icons/Comment"
+import { Link } from "remix"
 
 const articles = [
   {
@@ -104,8 +105,8 @@ export default function InteractionCard() {
                   href={article.href}
                 >
                   <div className="p-3">
-                    <a
-                      href=""
+                    <Link
+                      to="/test"
                       className="flex space-x-1 items-center text-gray-800 font-semibold text-xs"
                     >
                       <img
@@ -114,7 +115,7 @@ export default function InteractionCard() {
                         className="w-5 h-5 rounded-full"
                       />
                       <span>{article.source.name}</span>
-                    </a>
+                    </Link>
                   </div>
                 </a>
               </div>

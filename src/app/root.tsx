@@ -1,10 +1,10 @@
 import { Outlet, useCatch } from "remix"
 import type { LinksFunction } from "remix"
 
-import styles from "./styles/tailwind.css"
-import Layout from "./components/Layout"
-import Link from "./components/Link"
-import Document from "./components/common/Document"
+import styles from "~/styles/tailwind.css"
+import Layout from "~/components/Layout"
+import Link from "~/components/Link"
+import Document from "~/components/common/Document"
 
 // https://remix.run/api/app#links
 export const links: LinksFunction = () => {

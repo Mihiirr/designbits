@@ -6,7 +6,7 @@ node_modules
 .output
 
 public/build
-api/build
+src/deploy/build
 
 # Env variables
 .env

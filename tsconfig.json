@@ -9,7 +9,7 @@
     "target": "ES2019",
     "strict": true,
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./src/app/*"]
     },
 
     // Remix takes care of building everything in `remix build`.
