@@ -1,5 +1,5 @@
 {
-  "version": "9a8192e7",
+  "version": "c033d9c0",
   "entry": {
     "module": "/build/entry.client-TGHJTEHN.js",
     "imports": [
@@ -91,16 +91,6 @@
       "hasCatchBoundary": false,
       "hasErrorBoundary": false
     },
-    "routes/index": {
-      "id": "routes/index",
-      "parentId": "root",
-      "index": true,
-      "module": "/build/routes/index-N6DURVML.js",
-      "hasAction": false,
-      "hasLoader": false,
-      "hasCatchBoundary": false,
-      "hasErrorBoundary": false
-    },
     "routes/interaction/$id": {
       "id": "routes/interaction/$id",
       "parentId": "root",
@@ -112,5 +102,5 @@
       "hasErrorBoundary": false
     }
   },
-  "url": "/build/manifest-9A8192E7.js"
+  "url": "/build/manifest-C033D9C0.js"
 }
