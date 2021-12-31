@@ -72,7 +72,7 @@
     "zod-prisma": "git+https://github.com/tirthGajjar/zod-prisma.git"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=14"
   },
   "sideEffects": false
 }
