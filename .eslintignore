@@ -1,3 +1,4 @@
+.DS_Store
 node_modules
 
 .cache
@@ -5,10 +6,10 @@ node_modules
 .output
 
 public/build
-src/api/build
+api/build
 
 # Env variables
 .env
 
-# dotenv-linter
-bin/dotenv-linter
+# Docker
+.docker
