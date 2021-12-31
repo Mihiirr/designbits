@@ -868,10 +868,6 @@ select {
   min-height: 100%;
 }
 
-.w-56 {
-  width: 14rem;
-}
-
 .w-full {
   width: 100%;
 }
@@ -882,6 +878,10 @@ select {
 
 .w-10 {
   width: 2.5rem;
+}
+
+.w-56 {
+  width: 14rem;
 }
 
 .w-8 {

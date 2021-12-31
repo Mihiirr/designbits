@@ -5,7 +5,6 @@ import styles from "~/styles/tailwind.css"
 import Layout from "~/components/Layout"
 import Link from "~/components/Link"
 import Document from "~/components/common/Document"
-import CategoriesNav from "./components/CategoriesNav"
 
 // https://remix.run/api/app#links
 export const links: LinksFunction = () => {
@@ -26,14 +25,7 @@ export const links: LinksFunction = () => {
 export default function App() {
   return (
     <Document>
-      <Layout>
-        <div className="flex-shrink-0 w-56">
-          <CategoriesNav />
-        </div>
-        <div className="flex-1 flex-col">
-          <Outlet />
-        </div>
-      </Layout>
+      <Outlet />
     </Document>
   )
 }
