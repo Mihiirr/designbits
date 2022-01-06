@@ -12,7 +12,6 @@ import {
 export const UserModel = z.object({
   id: z.string(),
   email: z.string().email({ message: "Invalid email address" }),
-  slug: z.string(),
   passwordHash: z.string(),
   name: z.string().nullable(),
   UserStatus: z.nativeEnum(UserStatus),

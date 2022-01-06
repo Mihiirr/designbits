@@ -77,29 +77,29 @@ export function CatchBoundary() {
   return (
     <Document title={`${caught.status} ${caught.statusText}`}>
       <Layout>
-        <div className="mx-auto my-auto px-4 py-16 min-h-full bg-white sm:px-6 sm:py-24 md:grid md:place-items-center lg:px-8">
+        <div className="py-16 px-4 my-auto mx-auto min-h-full bg-white sm:py-24 sm:px-6 md:grid md:place-items-center lg:px-8">
           <div className="mx-auto max-w-max">
             <main className="sm:flex">
-              <p className="text-indigo-600 text-4xl font-extrabold sm:text-5xl">
+              <p className="text-4xl font-extrabold text-indigo-600 sm:text-5xl">
                 {caught.status}
               </p>
               <div className="sm:ml-6">
                 <div className="sm:pl-6 sm:border-l sm:border-gray-200">
-                  <h1 className="text-gray-900 text-4xl font-extrabold tracking-tight sm:text-5xl">
+                  <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
                     {caught.statusText}
                   </h1>
-                  <p className="mt-1 text-gray-500 text-base">{message}</p>
+                  <p className="mt-1 text-base text-gray-500">{message}</p>
                 </div>
                 <div className="flex mt-10 space-x-3 sm:pl-6 sm:border-l sm:border-transparent">
                   <Link
                     to="/explore"
-                    className="inline-flex items-center px-4 py-2 text-white text-sm font-medium bg-indigo-600 hover:bg-indigo-700 border border-transparent rounded-md focus:outline-none shadow-sm focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    className="inline-flex items-center py-2 px-4 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm"
                   >
                     Explore
                   </Link>
                   <a
                     href="/"
-                    className="inline-flex items-center px-4 py-2 text-indigo-700 text-sm font-medium bg-indigo-100 hover:bg-indigo-200 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    className="inline-flex items-center py-2 px-4 text-sm font-medium text-indigo-700 bg-indigo-100 hover:bg-indigo-200 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                   >
                     Go back home
                   </a>

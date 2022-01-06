@@ -8,10 +8,10 @@ interface Props {}
 const __explore = (props: Props) => {
   return (
     <Layout>
-      <div className="flex-shrink-0 w-56">
+      <div className="shrink-0 w-56">
         <CategoriesNav />
       </div>
-      <div className="flex-1 flex-col">
+      <div className="flex-col flex-1">
         <Outlet />
       </div>
     </Layout>

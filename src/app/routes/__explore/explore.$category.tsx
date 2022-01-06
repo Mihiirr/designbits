@@ -17,7 +17,7 @@ const CategoryPage: React.FC<Props> = ({ children }) => {
     <>
       <header>
         <div className="px-4 sm:px-6 lg:px-8">
-          <h1 className="text-gray-900 text-3xl font-bold leading-tight">
+          <h1 className="text-3xl font-bold leading-tight text-gray-900">
             {categoryId}
           </h1>
         </div>

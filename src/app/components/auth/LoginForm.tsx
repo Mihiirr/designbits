@@ -55,7 +55,7 @@ const LoginForm = (props: Props) => {
             type="email"
             autoComplete="email"
             required
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="block py-2 px-3 w-full placeholder:text-gray-400 rounded-md border border-gray-300 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 shadow-sm appearance-none sm:text-sm"
             aria-invalid={Boolean(error?.fieldErrors?.email)}
             aria-describedby={
               error?.fieldErrors?.email ? "username-error" : undefined
@@ -64,7 +64,7 @@ const LoginForm = (props: Props) => {
           />
           {error?.fieldErrors?.email ? (
             <p
-              className="text-red-500 text-sm pt-1"
+              className="pt-1 text-sm text-red-500"
               role="alert"
               id="username-error"
             >
@@ -88,7 +88,7 @@ const LoginForm = (props: Props) => {
             type="password"
             autoComplete="current-password"
             required
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="block py-2 px-3 w-full placeholder:text-gray-400 rounded-md border border-gray-300 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 shadow-sm appearance-none sm:text-sm"
             aria-invalid={Boolean(error?.fieldErrors?.password) || undefined}
             aria-describedby={
               error?.fieldErrors?.password ? "password-error" : undefined
@@ -97,7 +97,7 @@ const LoginForm = (props: Props) => {
           />
           {error?.fieldErrors?.password ? (
             <p
-              className="text-red-500 text-sm pt-1"
+              className="pt-1 text-sm text-red-500"
               role="alert"
               id="password-error"
             >
@@ -107,17 +107,17 @@ const LoginForm = (props: Props) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center">
         <div className="flex items-center">
           <input
             id="remember-me"
             name="remember-me"
             type="checkbox"
-            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+            className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
           />
           <label
             htmlFor="remember-me"
-            className="ml-2 block text-sm text-gray-900"
+            className="block ml-2 text-sm text-gray-900"
           >
             Remember me
           </label>
@@ -135,7 +135,7 @@ const LoginForm = (props: Props) => {
       <div id="form-error-message">
         {error?.formErrors?.length ? (
           <p
-            className="text-red-500 text-sm px-2 py-1 bg-red-50 rounded-sm"
+            className="py-1 px-2 text-sm text-red-500 bg-red-50 rounded-sm"
             role="alert"
           >
             {error?.formErrors.join(" & ")}
@@ -145,7 +145,7 @@ const LoginForm = (props: Props) => {
       <div>
         <button
           type="submit"
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="flex justify-center py-2 px-4 w-full text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm"
         >
           Sign in
         </button>

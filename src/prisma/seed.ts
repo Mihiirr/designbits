@@ -10,7 +10,6 @@ async function seed() {
       return db.user.create({
         data: {
           email: user.email,
-          slug: user.slug,
           name: user.name,
           passwordHash: user.passwordHash,
         },
@@ -24,8 +23,7 @@ seed()
 async function getUsers(): Promise<Prisma.UserCreateInput[]> {
   return [
     {
-      email: "shreyas@designbits.com",
-      slug: "shreyas",
+      email: "shreyas@designbits.io",
       name: "Shreyas Chaudhary",
       passwordHash: await bcrypt.hash(
         process.env.SEED_ACCOUNT_PASSWORD ?? "",
@@ -33,8 +31,7 @@ async function getUsers(): Promise<Prisma.UserCreateInput[]> {
       ),
     },
     {
-      email: "tirth@designbits.com",
-      slug: "tirth",
+      email: "tirth@designbits.io",
       name: "Tirth Gajjar",
       passwordHash: await bcrypt.hash(
         process.env.SEED_ACCOUNT_PASSWORD ?? "",

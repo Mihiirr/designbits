@@ -86,12 +86,12 @@ const articles = [
 export default function InteractionCard() {
   return (
     <div className="bg-white">
-      <div className="px-4 py-8 sm:px-6 sm:py-8 lg:px-0">
+      <div className="py-8 px-4 sm:py-8 sm:px-6 lg:px-0">
         <h2 className="sr-only">artciles</h2>
-        <div className="grid gap-x-6 gap-y-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
           {articles.map(article => (
             <div key={article.id}>
-              <div className="w-full bg-gray-200 rounded-lg overflow-hidden relative">
+              <div className="overflow-hidden relative w-full bg-gray-200 rounded-lg">
                 {/* <img
                   src={article.imageSrc}
                   alt={article.imageAlt}
@@ -107,7 +107,7 @@ export default function InteractionCard() {
                   <div className="p-3">
                     <Link
                       to="/test"
-                      className="flex space-x-1 items-center text-gray-800 font-semibold text-xs"
+                      className="flex items-center space-x-1 text-xs font-semibold text-gray-800"
                     >
                       <img
                         src={article.source.logo}
@@ -119,10 +119,10 @@ export default function InteractionCard() {
                   </div>
                 </a>
               </div>
-              <h3 className="mt-3 text-gray-700 text-sm font-semibold">
+              <h3 className="mt-3 text-sm font-semibold text-gray-700">
                 <a href={article.href}>{article.title}</a>
               </h3>
-              <div className="flex text-xs mt-1 space-x-1 text-gray-400">
+              <div className="flex mt-1 space-x-1 text-xs text-gray-400">
                 <a href={article.author.profile} className="text-indigo-700">
                   {article.author.name}
                 </a>
@@ -131,12 +131,12 @@ export default function InteractionCard() {
                 <span>&middot;</span>
                 <span>{article.views}</span>
               </div>
-              <div className="flex mt-2 text-gray-500 text-xs space-x-4">
-                <button className="space-x-1 flex items-center hover:text-indigo-500 hover:bg-indigo-50 focus:text-indigo-500 focus:bg-indigo-50 px-1 rounded-sm py-0.5">
+              <div className="flex mt-2 space-x-4 text-xs text-gray-500">
+                <button className="flex items-center py-0.5 px-1 space-x-1 hover:text-indigo-500 focus:text-indigo-500 hover:bg-indigo-50 focus:bg-indigo-50 rounded-sm">
                   <LikeIcon height={16} width={16} />
                   <span>{article.likes}</span>
                 </button>
-                <button className="space-x-1 flex items-center hover:text-indigo-500 hover:bg-indigo-50 focus:text-indigo-500 focus:bg-indigo-50 px-1 rounded-sm py-0.5">
+                <button className="flex items-center py-0.5 px-1 space-x-1 hover:text-indigo-500 focus:text-indigo-500 hover:bg-indigo-50 focus:bg-indigo-50 rounded-sm">
                   <CommentIcon height={16} width={16} />
                   <span>{article.comments.count}</span>
                 </button>

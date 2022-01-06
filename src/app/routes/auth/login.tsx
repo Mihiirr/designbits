@@ -10,7 +10,7 @@ import { RequireAtLeastOne } from "type-fest"
 const LoginSchema = z.object({
   email: z.string().email().max(256),
   password: z.string().min(8).max(20),
-  redirectTo: z.string().optional(),
+  redirectTo: z.string().nullable(),
 })
 
 type LoginFormFields = z.infer<typeof LoginSchema>
@@ -29,15 +29,15 @@ const internalError = (data: LoginActionData) => json(data, { status: 500 })
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData()
 
-  const fields = {
+  const fields = LoginSchema.parse({
     email: form.get("email"),
     password: form.get("password"),
     redirectTo: form.get("redirectTo"),
-  }
+  })
 
   try {
     const validatedFields = LoginSchema.parse(fields)
-    const { email, password, redirectTo = "/explore" } = validatedFields
+    const { email, password, redirectTo } = validatedFields
     const user = await login({ email, password })
 
     if (!user) {
@@ -52,7 +52,7 @@ export const action: ActionFunction = async ({ request }) => {
         },
       })
     }
-    return createUserSession(user.id, redirectTo)
+    return createUserSession(user.id, redirectTo ?? "")
   } catch (error: ZodError<LoginFormFields>["formErrors"] | unknown) {
     if (error instanceof ZodError) {
       return badRequest({

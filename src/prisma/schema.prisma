@@ -34,7 +34,6 @@ model User {
   id             String         @id @default(cuid())
   /// @zod.email({ message: "Invalid email address" })
   email          String         @unique
-  slug           String         @unique
   passwordHash   String
   name           String?
   UserStatus     UserStatus     @default(ACTIVE)

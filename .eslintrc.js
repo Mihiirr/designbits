@@ -6,12 +6,13 @@ module.exports = {
     // "kentcdodds/react",
     require.resolve("./.lint/remix-eslint.js"),
     "plugin:prettier/recommended",
+    "plugin:tailwindcss/recommended",
   ],
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: "./tsconfig.json",
   },
-  plugins: ["file-progress"],
+  plugins: ["file-progress", "tailwindcss"],
   rules: {
     "file-progress/activate": 1,
     "no-console": "off",

@@ -41,8 +41,8 @@ const InteractionFeedback = (props: Props) => {
   const [expeinceFeedback, setExperienceFeedback] = useState()
 
   return (
-    <div className="w-full px-8 py-16 bg-gradient-to-tl from-indigo-100 via-white to-white border-b border-indigo-100">
-      <h2 className="font-bold text-xl text-gray-800">
+    <div className="py-16 px-8 w-full bg-gradient-to-tl from-indigo-100 via-white to-white border-b border-indigo-100">
+      <h2 className="text-xl font-bold text-gray-800">
         Help designers learn more about this interaction
       </h2>
       <div className="mt-8">
@@ -51,7 +51,7 @@ const InteractionFeedback = (props: Props) => {
           onChange={setIfHasSeenValue}
           className="mb-8"
         >
-          <RadioGroup.Label className="text-sm text-gray-700 font-semibold">
+          <RadioGroup.Label className="text-sm font-semibold text-gray-700">
             Have you ever seen this interaction before?
           </RadioGroup.Label>
           <div className="flex flex-wrap mt-4">
@@ -80,7 +80,7 @@ const InteractionFeedback = (props: Props) => {
           onChange={setExperienceFeedback}
           className="mb-8"
         >
-          <RadioGroup.Label className="text-sm text-gray-700 font-semibold">
+          <RadioGroup.Label className="text-sm font-semibold text-gray-700">
             Evaluate the experience of this interaction
           </RadioGroup.Label>
           <div className="flex flex-wrap mt-4">
@@ -108,7 +108,7 @@ const InteractionFeedback = (props: Props) => {
         <img
           src="/Feedback.png"
           role="presentation"
-          className="absolute right-0 -translate-y-3/4 -translate-x-1/2"
+          className="absolute right-0 -translate-x-1/2 -translate-y-3/4"
         />
       </div>
     </div>

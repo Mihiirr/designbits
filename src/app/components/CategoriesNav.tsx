@@ -84,7 +84,7 @@ const navItems = [
 
 const CategoriesNav = () => {
   return (
-    <nav className="text-sm space-y-2">
+    <nav className="space-y-2 text-sm">
       {navItems.map(({ name, to, icon }) => (
         <NavLink
           key={name}
