@@ -1,10 +1,105 @@
 import { Outlet, useCatch } from "remix"
 import type { LinksFunction } from "remix"
+import React from "react"
+import { useSpinDelay } from "spin-delay"
 
 import styles from "~/styles/tailwind.css"
 import Layout from "~/components/Layout"
 import Link from "~/components/Link"
 import Document from "~/components/common/Document"
+import { getThemeSession } from "~/utils/theme.server"
+import { useTransition } from "remix"
+import { NotificationMessage } from "./components/NotificationMessage"
+import { AnimatePresence, motion } from "framer-motion"
+import { TeamCircle } from "./components/team-circle"
+import Spinner from "./components/Spinner"
+
+const LOADER_WORDS = [
+  "loading",
+  "checking cdn",
+  "checking cache",
+  "fetching from db",
+  "compiling mdx",
+  "updating cache",
+  "transfer",
+]
+
+const ACTION_WORDS = [
+  "packaging",
+  "zapping",
+  "validating",
+  "processing",
+  "calculating",
+  "computing",
+  "computering",
+]
+
+// we don't want to show the loading indicator on page load
+let firstRender = true
+function PageLoadingMessage() {
+  const transition = useTransition()
+  const [words, setWords] = React.useState<Array<string>>([])
+  const [pendingPath, setPendingPath] = React.useState("")
+  const showLoader = useSpinDelay(Boolean(transition.state !== "idle"), {
+    delay: 400,
+    minDuration: 1000,
+  })
+
+  React.useEffect(() => {
+    if (firstRender) return
+    if (transition.state === "idle") return
+    if (transition.state === "loading") setWords(LOADER_WORDS)
+    if (transition.state === "submitting") setWords(ACTION_WORDS)
+
+    const interval = setInterval(() => {
+      setWords(([first, ...rest]) => [...rest, first] as Array<string>)
+    }, 2000)
+
+    return () => clearInterval(interval)
+  }, [pendingPath, transition.state])
+
+  React.useEffect(() => {
+    if (firstRender) return
+    if (transition.state === "idle") return
+    setPendingPath(transition.location.pathname)
+  }, [transition])
+
+  React.useEffect(() => {
+    firstRender = false
+  }, [])
+
+  const action = words[0]
+
+  return (
+    <NotificationMessage position="bottom-right" visible={showLoader}>
+      <div className="flex items-center w-64">
+        <motion.div
+          transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+          animate={{ rotate: 360 }}
+        >
+          <Spinner height={48} width={48} />
+        </motion.div>
+        <div className="inline-grid ml-4">
+          <AnimatePresence>
+            <div className="flex overflow-hidden col-start-1 row-start-1">
+              <motion.span
+                key={action}
+                initial={{ y: 15, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -15, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="flex-none"
+              >
+                {action}
+              </motion.span>
+            </div>
+          </AnimatePresence>
+          <span className="truncate text-secondary">path: {pendingPath}</span>
+        </div>
+      </div>
+    </NotificationMessage>
+  )
+}
 
 // https://remix.run/api/app#links
 export const links: LinksFunction = () => {
@@ -17,6 +112,20 @@ export const links: LinksFunction = () => {
       rel: "stylesheet",
       href: styles,
     },
+    {
+      rel: "preload",
+      as: "font",
+      href: "/fonts/Matter-Medium.woff2",
+      type: "font/woff2",
+      crossOrigin: "anonymous",
+    },
+    {
+      rel: "preload",
+      as: "font",
+      href: "/fonts/Matter-Regular.woff2",
+      type: "font/woff2",
+      crossOrigin: "anonymous",
+    },
   ]
 }
 
@@ -25,6 +134,7 @@ export const links: LinksFunction = () => {
 export default function App() {
   return (
     <Document>
+      <PageLoadingMessage></PageLoadingMessage>
       <Outlet />
     </Document>
   )

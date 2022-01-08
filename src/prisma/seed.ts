@@ -1,5 +1,4 @@
 import { PrismaClient, Prisma } from "@prisma/client"
-import bcrypt from "bcrypt"
 
 const db = new PrismaClient()
 
@@ -11,7 +10,6 @@ async function seed() {
         data: {
           email: user.email,
           name: user.name,
-          passwordHash: user.passwordHash,
         },
       })
     }),
@@ -25,18 +23,10 @@ async function getUsers(): Promise<Prisma.UserCreateInput[]> {
     {
       email: "shreyas@designbits.io",
       name: "Shreyas Chaudhary",
-      passwordHash: await bcrypt.hash(
-        process.env.SEED_ACCOUNT_PASSWORD ?? "",
-        10,
-      ),
     },
     {
       email: "tirth@designbits.io",
       name: "Tirth Gajjar",
-      passwordHash: await bcrypt.hash(
-        process.env.SEED_ACCOUNT_PASSWORD ?? "",
-        10,
-      ),
     },
   ]
 }

@@ -34,7 +34,6 @@ model User {
   id             String         @id @default(cuid())
   /// @zod.email({ message: "Invalid email address" })
   email          String         @unique
-  passwordHash   String
   name           String?
   UserStatus     UserStatus     @default(ACTIVE)
   role           UserRole       @default(USER)
@@ -43,6 +42,7 @@ model User {
   Post           Post[]
   PostViews      PostView[]
   ReactedOnPosts PostReaction[]
+  Session        Session[]
 }
 
 model Post {
@@ -69,7 +69,7 @@ model PostView {
   id       String   @id
   viewedBy String   @map("userId")
   viewedAt DateTime @default(now())
-  ViewedBy User     @relation(fields: [viewedBy], references: [id])
+  ViewedBy User     @relation(fields: [viewedBy], references: [id], onDelete: Cascade)
 }
 
 enum PostReactionTypes {
@@ -82,5 +82,13 @@ model PostReaction {
   reaction  PostReactionTypes @default(LIKE)
   reactedBy String            @map("userId")
   viewedAt  DateTime          @default(now())
-  ReactedBy User              @relation(fields: [reactedBy], references: [id])
+  ReactedBy User              @relation(fields: [reactedBy], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id             String   @id @default(uuid())
+  createdAt      DateTime @default(now())
+  User           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  expirationDate DateTime
 }

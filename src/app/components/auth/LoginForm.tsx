@@ -1,5 +1,4 @@
-import React from "react"
-import { Form, Link } from "remix"
+import { Form } from "remix"
 import { LoginActionData } from "../../routes/auth/login"
 
 interface Props {
@@ -15,12 +14,10 @@ const LoginForm = (props: Props) => {
         formErrors: [],
         fieldErrors: {
           email: [],
-          password: [],
         },
       },
       fields: {
         email: "",
-        password: "",
       },
     },
   } = props
@@ -74,39 +71,6 @@ const LoginForm = (props: Props) => {
         </div>
       </div>
 
-      <div className="space-y-1">
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Password
-        </label>
-        <div className="mt-1">
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            className="block py-2 px-3 w-full placeholder:text-gray-400 rounded-md border border-gray-300 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 shadow-sm appearance-none sm:text-sm"
-            aria-invalid={Boolean(error?.fieldErrors?.password) || undefined}
-            aria-describedby={
-              error?.fieldErrors?.password ? "password-error" : undefined
-            }
-            defaultValue={fields.password}
-          />
-          {error?.fieldErrors?.password ? (
-            <p
-              className="pt-1 text-sm text-red-500"
-              role="alert"
-              id="password-error"
-            >
-              {error?.fieldErrors.password}
-            </p>
-          ) : null}
-        </div>
-      </div>
-
       <div className="flex justify-between items-center">
         <div className="flex items-center">
           <input
@@ -121,15 +85,6 @@ const LoginForm = (props: Props) => {
           >
             Remember me
           </label>
-        </div>
-
-        <div className="text-sm">
-          <Link
-            to="/auth/forgot-password"
-            className="font-medium text-indigo-600 hover:text-indigo-500"
-          >
-            Forgot your password?
-          </Link>
         </div>
       </div>
       <div id="form-error-message">

@@ -6,7 +6,7 @@ const Button: React.FC<
       React.ButtonHTMLAttributes<HTMLButtonElement>,
       HTMLButtonElement
     >,
-    "className" | "type"
+    "className"
   >
 > = ({ children, ...btnProps }) => {
   return (

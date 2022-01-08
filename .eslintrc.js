@@ -16,7 +16,6 @@ module.exports = {
   rules: {
     "file-progress/activate": 1,
     "no-console": "off",
-
     // meh...
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/sort-type-union-intersection-members": "off",

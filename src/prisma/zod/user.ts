@@ -7,12 +7,13 @@ import {
   RelatedPostViewModel,
   CompletePostReaction,
   RelatedPostReactionModel,
+  CompleteSession,
+  RelatedSessionModel,
 } from "./index"
 
 export const UserModel = z.object({
   id: z.string(),
   email: z.string().email({ message: "Invalid email address" }),
-  passwordHash: z.string(),
   name: z.string().nullable(),
   UserStatus: z.nativeEnum(UserStatus),
   role: z.nativeEnum(UserRole),
@@ -24,6 +25,7 @@ export interface CompleteUser extends User {
   Post: CompletePost[]
   PostViews: CompletePostView[]
   ReactedOnPosts: CompletePostReaction[]
+  Session: CompleteSession[]
 }
 
 /**
@@ -36,5 +38,6 @@ export const RelatedUserModel: z.ZodSchema<CompleteUser> = z.lazy(() =>
     Post: RelatedPostModel.array(),
     PostViews: RelatedPostViewModel.array(),
     ReactedOnPosts: RelatedPostReactionModel.array(),
+    Session: RelatedSessionModel.array(),
   }),
 )
