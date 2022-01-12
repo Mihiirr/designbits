@@ -16,7 +16,7 @@ export default function Document({
         <Meta />
         <Links />
       </head>
-      <body className="h-full">
+      <body className="h-full bg-white dark:bg-gray-900 transition duration-500">
         {children}
         <ScrollRestoration />
         <Scripts />

@@ -105,26 +105,26 @@ function PageLoadingMessage() {
 export const links: LinksFunction = () => {
   return [
     {
-      rel: "stylesheet",
-      href: "https://rsms.me/inter/inter.css",
+      rel: "preload",
+      as: "font",
+      href: "/fonts/wotfard/wotfard-regular-webfont.woff2",
+      type: "font/woff2",
+      crossOrigin: "anonymous",
+    },
+    {
+      rel: "preload",
+      as: "font",
+      href: "/fonts/wotfard/wotfard-medium-webfont.woff2",
+      type: "font/woff2",
+      crossOrigin: "anonymous",
     },
     {
       rel: "stylesheet",
       href: styles,
     },
     {
-      rel: "preload",
-      as: "font",
-      href: "/fonts/Matter-Medium.woff2",
-      type: "font/woff2",
-      crossOrigin: "anonymous",
-    },
-    {
-      rel: "preload",
-      as: "font",
-      href: "/fonts/Matter-Regular.woff2",
-      type: "font/woff2",
-      crossOrigin: "anonymous",
+      rel: "stylesheet",
+      href: "/fonts/wotfard/wotfard-font.css",
     },
   ]
 }

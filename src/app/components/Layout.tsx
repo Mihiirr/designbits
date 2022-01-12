@@ -49,14 +49,14 @@ const userNavigation = [
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <div className="min-h-full">
+      <div className="min-h-full bg-white dark:bg-gray-900">
         <Disclosure as="nav" className="bg-white shadow-sm">
           {({ open }) => (
             <>
               <div className="px-4">
                 <div className="flex justify-between h-16">
                   <div className="flex">
-                    <div className="flex shrink-0 items-center w-56">
+                    <div className="flex shrink-0 items-center w-40 lg:w-56">
                       <Link to="/" className="px-2">
                         <DesignBitsLogo />
                       </Link>

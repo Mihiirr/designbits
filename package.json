@@ -22,7 +22,8 @@
     "install:dotenv-linter": "curl -sSfL https://raw.githubusercontent.com/dotenv-linter/dotenv-linter/master/install.sh | sh -s -- -b node_modules/.bin",
     "prisma:create-migration": "npx prisma migrate dev",
     "prisma:reset-database": "npx prisma migrate reset",
-    "prisma:generate": "npx prisma generate && npx prettier --write **/prisma/zod"
+    "prisma:generate": "npx prisma generate && npx prettier --write **/prisma/zod",
+    "vercel:env:push": "bash scripts/env.sh"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.2",
