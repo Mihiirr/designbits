@@ -16,68 +16,68 @@ import TableIcon from "./icons/Table"
 const navItems = [
   {
     name: "All",
-    to: "/",
+    to: "/explore/all",
     icon: <StackIcon width="24" height="24" role="presentation" />,
     active: true,
   },
   {
     name: "Lists",
-    to: "/explore/lists",
+    to: "/explore/lists/",
     icon: <ViewListIcon width="24" height="24" role="presentation" />,
   },
   {
     name: "Data display",
-    to: "/explore/data-display",
+    to: "/explore/data-display/",
     icon: <DataDisplayIcon width="24" height="24" role="presentation" />,
   },
   {
     name: "Navigation",
-    to: "/explore/navigation",
+    to: "/explore/navigation/",
     icon: <NavigationIcon width="24" height="24" role="presentation" />,
   },
   {
     name: "Feedback",
-    to: "/explore/feedback",
+    to: "/explore/feedback/",
     icon: <FeedbackIcon width="24" height="24" role="presentation" />,
   },
   {
     name: "Chat",
-    to: "/explore/chat",
+    to: "/explore/chat/",
     icon: <ChatIcon width="24" height="24" role="presentation" />,
   },
   {
     name: "Modal",
-    to: "/explore/modal",
+    to: "/explore/modal/",
     icon: <ModalIcon width="24" height="24" role="presentation" />,
   },
   {
     name: "Onboarding",
-    to: "/explore/onboarding",
+    to: "/explore/onboarding/",
     icon: <OnBoardingIcon width="24" height="24" role="presentation" />,
   },
   {
     name: "Dropdown",
-    to: "/explore/dropdown",
+    to: "/explore/dropdown/",
     icon: <DropdownIcon width="24" height="24" role="presentation" />,
   },
   {
     name: "Notification",
-    to: "/explore/notification",
+    to: "/explore/notification/",
     icon: <BellIcon width="24" height="24" role="presentation" />,
   },
   {
     name: "Forms",
-    to: "/explore/forms",
+    to: "/explore/forms/",
     icon: <FormIcon width="24" height="24" role="presentation" />,
   },
   {
     name: "Toggles",
-    to: "/explore/toggles",
+    to: "/explore/toggles/",
     icon: <ToggleIcon width="24" height="24" role="presentation" />,
   },
   {
     name: "Tables",
-    to: "/explore/tables",
+    to: "/explore/tables/",
     icon: <TableIcon width="24" height="24" role="presentation" />,
   },
 ]

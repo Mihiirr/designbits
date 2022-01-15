@@ -3,7 +3,7 @@ import type { LinksFunction } from "remix"
 import React from "react"
 import { useSpinDelay } from "spin-delay"
 
-import styles from "~/styles/tailwind.css"
+import tailwindStyles from "~/styles/tailwind.css"
 import Layout from "~/components/Layout"
 import Link from "~/components/Link"
 import Document from "~/components/common/Document"
@@ -11,7 +11,6 @@ import { getThemeSession } from "~/utils/theme.server"
 import { useTransition } from "remix"
 import { NotificationMessage } from "./components/NotificationMessage"
 import { AnimatePresence, motion } from "framer-motion"
-import { TeamCircle } from "./components/team-circle"
 import Spinner from "./components/Spinner"
 
 const LOADER_WORDS = [
@@ -94,7 +93,7 @@ function PageLoadingMessage() {
               </motion.span>
             </div>
           </AnimatePresence>
-          <span className="truncate text-secondary">path: {pendingPath}</span>
+          <span className="truncate">path: {pendingPath}</span>
         </div>
       </div>
     </NotificationMessage>
@@ -120,7 +119,7 @@ export const links: LinksFunction = () => {
     },
     {
       rel: "stylesheet",
-      href: styles,
+      href: tailwindStyles,
     },
     {
       rel: "stylesheet",

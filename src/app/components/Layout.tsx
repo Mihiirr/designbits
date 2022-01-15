@@ -29,13 +29,13 @@ const navigation = [
   { name: "Explore", href: "/explore", icon: <ExploreIcon {...iconProps} /> },
   {
     name: "Collections",
-    href: "/collections",
+    href: "/collections/",
     icon: <CollectionsIcon {...iconProps} />,
   },
-  { name: "Liked", href: "/liked", icon: <LikeIcon {...iconProps} /> },
+  { name: "Liked", href: "/liked/", icon: <LikeIcon {...iconProps} /> },
   {
     name: "My Uploads",
-    href: "/my-uploads",
+    href: "/my-uploads/",
     icon: <GalleryIcon {...iconProps} />,
   },
 ]

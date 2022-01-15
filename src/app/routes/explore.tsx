@@ -5,7 +5,7 @@ import Layout from "~/components/Layout"
 
 interface Props {}
 
-const __explore = (props: Props) => {
+const Explore = (props: Props) => {
   return (
     <Layout>
       <div className="shrink-0 w-40 lg:w-56">
@@ -18,4 +18,4 @@ const __explore = (props: Props) => {
   )
 }
 
-export default __explore
+export default Explore
