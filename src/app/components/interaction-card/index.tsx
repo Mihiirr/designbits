@@ -97,6 +97,7 @@ export default function InteractionCard() {
                   alt={article.imageAlt}
                   className="w-full h-full hover:opacity-75 object-cover object-center"
                 /> */}
+
                 <a
                   className={classNames(
                     article.backgroundColorClass,
@@ -104,6 +105,13 @@ export default function InteractionCard() {
                   )}
                   href={article.href}
                 >
+                  <img
+                    className={classNames(
+                      article.backgroundColorClass,
+                      "w-full h-full hover:opacity-75 object-cover object-center",
+                    )}
+                    src="/assets/github/preview.gif"
+                  />
                   <div className="p-3">
                     <Link
                       to="/test"
