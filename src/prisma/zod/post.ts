@@ -11,10 +11,12 @@ export const PostModel = z.object({
   id: z.string(),
   title: z.string(),
   slug: z.string(),
-  createdBy: z.string(),
+  createdById: z.string(),
   createdAt: z.date(),
   modifiedAt: z.date(),
   sourceId: z.string(),
+  videoUrl: z.string(),
+  previewUrl: z.string(),
 })
 
 export interface CompletePost extends Post {

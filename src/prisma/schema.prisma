@@ -46,20 +46,22 @@ model User {
 }
 
 model Post {
-  id         String   @id @default(cuid())
-  title      String
-  slug       String   @unique
-  createdBy  String
-  createdAt  DateTime @default(now())
-  modifiedAt DateTime @default(now())
-  CreatedBy  User     @relation(fields: [createdBy], references: [id])
-  Source     Source   @relation(fields: [sourceId], references: [id])
-  sourceId   String
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  createdById String
+  createdAt   DateTime @default(now())
+  modifiedAt  DateTime @default(now())
+  CreatedBy   User     @relation(fields: [createdById], references: [id])
+  Source      Source   @relation(fields: [sourceId], references: [id])
+  sourceId    String
+  videoUrl    String
+  previewUrl  String
 }
 
 model Source {
   id       String @id @default(cuid())
-  name     String
+  name     String @unique
   url      String
   imageSrc String
   Post     Post[]
