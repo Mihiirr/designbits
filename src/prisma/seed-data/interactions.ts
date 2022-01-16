@@ -42,7 +42,7 @@ export default function getPosts() {
         },
       },
       media: {
-        video: "github-watch-dropdown.gif",
+        video: "github-watch-dropdown.mp4",
         preview: "github-watch-dropdown.gif",
       },
     },

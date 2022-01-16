@@ -15,6 +15,7 @@
     "connect:databases": "concurrently -c \"#10b981.bold,#bada55.bold\" \"yarn:connect:database:*\"",
     "connect:database:develop": "pscale connect designbits develop --port ${DATABASE_PORT:-3309}",
     "connect:database:shadow": "pscale connect designbits shadow --port ${SHADOW_DATABASE_PORT:-3310}",
+    "connect:database:main": "pscale connect designbits main --port ${SHADOW_DATABASE_PORT:-3306}",
     "lint": "eslint --fix --cache --cache-location ./node_modules/.cache/.eslintcache --ext js,jsx,ts,tsx .",
     "lint:staged": "eslint --fix --no-error-on-unmatched-pattern --cache --cache-location ./node_modules/.cache/.eslintcache",
     "typecheck": "concurrently --raw yarn:typecheck:*",

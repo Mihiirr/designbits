@@ -109,7 +109,7 @@ export default function InteractionCard({
                     article.backgroundColorClass || "bg-gray-800",
                     "aspect-w-1 aspect-h-1 xl:aspect-w-7 xl:aspect-h-8 h-60 w-full hover:opacity-75 block",
                   )}
-                  href={article.slug}
+                  href={`/interaction/${article.slug}`}
                 >
                   <img
                     className={classNames(

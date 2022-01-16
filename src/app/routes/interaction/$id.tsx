@@ -3,17 +3,40 @@ import {
   DotsVerticalIcon,
   ShareIcon,
 } from "@heroicons/react/outline"
+import { Post, Source, User } from "@prisma/client"
 import React from "react"
+import { LoaderFunction, useLoaderData } from "remix"
 import Avatar from "~/components/Avatar"
 import Button from "~/components/Button"
 import AndroidIcon from "~/components/icons/Android"
 import LikeIcon from "~/components/icons/Like"
 import InteractionFeedback from "~/components/InteractionFeedback"
 import Layout from "~/components/Layout"
+import { db } from "~/services/db/prisma.server"
 
-interface Props {}
+export let loader: LoaderFunction = async ({ params }) => {
+  const postId = params.id
 
-const Interaction = (props: Props) => {
+  const data = await db.post.findUnique({
+    where: {
+      slug: postId,
+    },
+    include: {
+      Source: true,
+      CreatedBy: true,
+    },
+  })
+  return data
+}
+
+type PostData = Post & {
+  Source: Source
+  CreatedBy: User
+}
+
+const Interaction = () => {
+  const postData = useLoaderData<PostData>()
+
   return (
     <Layout>
       <div className="grid grid-cols-7 w-full">
@@ -42,7 +65,12 @@ const Interaction = (props: Props) => {
               </button>
             </div>
           </div>
-          <div className="aspect-video w-full bg-yellow-50 rounded-lg"></div>
+          <video
+            className="aspect-video w-full bg-gray-800 rounded-lg"
+            controls
+          >
+            <source src={postData.videoUrl} type="video/mp4"></source>
+          </video>
         </div>
         <div className="col-span-2 ">
           <div className="px-8 space-y-7 w-full">

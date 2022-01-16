@@ -29,7 +29,7 @@ export let loader: LoaderFunction = async ({ params }) => {
   return { categoryId, interactions: data }
 }
 
-const CategoryPage: React.FC<Props> = ({ children }) => {
+const CategoryPage: React.FC<Props> = () => {
   const { categoryId, interactions } = useLoaderData<LoaderData>()
   return (
     <>
