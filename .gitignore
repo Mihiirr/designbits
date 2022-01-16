@@ -16,3 +16,7 @@ bin/dotenv-linter
 
 # Docker
 .docker
+
+# Videos
+src/prisma/seed-data/interactions/*.mp4
+src/prisma/seed-data/interactions/*.gif
