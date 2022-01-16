@@ -107,21 +107,21 @@ export default function InteractionCard({
                 <a
                   className={classNames(
                     article.backgroundColorClass || "bg-gray-800",
-                    "aspect-w-1 aspect-h-1 xl:aspect-w-7 xl:aspect-h-8 h-60 w-full hover:opacity-75 block",
+                    "aspect-w-1 aspect-h-1 xl:aspect-w-7 xl:aspect-h-8 h-60 w-full block relative group",
                   )}
                   href={`/interaction/${article.slug}`}
                 >
                   <img
                     className={classNames(
                       article.backgroundColorClass || "bg-gray-800",
-                      "w-full h-full hover:opacity-75 object-cover object-center",
+                      "w-full h-full opacity-50 group-hover:opacity-100 object-cover object-center",
                     )}
                     src={article.previewUrl}
                   />
-                  <div className="p-3">
+                  <div className="absolute top-0 p-3 w-full h-full bg-gradient-to-b group-hover:bg-none from-gray-800 via-transparent transition-transform group-hover:-translate-y-full">
                     <Link
                       to="/test"
-                      className="flex items-center space-x-1 text-xs font-semibold text-gray-800"
+                      className="flex items-center space-x-2 text-xs font-semibold text-gray-200"
                     >
                       <img
                         src={article.Source.imageSrc}

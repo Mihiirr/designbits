@@ -745,6 +745,10 @@ select {
   right: 1rem;
 }
 
+.top-0 {
+  top: 0px;
+}
+
 .z-50 {
   z-index: 50;
 }
@@ -1315,15 +1319,30 @@ select {
   background-image: linear-gradient(to top left, var(--tw-gradient-stops));
 }
 
+.bg-gradient-to-b {
+  background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
+}
+
 .from-indigo-100 {
   --tw-gradient-from: #e0e7ff;
   --tw-gradient-stops: var(--tw-gradient-from),
     var(--tw-gradient-to, rgb(224 231 255 / 0));
 }
 
+.from-gray-800 {
+  --tw-gradient-from: #1f2937;
+  --tw-gradient-stops: var(--tw-gradient-from),
+    var(--tw-gradient-to, rgb(31 41 55 / 0));
+}
+
 .via-white {
   --tw-gradient-stops: var(--tw-gradient-from), #fff,
     var(--tw-gradient-to, rgb(255 255 255 / 0));
+}
+
+.via-transparent {
+  --tw-gradient-stops: var(--tw-gradient-from), transparent,
+    var(--tw-gradient-to, rgb(0 0 0 / 0));
 }
 
 .to-white {
@@ -1606,6 +1625,11 @@ select {
   color: rgb(239 68 68 / var(--tw-text-opacity));
 }
 
+.text-gray-200 {
+  --tw-text-opacity: 1;
+  color: rgb(229 231 235 / var(--tw-text-opacity));
+}
+
 .opacity-0 {
   opacity: 0;
 }
@@ -1616,6 +1640,14 @@ select {
 
 .opacity-25 {
   opacity: 0.25;
+}
+
+.opacity-75 {
+  opacity: 0.75;
+}
+
+.opacity-50 {
+  opacity: 0.5;
 }
 
 .shadow-sm {
@@ -1696,6 +1728,12 @@ select {
   transition-duration: 150ms;
 }
 
+.transition-transform {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
 .duration-200 {
   transition-duration: 200ms;
 }
@@ -1769,6 +1807,14 @@ select {
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-transparent:hover {
+  background-color: transparent;
+}
+
+.hover\:bg-none:hover {
+  background-image: none;
+}
+
 .hover\:text-gray-700:hover {
   --tw-text-opacity: 1;
   color: rgb(55 65 81 / var(--tw-text-opacity));
@@ -1791,6 +1837,10 @@ select {
 
 .hover\:opacity-75:hover {
   opacity: 0.75;
+}
+
+.hover\:opacity-100:hover {
+  opacity: 1;
 }
 
 .focus\:border-indigo-500:focus {
@@ -1839,6 +1889,15 @@ select {
   opacity: 0.5;
 }
 
+.group:hover .group-hover\:-translate-y-full {
+  --tw-translate-y: -100%;
+  transform: var(--tw-transform);
+}
+
+.group:hover .group-hover\:bg-none {
+  background-image: none;
+}
+
 .group:hover .group-hover\:text-gray-900 {
   --tw-text-opacity: 1;
   color: rgb(17 24 39 / var(--tw-text-opacity));
@@ -1847,6 +1906,10 @@ select {
 .group:hover .group-hover\:text-gray-700 {
   --tw-text-opacity: 1;
   color: rgb(55 65 81 / var(--tw-text-opacity));
+}
+
+.group:hover .group-hover\:opacity-100 {
+  opacity: 1;
 }
 
 .dark .dark\:bg-gray-900 {
