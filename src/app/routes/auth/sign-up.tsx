@@ -92,7 +92,7 @@ export const action: ActionFunction = async ({ request }) => {
 
       try {
         const user = await db.user.create({
-          data: { email, name: firstName },
+          data: { email, name: firstName, profileSlug: firstName ?? "" },
         })
         const headers = new Headers()
         await session.signIn(user)

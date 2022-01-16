@@ -35,6 +35,8 @@ model User {
   /// @zod.email({ message: "Invalid email address" })
   email          String         @unique
   name           String?
+  profilePicture String?
+  profileSlug    String
   UserStatus     UserStatus     @default(ACTIVE)
   role           UserRole       @default(USER)
   createdAt      DateTime       @default(now())
@@ -57,6 +59,7 @@ model Post {
   sourceId    String
   videoUrl    String
   previewUrl  String
+  description String   @db.MediumText
 }
 
 model Source {

@@ -17,6 +17,7 @@ export const PostModel = z.object({
   sourceId: z.string(),
   videoUrl: z.string(),
   previewUrl: z.string(),
+  description: z.string(),
 })
 
 export interface CompletePost extends Post {

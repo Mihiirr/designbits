@@ -11,7 +11,7 @@ async function seed() {
   const postsData = getPosts()
   await Promise.all(
     postsData.map(async post => {
-      const { title, slug, media, Source, CreatedBy } = post
+      const { title, slug, media, Source, CreatedBy, description } = post
 
       const uploadedMedia = await pProps({
         video: uploadToS3(media?.video),
@@ -23,6 +23,7 @@ async function seed() {
           slug,
           Source,
           CreatedBy,
+          description,
           videoUrl: CDNLink + uploadedMedia.video.key,
           previewUrl: CDNLink + uploadedMedia.preview.key,
         },

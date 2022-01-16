@@ -1,9 +1,13 @@
+const CDNLink = "https://dtom6jzmogd06.cloudfront.net/"
+
 const usersData = {
   Tirth: {
     connectOrCreate: {
       create: {
         email: "tirth@designbits.io",
         name: "Tirth Gajjar",
+        profilePicture: CDNLink + "DesignBits/dev/profile-pictures/tirth.jpeg",
+        profileSlug: "tirth-gajjar",
       },
       where: {
         email: "tirth@designbits.io",
@@ -15,6 +19,9 @@ const usersData = {
       create: {
         email: "shreyas@designbits.io",
         name: "Shreyas Chaudhary",
+        profilePicture:
+          CDNLink + "DesignBits/dev/profile-pictures/Shreyas.jpeg",
+        profileSlug: "shreyas-chaudhary",
       },
       where: {
         email: "shreyas@designbits.io",
@@ -45,6 +52,8 @@ export default function getPosts() {
         video: "github-watch-dropdown.mp4",
         preview: "github-watch-dropdown.gif",
       },
+      description:
+        "Platformas like Github that handles complex and large amount of data often need to keep that interface compact with more nested approach. Eg., Photoshop, After effects, editors, etc. In such scarios, github's nested dropdown aviation is quite smooth and clean. Cognitively easy. Is this pattern actually good? Or such complexity can be avoided/handled in a better way.",
     },
     {
       title: "Codepen - expand/collapse panes (brave)",
@@ -67,6 +76,8 @@ export default function getPosts() {
         video: "codepen-pane-expand-collapse.mp4",
         preview: "codepen-pane-expand-collapse.gif",
       },
+      description:
+        "Most unique way of expanding and collapsing panes. That transition of title is really brave. Love when tools still try to break the ideal design.",
     },
   ]
 }

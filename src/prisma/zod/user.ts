@@ -15,6 +15,8 @@ export const UserModel = z.object({
   id: z.string(),
   email: z.string().email({ message: "Invalid email address" }),
   name: z.string().nullable(),
+  profilePicture: z.string().nullable(),
+  profileSlug: z.string(),
   UserStatus: z.nativeEnum(UserStatus),
   role: z.nativeEnum(UserRole),
   createdAt: z.date(),

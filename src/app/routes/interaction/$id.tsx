@@ -44,7 +44,7 @@ const Interaction = () => {
           <div className="flex justify-between items-start">
             <div>
               <div className="text-2xl font-bold text-gray-800">
-                Bottom navigation drag utility
+                {postData.title}
               </div>
               <div className="flex mt-1 space-x-1 text-sm text-gray-500">
                 <span>6 hrs ago</span>
@@ -55,7 +55,7 @@ const Interaction = () => {
             <div className="flex space-x-4">
               <button className="flex py-2 px-4 space-x-2 text-gray-800 rounded-lg border border-gray-200">
                 <LikeIcon height="24" width="24" />
-                <span>256</span>
+                <span>{256}</span>
               </button>
               <button className="flex p-2 space-x-2 text-gray-800 rounded-lg border border-gray-200">
                 <CollectionIcon height="24" width="24" />
@@ -65,17 +65,24 @@ const Interaction = () => {
               </button>
             </div>
           </div>
-          <video
-            className="aspect-video w-full bg-gray-800 rounded-lg"
-            controls
-          >
-            <source src={postData.videoUrl} type="video/mp4"></source>
-          </video>
+          <div>
+            <video
+              className="aspect-video w-full bg-gray-800 rounded-lg"
+              controls
+              autoPlay
+            >
+              <source src={postData.videoUrl} type="video/mp4"></source>
+            </video>
+          </div>
         </div>
         <div className="col-span-2 ">
           <div className="px-8 space-y-7 w-full">
             <div className="flex justify-between items-center">
-              <Avatar />
+              <Avatar
+                slug={postData.CreatedBy.profileSlug}
+                imgSrc={postData.CreatedBy.profilePicture}
+                name={postData.CreatedBy.name}
+              />
               <div className="flex items-center space-x-4">
                 <Button>Follow</Button>
                 <button>
@@ -83,12 +90,7 @@ const Interaction = () => {
                 </button>
               </div>
             </div>
-            <p className="text-sm text-gray-800">
-              An innovative way to utilize the bottom navigation menu in mobile
-              app for quick actions. It doesn’t disturb the UI and makes it easy
-              to create new task or send message, no matter where I am in the
-              app. Big time saviour.
-            </p>
+            <p className="text-sm text-gray-800">{postData.description}</p>
             <div className="space-y-2 text-sm text-gray-500">
               <div className="flex space-x-4 w-full">
                 <div className="w-2/12">Source</div>
