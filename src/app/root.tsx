@@ -201,6 +201,7 @@ export function CatchBoundary() {
                 </div>
                 <div className="flex mt-10 space-x-3 sm:pl-6 sm:border-l sm:border-transparent">
                   <Link
+                    prefetch="intent"
                     to="/explore"
                     className="inline-flex items-center py-2 px-4 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm"
                   >

@@ -57,7 +57,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <div className="flex justify-between h-16">
                   <div className="flex">
                     <div className="flex shrink-0 items-center w-40 lg:w-56">
-                      <Link to="/" className="px-2">
+                      <Link prefetch="intent" to="/" className="px-2">
                         <DesignBitsLogo />
                       </Link>
                     </div>

@@ -104,12 +104,13 @@ export default function InteractionCard({
           {interactions.map(article => (
             <div key={article.id}>
               <div className="overflow-hidden relative w-full bg-gray-200 rounded-lg">
-                <a
+                <Link
                   className={classNames(
                     article.backgroundColorClass || "bg-gray-800",
                     "aspect-w-1 aspect-h-1 xl:aspect-w-7 xl:aspect-h-8 h-60 w-full block relative group",
                   )}
-                  href={`/interaction/${article.slug}`}
+                  to={`/interaction/${article.slug}`}
+                  prefetch="intent"
                 >
                   <img
                     className={classNames(
@@ -131,7 +132,7 @@ export default function InteractionCard({
                       <span>{article.Source.name}</span>
                     </Link>
                   </div>
-                </a>
+                </Link>
               </div>
               <h3 className="mt-3 text-sm font-semibold text-gray-700">
                 <a href={article.slug}>{article.title}</a>
