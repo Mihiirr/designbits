@@ -3,86 +3,7 @@ import classNames from "../../utils/classnames"
 import CommentIcon from "../icons/Comment"
 import { Link } from "remix"
 import { Post, Source, User } from "@prisma/client"
-
-const articles = [
-  {
-    id: 1,
-    title: "Bottom navigation drag utility",
-    href: "/interaction/1",
-    source: {
-      logo: "https://basecamp.com/basecamp-icon-196x196.png",
-      name: "Basecamp",
-    },
-    author: {
-      name: "Leslie",
-      profile: "/leslie",
-    },
-    likes: 106,
-    comments: {
-      count: 6,
-    },
-    views: "1.2k",
-    backgroundColorClass: "bg-yellow-50",
-  },
-  {
-    id: 2,
-    title: "Collapse side navigation on-hover",
-    href: "/interaction/2",
-    source: {
-      logo: "//logo.clearbit.com/loom.com",
-      name: "Loom",
-    },
-    author: {
-      name: "Leslie",
-      profile: "/leslie",
-    },
-    likes: 106,
-    comments: {
-      count: 6,
-    },
-    views: "1.2k",
-    backgroundColorClass: "bg-indigo-50",
-  },
-  {
-    id: 3,
-    title: "Icon transition micro animation",
-    href: "/interaction/3",
-    source: {
-      logo: "//logo.clearbit.com/telegram.org",
-      name: "Telegram",
-    },
-    author: {
-      name: "Wade Warren",
-      profile: "/wade-warren",
-    },
-    likes: 106,
-    comments: {
-      count: 6,
-    },
-    views: "1.2k",
-    backgroundColorClass: "bg-gray-200",
-  },
-  {
-    id: 4,
-    title: "Swipe down to refresh animation",
-    href: "/interaction/4",
-    source: {
-      logo: "//logo.clearbit.com/dribbble.com/",
-      name: "Dribbble",
-    },
-    author: {
-      name: "Leslie",
-      profile: "/leslie",
-    },
-    likes: 106,
-    comments: {
-      count: 6,
-    },
-    views: "1.2k",
-    backgroundColorClass: "bg-orange-50",
-  },
-  // More products...
-]
+import { motion } from "framer-motion"
 
 type InteractionData = Post & {
   Source: Source
@@ -101,8 +22,18 @@ export default function InteractionCard({
       <div className="py-8 px-4 sm:py-8 sm:px-6 lg:px-0">
         <h2 className="sr-only">artciles</h2>
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-          {interactions.map(article => (
-            <div key={article.id}>
+          {interactions.map((article, i) => (
+            <motion.div
+              key={article.id}
+              initial={{ scale: 0.85, translateX: "-10%" }}
+              animate={{ scale: 1, translateX: 0 }}
+              transition={{
+                delay: 0.1 * i,
+                x: { type: "spring", stiffness: 100 },
+                default: { duration: 0.5 },
+              }}
+              whileHover={{ scale: 1.05 }}
+            >
               <div className="overflow-hidden relative w-full bg-gray-200 rounded-lg">
                 <Link
                   className={classNames(
@@ -156,7 +87,7 @@ export default function InteractionCard({
                   <span>{"5"}</span>
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

@@ -23,7 +23,7 @@ function getClient(): PrismaClient {
     ],
   })
   client.$on("query", (e: { duration: number; query: any }) => {
-    if (e.duration < logThreshold) return
+    // if (e.duration < logThreshold) return
 
     const color =
       e.duration < 30
