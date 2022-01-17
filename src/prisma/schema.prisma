@@ -45,6 +45,18 @@ model User {
   PostViews      PostView[]
   ReactedOnPosts PostReaction[]
   Session        Session[]
+  Following      Follower[]     @relation("following")
+  FollowedBy     Follower[]     @relation("followedBy")
+}
+
+model Follower {
+  id               String @id
+  followedByUserId String @map("followedById")
+  FollowingUser    User   @relation(fields: [followedByUserId], references: [id], name: "followedBy")
+  followingUserId  String @map("followerId")
+  Follower         User   @relation(fields: [followingUserId], references: [id], name: "following")
+
+  @@unique([followedByUserId, followingUserId])
 }
 
 model Post {

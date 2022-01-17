@@ -9,6 +9,8 @@ import {
   RelatedPostReactionModel,
   CompleteSession,
   RelatedSessionModel,
+  CompleteFollower,
+  RelatedFollowerModel,
 } from "./index"
 
 export const UserModel = z.object({
@@ -28,6 +30,8 @@ export interface CompleteUser extends User {
   PostViews: CompletePostView[]
   ReactedOnPosts: CompletePostReaction[]
   Session: CompleteSession[]
+  Followers: CompleteFollower[]
+  Follower: CompleteFollower[]
 }
 
 /**
@@ -41,5 +45,7 @@ export const RelatedUserModel: z.ZodSchema<CompleteUser> = z.lazy(() =>
     PostViews: RelatedPostViewModel.array(),
     ReactedOnPosts: RelatedPostReactionModel.array(),
     Session: RelatedSessionModel.array(),
+    Followers: RelatedFollowerModel.array(),
+    Follower: RelatedFollowerModel.array(),
   }),
 )

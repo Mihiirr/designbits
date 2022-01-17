@@ -1,5 +1,7 @@
 import { Post, Source, User } from "@prisma/client"
-import { LoaderFunction, useLoaderData } from "remix"
+import groupBy from "lodash.groupby"
+import { LoaderFunction, MetaFunction, useLoaderData } from "remix"
+import { navItems } from "~/components/CategoriesNav"
 import InteractionCard from "~/components/interaction-card"
 import { db } from "~/services/db/prisma.server"
 
@@ -13,12 +15,17 @@ type InteractionData = Post & {
 }
 
 interface LoaderData {
-  categoryId: string
+  category: string
   interactions: InteractionData[]
 }
 
+const categoryMap = groupBy(navItems, "id")
+
 export let loader: LoaderFunction = async ({ params }) => {
   const categoryId = params.category
+  if (!categoryId) {
+    return
+  }
 
   const data = await db.post.findMany({
     include: {
@@ -26,17 +33,17 @@ export let loader: LoaderFunction = async ({ params }) => {
       CreatedBy: true,
     },
   })
-  return { categoryId, interactions: data }
+  return { category: categoryMap[categoryId][0].name, interactions: data }
 }
 
 const CategoryPage: React.FC<Props> = () => {
-  const { categoryId, interactions } = useLoaderData<LoaderData>()
+  const { category, interactions } = useLoaderData<LoaderData>()
   return (
     <>
       <header>
         <div className="px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold leading-tight text-gray-900">
-            {categoryId}
+            {category}
           </h1>
         </div>
       </header>
@@ -47,6 +54,16 @@ const CategoryPage: React.FC<Props> = () => {
       </main>
     </>
   )
+}
+
+export const meta: MetaFunction = ({ params }) => {
+  const categoryId = params.category || ""
+
+  return {
+    title:
+      (categoryMap[categoryId]?.[0]?.name || "") + " interactions | DesignBits",
+    description: `discover ${categoryId} interactions.`,
+  }
 }
 
 export default CategoryPage

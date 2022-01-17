@@ -69,8 +69,16 @@ export default function InteractionCard({
                 <a href={article.slug}>{article.title}</a>
               </h3>
               <div className="flex mt-1 space-x-1 text-xs text-gray-400">
-                <a href={article.CreatedBy.id} className="text-indigo-700">
-                  {article.CreatedBy.name}
+                <a
+                  href={article.CreatedBy.id}
+                  className="flex items-center space-x-1 text-indigo-700"
+                >
+                  <img
+                    className="inline-block w-4 h-4 rounded-full"
+                    src={article.CreatedBy.profilePicture ?? ""}
+                    alt="profile"
+                  />
+                  <span>{article.CreatedBy.name}</span>
                 </a>
                 <span>&middot;</span>
                 <span>6 hrs ago</span>

@@ -5,7 +5,7 @@ import {
 } from "@heroicons/react/outline"
 import { Post, Source, User } from "@prisma/client"
 import React from "react"
-import { LoaderFunction, useLoaderData } from "remix"
+import { LoaderFunction, MetaFunction, useLoaderData } from "remix"
 import Avatar from "~/components/Avatar"
 import Button from "~/components/Button"
 import AndroidIcon from "~/components/icons/Android"
@@ -96,21 +96,21 @@ const Interaction = () => {
                 <div className="w-2/12">Source</div>
                 <div>
                   <a
-                    href="/"
-                    className="flex items-center space-x-1 text-xs font-semibold text-gray-800"
+                    href={postData.Source.url}
+                    className="flex items-center space-x-2 text-sm font-semibold text-gray-800"
                   >
                     <img
-                      src="https://basecamp.com/basecamp-icon-196x196.png"
-                      alt="Basecamp.com"
-                      className="w-5 h-5 rounded-full"
+                      src={postData.Source.imageSrc}
+                      alt={postData.Source.name}
+                      className="w-5 h-5 bg-gray-800 rounded-full"
                     />
-                    <span>Basecamp.com</span>
+                    <span>{postData.Source.name}</span>
                   </a>
                 </div>
               </div>
               <div className="flex space-x-4 w-full">
                 <div className="w-2/12">Platform</div>
-                <div className="flex space-x-1 text-gray-800">
+                <div className="flex space-x-2 text-gray-800">
                   <AndroidIcon />
                   <span>Android</span>
                 </div>
@@ -137,4 +137,11 @@ const Interaction = () => {
   )
 }
 
+export const meta: MetaFunction = ({ data }) => {
+  const postData = data as PostData
+  return {
+    title: postData.title + " | DesignBits",
+    description: postData.description,
+  }
+}
 export default Interaction

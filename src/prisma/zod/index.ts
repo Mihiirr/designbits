@@ -1,4 +1,5 @@
 export * from "./user"
+export * from "./follower"
 export * from "./post"
 export * from "./source"
 export * from "./postview"
