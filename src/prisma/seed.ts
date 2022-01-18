@@ -5,8 +5,6 @@ import { uploadToS3 } from "./seed-data/interactions/upload"
 
 const db = new PrismaClient()
 
-const CDNLink = "https://dtom6jzmogd06.cloudfront.net/"
-
 async function seed() {
   const postsData = getPosts()
   await Promise.all(
@@ -14,7 +12,8 @@ async function seed() {
       const { title, slug, media, Source, CreatedBy, description } = post
 
       const uploadedMedia = await pProps({
-        video: uploadToS3(media?.video),
+        videoMp4: uploadToS3(media?.videoMp4),
+        videoWebM: uploadToS3(media?.videoWebM),
         preview: uploadToS3(media?.preview),
       })
       return db.post.create({
@@ -24,8 +23,21 @@ async function seed() {
           Source,
           CreatedBy,
           description,
-          videoUrl: CDNLink + uploadedMedia.video.key,
-          previewUrl: CDNLink + uploadedMedia.preview.key,
+          VideoSources: {
+            createMany: {
+              data: [
+                {
+                  type: "video/mp4",
+                  url: uploadedMedia.videoMp4.Key,
+                },
+                {
+                  type: "video/webm",
+                  url: uploadedMedia.videoWebM.Key,
+                },
+              ],
+            },
+          },
+          previewUrl: uploadedMedia.preview.Key,
         },
       })
     }),

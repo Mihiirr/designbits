@@ -31,6 +31,8 @@ export async function uploadToS3(fileName: string): Promise<any> {
   }
   try {
     const data = await s3bucket.upload(params).promise()
+    console.log("uploaded file:" + fileName + " \n ")
+    console.log({ data })
     return data
   } catch (error) {
     console.warn(error)

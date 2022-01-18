@@ -4,12 +4,12 @@ import { CompleteUser, RelatedUserModel } from "./index"
 
 export const FollowerModel = z.object({
   id: z.string(),
-  followedById: z.string(),
-  followerId: z.string(),
+  followedByUserId: z.string(),
+  followingUserId: z.string(),
 })
 
 export interface CompleteFollower extends Follower {
-  Followed: CompleteUser
+  FollowingUser: CompleteUser
   Follower: CompleteUser
 }
 
@@ -20,7 +20,7 @@ export interface CompleteFollower extends Follower {
  */
 export const RelatedFollowerModel: z.ZodSchema<CompleteFollower> = z.lazy(() =>
   FollowerModel.extend({
-    Followed: RelatedUserModel,
+    FollowingUser: RelatedUserModel,
     Follower: RelatedUserModel,
   }),
 )

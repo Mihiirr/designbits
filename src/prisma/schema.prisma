@@ -60,18 +60,26 @@ model Follower {
 }
 
 model Post {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  createdById String
-  createdAt   DateTime @default(now())
-  modifiedAt  DateTime @default(now())
-  CreatedBy   User     @relation(fields: [createdById], references: [id])
-  Source      Source   @relation(fields: [sourceId], references: [id])
-  sourceId    String
-  videoUrl    String
-  previewUrl  String
-  description String   @db.MediumText
+  id           String        @id @default(cuid())
+  title        String
+  slug         String        @unique
+  createdById  String
+  createdAt    DateTime      @default(now())
+  modifiedAt   DateTime      @default(now())
+  CreatedBy    User          @relation(fields: [createdById], references: [id])
+  Source       Source        @relation(fields: [sourceId], references: [id])
+  sourceId     String
+  previewUrl   String
+  description  String        @db.MediumText
+  VideoSources VideoSource[]
+}
+
+model VideoSource {
+  id     String @id @default(uuid())
+  postId String
+  type   String
+  url    String
+  Post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Source {

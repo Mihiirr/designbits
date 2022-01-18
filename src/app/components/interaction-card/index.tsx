@@ -25,16 +25,18 @@ export default function InteractionCard({
           {interactions.map((article, i) => (
             <motion.div
               key={article.id}
-              initial={{ scale: 0.85, translateX: "-10%" }}
-              animate={{ scale: 1, translateX: 0 }}
+              initial={{ scale: 0.85, translateY: "-10%" }}
+              animate={{ scale: 1, translateY: 0 }}
               transition={{
                 delay: 0.1 * i,
                 x: { type: "spring", stiffness: 100 },
                 default: { duration: 0.5 },
               }}
-              whileHover={{ scale: 1.05 }}
             >
-              <div className="overflow-hidden relative w-full bg-gray-200 rounded-lg">
+              <motion.div
+                className="overflow-hidden relative w-full bg-gray-200 rounded-lg"
+                whileHover={{ scale: 1.05 }}
+              >
                 <Link
                   className={classNames(
                     article.backgroundColorClass || "bg-gray-800",
@@ -64,7 +66,7 @@ export default function InteractionCard({
                     </Link>
                   </div>
                 </Link>
-              </div>
+              </motion.div>
               <h3 className="mt-3 text-sm font-semibold text-gray-700">
                 <a href={article.slug}>{article.title}</a>
               </h3>

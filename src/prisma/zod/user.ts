@@ -30,8 +30,8 @@ export interface CompleteUser extends User {
   PostViews: CompletePostView[]
   ReactedOnPosts: CompletePostReaction[]
   Session: CompleteSession[]
-  Followers: CompleteFollower[]
-  Follower: CompleteFollower[]
+  Following: CompleteFollower[]
+  FollowedBy: CompleteFollower[]
 }
 
 /**
@@ -45,7 +45,7 @@ export const RelatedUserModel: z.ZodSchema<CompleteUser> = z.lazy(() =>
     PostViews: RelatedPostViewModel.array(),
     ReactedOnPosts: RelatedPostReactionModel.array(),
     Session: RelatedSessionModel.array(),
-    Followers: RelatedFollowerModel.array(),
-    Follower: RelatedFollowerModel.array(),
+    Following: RelatedFollowerModel.array(),
+    FollowedBy: RelatedFollowerModel.array(),
   }),
 )

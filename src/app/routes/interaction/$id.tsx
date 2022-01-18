@@ -3,7 +3,7 @@ import {
   DotsVerticalIcon,
   ShareIcon,
 } from "@heroicons/react/outline"
-import { Post, Source, User } from "@prisma/client"
+import { Post, Source, User, VideoSource } from "@prisma/client"
 import React from "react"
 import { LoaderFunction, MetaFunction, useLoaderData } from "remix"
 import Avatar from "~/components/Avatar"
@@ -13,6 +13,9 @@ import LikeIcon from "~/components/icons/Like"
 import InteractionFeedback from "~/components/InteractionFeedback"
 import Layout from "~/components/Layout"
 import { db } from "~/services/db/prisma.server"
+import { getRequiredServerEnvVar } from "~/utils/env"
+
+const sourcePriority = ["video/webm", "video/mp4"]
 
 export let loader: LoaderFunction = async ({ params }) => {
   const postId = params.id
@@ -24,15 +27,25 @@ export let loader: LoaderFunction = async ({ params }) => {
     include: {
       Source: true,
       CreatedBy: true,
+      VideoSources: true,
     },
   })
-  return data
+  const videoSourcesSorted = data?.VideoSources.sort(function (a, b) {
+    return sourcePriority.indexOf(a.type) - sourcePriority.indexOf(b.type)
+  })
+  return {
+    ...data,
+    VideoSources: videoSourcesSorted,
+  }
 }
 
 type PostData = Post & {
   Source: Source
   CreatedBy: User
+  VideoSources: VideoSource[]
 }
+
+const ASSETS_CDN_LINK = "https://dtom6jzmogd06.cloudfront.net/"
 
 const Interaction = () => {
   const postData = useLoaderData<PostData>()
@@ -71,7 +84,12 @@ const Interaction = () => {
               controls
               autoPlay
             >
-              <source src={postData.videoUrl} type="video/mp4"></source>
+              {postData.VideoSources.map(source => (
+                <source
+                  src={ASSETS_CDN_LINK + source.url}
+                  type={source.type}
+                ></source>
+              ))}
             </video>
           </div>
         </div>

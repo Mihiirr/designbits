@@ -49,7 +49,8 @@ export default function getPosts() {
         },
       },
       media: {
-        video: "github-watch-dropdown.mp4",
+        videoMp4: "github-watch-dropdown.mp4",
+        videoWebM: "github-watch-dropdown.webm",
         preview: "github-watch-dropdown.gif",
       },
       description:
@@ -73,7 +74,8 @@ export default function getPosts() {
         },
       },
       media: {
-        video: "codepen-pane-expand-collapse.mp4",
+        videoMp4: "codepen-pane-expand-collapse.mp4",
+        videoWebM: "codepen-pane-expand-collapse.webm",
         preview: "codepen-pane-expand-collapse.gif",
       },
       description:
