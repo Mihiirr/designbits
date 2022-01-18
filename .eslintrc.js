@@ -1,10 +1,7 @@
 module.exports = {
   extends: [
-    // "kentcdodds",
-    // "kentcdodds/jest",
-    // "kentcdodds/jsx-a11y",
-    // "kentcdodds/react",
-    require.resolve("./.lint/remix-eslint.js"),
+    "@remix-run/eslint-config",
+    "@remix-run/eslint-config/jest",
     "plugin:prettier/recommended",
     "plugin:tailwindcss/recommended",
   ],

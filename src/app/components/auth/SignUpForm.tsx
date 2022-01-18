@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Form, Link } from "remix"
+import { Form } from "remix"
 import { SignUpActionData, SignUpLoaderData } from "~/routes/auth/sign-up"
 
 interface Props {

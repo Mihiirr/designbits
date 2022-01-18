@@ -13,7 +13,6 @@ import LikeIcon from "~/components/icons/Like"
 import InteractionFeedback from "~/components/InteractionFeedback"
 import Layout from "~/components/Layout"
 import { db } from "~/services/db/prisma.server"
-import { getRequiredServerEnvVar } from "~/utils/env"
 
 const sourcePriority = ["video/webm", "video/mp4"]
 
@@ -86,6 +85,7 @@ const Interaction = () => {
             >
               {postData.VideoSources.map(source => (
                 <source
+                  key={source.id}
                   src={ASSETS_CDN_LINK + source.url}
                   type={source.type}
                 ></source>
