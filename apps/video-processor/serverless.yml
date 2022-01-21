@@ -1,0 +1,70 @@
+service: serverless-example
+frameworkVersion: ">=2.24.0"
+
+plugins:
+  - serverless-esbuild
+  - serverless-offline
+
+package:
+  individually: true
+
+useDotenv: true
+provider:
+  name: aws
+  runtime: "nodejs14.x",
+  lambdaHashingVersion: '20201221'
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:PutObjectAcl
+          Resource: "arn:aws:s3:::${env:ASSETS_BUCKET}/*"
+
+functions:
+  generatePreviewSizeWebM:
+    handler: hello1.handler
+    events:
+      - http:
+          path: hello
+          method: get
+
+  hello2:
+    handler: src/functions/hello/
+    layers:
+      - {Ref: FfmpegLambdaLayer}
+    events:
+      - http:
+          path: hello
+          method: get
+
+layers:
+  ffmpeg:
+    path: layer
+
+
+custom:
+  esbuild:
+    bundle: true,
+    minify: false,
+    sourcemap: true,
+    exclude: ["aws-sdk"],
+    target: "node14",
+    define: { "require.resolve": undefined },
+    keepNames: true
+    platform: "node",
+    concurrency: 10,
+
+variablesResolutionMode: "20210326",
+resources:
+  Resources:
+
+
+

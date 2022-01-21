@@ -1,0 +1,224 @@
+import * as AWS from "aws-sdk";
+
+export class S3Service {
+  s3: AWS.S3;
+
+  constructor({
+    accessKeyId,
+    secretAccessKey,
+  }: {
+    accessKeyId?: string;
+    secretAccessKey?: string;
+  } = {}) {
+    if (accessKeyId && secretAccessKey) {
+      this.s3 = new AWS.S3({ accessKeyId, secretAccessKey });
+    } else {
+      this.s3 = new AWS.S3();
+    }
+  }
+
+  /**
+   * List files
+   */
+  listFiles = async ({
+    bucket,
+    after,
+    count = 100,
+    prefix,
+  }: {
+    bucket: string;
+    after?: string;
+    count?: number;
+    prefix?: string;
+  }) => {
+    console.log(
+      `[LIST]: bucket:${bucket}, after:${after}, count:${count}, prefix:${prefix}`
+    );
+
+    const result = await this.s3
+      .listObjectsV2({
+        Bucket: bucket,
+        ContinuationToken: after,
+        MaxKeys: count,
+        Prefix: prefix,
+      })
+      .promise();
+
+    return {
+      files: result.Contents,
+      next: result.NextContinuationToken,
+      hasNext: result.IsTruncated,
+    };
+  };
+
+  /**
+   * List file versions
+   */
+  listFileVersions = async ({
+    bucket,
+    key,
+  }: {
+    bucket: string;
+    key: string;
+  }) => {
+    console.log(`[LIST-VERSIONS]: bucket:${bucket}, key:${key}`);
+
+    const result = await this.s3
+      .listObjectVersions({
+        Bucket: bucket,
+        Prefix: key,
+      })
+      .promise();
+
+    return result.Versions.filter(({ Key }) => Key === key).map(
+      ({ VersionId }) => VersionId
+    );
+  };
+
+  /**
+   * Read file by the given bucket and key
+   */
+  getFile = async ({ bucket, key }: { bucket: string; key: string }) => {
+    console.log(`[GET]: ${key}`);
+
+    return this.s3.getObject({ Bucket: bucket, Key: key }).promise();
+  };
+
+  /**
+   * Get file tags
+   */
+  getFileTags = async ({ bucket, key }: { bucket: string; key: string }) => {
+    console.log(`[GET:Tags]: ${key}`);
+
+    return this.s3.getObjectTagging({ Bucket: bucket, Key: key }).promise();
+  };
+
+  /**
+   * Upload file to AWS S3.
+   */
+  uploadFile = async ({
+    body,
+    bucket,
+    key,
+    tagging,
+    acl = "private",
+  }: {
+    body: Buffer;
+    bucket: string;
+    key: string;
+    tagging?: string;
+    acl?: string;
+  }) => {
+    console.log(`[UPLOAD]: ${key}`);
+
+    return this.s3
+      .upload({
+        Body: body,
+        Bucket: bucket,
+        Key: key,
+        Tagging: tagging,
+        ACL: acl,
+      })
+      .promise();
+  };
+
+  /**
+   * Copy file
+   */
+  copyFile = async ({
+    srcBucket,
+    srcKey,
+    destBucket,
+    destKey,
+  }: {
+    srcBucket: string;
+    srcKey: string;
+    destBucket: string;
+    destKey: string;
+  }) => {
+    // const src = `${srcBucket}/${srcKey}`
+    const src = encodeURI(`${srcBucket}/${srcKey}`);
+
+    console.log(`[COPY]: from ${src} to ${destBucket}/${destKey}`);
+
+    return this.s3
+      .copyObject({
+        Bucket: destBucket,
+        Key: destKey,
+        CopySource: src,
+        MetadataDirective: "COPY",
+        TaggingDirective: "COPY",
+        ACL: "public-read",
+      })
+      .promise();
+  };
+
+  /**
+   * Delete file(s) from AWS S3 by a given path key.
+   */
+  deleteFile = async ({ bucket, key }: { bucket: string; key: string }) => {
+    console.log(`[DELETE]: ${key}`);
+
+    return this.s3
+      .deleteObject({
+        Bucket: bucket,
+        Key: key,
+      })
+      .promise();
+  };
+
+  deleteFiles = async ({
+    bucket,
+    objects,
+  }: {
+    bucket: string;
+    objects: { key: string; versionId?: string }[];
+  }) => {
+    console.log(
+      `[DELETE]: ${objects
+        .map(
+          ({ key, versionId }) => `${key}${versionId ? ":" + versionId : ""}`
+        )
+        .join(", ")}`
+    );
+
+    return this.s3
+      .deleteObjects({
+        Bucket: bucket,
+        Delete: {
+          Objects: objects.map(({ key, versionId }) => ({
+            Key: key,
+            VersionId: versionId,
+          })),
+          // Quiet: true,
+        },
+      })
+      .promise();
+  };
+
+  /**
+   * Move file
+   */
+  moveFile = async ({
+    srcBucket,
+    srcKey,
+    destBucket,
+    destKey,
+  }: {
+    srcBucket: string;
+    srcKey: string;
+    destBucket: string;
+    destKey: string;
+  }) => {
+    await this.copyFile({
+      srcBucket,
+      srcKey,
+      destBucket,
+      destKey,
+    });
+    await this.deleteFile({
+      bucket: srcBucket,
+      key: srcKey,
+    });
+  };
+}
