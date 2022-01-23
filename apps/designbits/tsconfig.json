@@ -1,0 +1,10 @@
+{
+  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+  "extends": "tsconfig/remix.json",
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "paths": {
+      "~/*": ["./src/app/*"]
+    }
+  }
+}

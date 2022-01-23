@@ -2,15 +2,14 @@ import { S3Service } from "@libs/s3";
 import { mkdirSync, readFileSync, unlinkSync, writeFileSync } from "fs";
 import { spawnSync } from "child_process";
 import {
-  VIDEO_SIZE,
   VIDEO_SIZES,
   TAG_VERSION_KEY,
   TAG_VERSION_VALUE,
   VIDEO_EXTENSIONS,
   VIDEO_FOLDER_OUT,
-  VIDEO_TYPES,
+  VIDEO_TYPES
 } from "@libs/enums";
-import { changeExt, getKeyWioutExt, toProcessedKey } from "@libs/utils";
+import { getKeyWioutExt, toProcessedKey } from "@libs/utils";
 
 /**
  * Process the original image to:
@@ -23,7 +22,7 @@ export const processVideo = async ({
   bucket,
   key,
   size,
-  outputFormat,
+  outputFormat
 }: {
   s3: S3Service;
   bucket: string;
@@ -40,7 +39,7 @@ export const processVideo = async ({
 
   const baseUploadProps = {
     bucket,
-    tagging: `${TAG_VERSION_KEY}=${TAG_VERSION_VALUE}`, // mark as processed
+    tagging: `${TAG_VERSION_KEY}=${TAG_VERSION_VALUE}` // mark as processed
   };
 
   const isSupported = Object.values(VIDEO_EXTENSIONS).some((format) =>
@@ -104,7 +103,7 @@ export const processVideo = async ({
     keyWioutExt,
     size ? ["-" + size] : "",
     ".",
-    outputFormat !== undefined ? outputFormat : ext,
+    outputFormat !== undefined ? outputFormat : ext
   ].join("");
 
   console.log(
@@ -117,7 +116,7 @@ export const processVideo = async ({
 
   // convert the file!
   const res = spawnSync(
-    "/opt/ffmpeg",
+    "/opt/ffmpeg/ffmpeg",
     [
       "-i",
       `/tmp/${key}`,
@@ -132,7 +131,7 @@ export const processVideo = async ({
       "128k",
       "-c:a",
       "libopus",
-      `/tmp/${outputFileName}`,
+      `/tmp/${outputFileName}`
     ],
     { stdio: "pipe", encoding: "utf-8" }
   );
@@ -150,13 +149,13 @@ export const processVideo = async ({
 
   const processedFileKey = toProcessedKey({
     key: outputFileName,
-    subFolder: "_temp",
+    subFolder: "_temp"
   });
 
   await s3.uploadFile({
     ...baseUploadProps,
     body: processedFile,
-    key: processedFileKey,
+    key: processedFileKey
   });
 
   unlinkSync(`/tmp/${outputFileName}`);
@@ -166,7 +165,7 @@ export const processVideo = async ({
     srcBucket: bucket,
     srcKey: processedFileKey,
     destBucket: bucket,
-    destKey: outputFileName,
+    destKey: outputFileName
   });
 };
 

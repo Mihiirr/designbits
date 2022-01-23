@@ -1,1 +1,2 @@
-export { default as hello } from './hello';
+export * as convertFunctions from "./convert/handler";
+export { handler as trancode } from "./transcode";

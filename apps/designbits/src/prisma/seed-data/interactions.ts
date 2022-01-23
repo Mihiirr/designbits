@@ -1,0 +1,85 @@
+const CDNLink = "https://dtom6jzmogd06.cloudfront.net/"
+
+const usersData = {
+  Tirth: {
+    connectOrCreate: {
+      create: {
+        email: "tirth@designbits.io",
+        name: "Tirth Gajjar",
+        profilePicture: CDNLink + "DesignBits/dev/profile-pictures/tirth.jpeg",
+        profileSlug: "tirth-gajjar",
+      },
+      where: {
+        email: "tirth@designbits.io",
+      },
+    },
+  },
+  Shreyas: {
+    connectOrCreate: {
+      create: {
+        email: "shreyas@designbits.io",
+        name: "Shreyas Chaudhary",
+        profilePicture:
+          CDNLink + "DesignBits/dev/profile-pictures/Shreyas.jpeg",
+        profileSlug: "shreyas-chaudhary",
+      },
+      where: {
+        email: "shreyas@designbits.io",
+      },
+    },
+  },
+}
+
+export default function getPosts() {
+  return [
+    {
+      title: "Github - Navigation within a dropdown",
+      slug: "github-navigation-within-a-dropdown",
+      CreatedBy: usersData.Tirth,
+      Source: {
+        connectOrCreate: {
+          create: {
+            imageSrc: "https://github.githubassets.com/favicons/favicon.svg",
+            name: "Github",
+            url: "https://github.com/",
+          },
+          where: {
+            name: "Github",
+          },
+        },
+      },
+      media: {
+        videoMp4: "github-watch-dropdown.mp4",
+        videoWebM: "github-watch-dropdown.webm",
+        preview: "github-watch-dropdown.gif",
+      },
+      description:
+        "Platformas like Github that handles complex and large amount of data often need to keep that interface compact with more nested approach. Eg., Photoshop, After effects, editors, etc. In such scarios, github's nested dropdown aviation is quite smooth and clean. Cognitively easy. Is this pattern actually good? Or such complexity can be avoided/handled in a better way.",
+    },
+    {
+      title: "Codepen - expand/collapse panes (brave)",
+      slug: "codepen-expand-collapse-panes",
+      CreatedBy: usersData.Shreyas,
+      Source: {
+        connectOrCreate: {
+          create: {
+            imageSrc:
+              "https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png",
+            name: "Codepen",
+            url: "https://codepen.io/",
+          },
+          where: {
+            name: "Codepen",
+          },
+        },
+      },
+      media: {
+        videoMp4: "codepen-pane-expand-collapse.mp4",
+        videoWebM: "codepen-pane-expand-collapse.webm",
+        preview: "codepen-pane-expand-collapse.gif",
+      },
+      description:
+        "Most unique way of expanding and collapsing panes. That transition of title is really brave. Love when tools still try to break the ideal design.",
+    },
+  ]
+}

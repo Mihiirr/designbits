@@ -1,4 +1,4 @@
-service: serverless-example
+service: assets-processor
 frameworkVersion: ">=2.24.0"
 
 plugins:
@@ -11,60 +11,297 @@ package:
 useDotenv: true
 provider:
   name: aws
-  runtime: "nodejs14.x",
-  lambdaHashingVersion: '20201221'
+  runtime: "nodejs14.x"
+  lambdaHashingVersion: "20201221"
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
-    NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
+    NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000"
   apiGateway:
     minimumCompressionSize: 1024
     shouldStartNameWithService: true
   iam:
     role:
-      statements:
-        - Effect: Allow
-          Action:
-            - s3:PutObject
-            - s3:PutObjectAcl
-          Resource: "arn:aws:s3:::${env:ASSETS_BUCKET}/*"
+      managedPolicies:
+        - !Ref TranscodekitLambdaPolicy
+      # statements:
+      #   - Effect: Allow
+      #     Action:
+      #       - s3:*
+      #     Resource:
+      #       Fn::Join:
+      #         - ""
+      #         - - "arn:aws:s3:::"
+      #           - Ref: AssetsBucket
+      #           - "/*"
+      #   - Effect: Allow
+      #     Action:
+      #       - lambda:GetFunctionConfiguration
+      #     Resource:
+      #       - "*"
 
 functions:
-  generatePreviewSizeWebM:
-    handler: hello1.handler
-    events:
-      - http:
-          path: hello
-          method: get
-
-  hello2:
-    handler: src/functions/hello/
-    layers:
-      - {Ref: FfmpegLambdaLayer}
-    events:
-      - http:
-          path: hello
-          method: get
-
+  generatePreviewSizeWebM: ${file(./config.js):generatePreviewSizeWebM}
+  transcode: ${file(./config.js):transcodeVideo}
 layers:
   ffmpeg:
     path: layer
 
-
 custom:
   esbuild:
-    bundle: true,
-    minify: false,
-    sourcemap: true,
-    exclude: ["aws-sdk"],
-    target: "node14",
-    define: { "require.resolve": undefined },
+    bundle: true
+    minify: false
+    sourcemap: true
+    exclude: ["aws-sdk"]
+    target: "node14"
+    define: { "require.resolve": undefined }
     keepNames: true
-    platform: "node",
-    concurrency: 10,
+    platform: "node"
+    concurrency: 10
 
-variablesResolutionMode: "20210326",
+variablesResolutionMode: "20210326"
+
 resources:
   Resources:
+    UploadAssetSNSTopicPolicy:
+      Type: "AWS::SNS::TopicPolicy"
+      Properties:
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal: "*"
+              Action: "sns:Publish"
+              Resource: !Ref UploadAssetSNSTopic
+              Condition:
+                ArnLike:
+                  aws:SourceArn: "arn:aws:s3:::${env:ASSETS_BUCKET}-${sls:stage}"
+        Topics:
+          - !Ref UploadAssetSNSTopic
 
+    UploadAssetSNSTopic:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        DisplayName: Assets bucket topic
+        TopicName: "${env:TOPIC_NAME}-${sls:stage}"
 
+    AssetsBucket:
+      Type: "AWS::S3::Bucket"
+      DependsOn:
+        - UploadAssetSNSTopicPolicy
+      Properties:
+        BucketName: "${env:ASSETS_BUCKET}-${sls:stage}"
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: "false"
+          BlockPublicPolicy: "false"
+          IgnorePublicAcls: "false"
+          RestrictPublicBuckets: "false"
+        AccelerateConfiguration:
+          AccelerationStatus: Enabled
+        NotificationConfiguration:
+          TopicConfigurations:
+            - Event: "s3:ObjectCreated:*"
+              Topic: !Ref UploadAssetSNSTopic
+              Filter:
+                S3Key:
+                  Rules:
+                    - Name: prefix
+                      Value: "originals/"
+        CorsConfiguration:
+          CorsRules:
+            - AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - HEAD
+              AllowedOrigins:
+                - "*"
+              AllowedHeaders:
+                - "*"
+              MaxAge: "3000"
 
+    # LambdaExecutionRole:
+    #   Type: "AWS::IAM::Role"
+    #   Properties:
+    #     RoleName: LambdaExecution
+    #     Description: Allows Transcodekit lambda function to start MediaConvert job
+    #     AssumeRolePolicyDocument:
+    #       Version: "2012-10-17"
+    #       Statement:
+    #         - Effect: Allow
+    #           Principal:
+    #             Service:
+    #               - lambda.amazonaws.com
+    #           Action:
+    #             - sts:AssumeRole
+    #     Path: "/"
+    #     ManagedPolicyArns:
+    #       - !Ref TranscodekitLambdaPolicy
+
+    # # TranscodeVideoFunction:
+    # #   Type: AWS::Lambda::Function
+    # #   Properties:
+    # #     FunctionName: TranscodeVideo
+    # #     Description: Sends uploaded S3 object to MediaConvert for transcoding
+    # #     Handler: index.handler
+    # #     Role: !GetAtt LambdaExecutionRole.Arn
+    # #     Environment:
+    # #       Variables:
+    # #         ROLE: !GetAtt MediaConvertRole.Arn
+    # #     Runtime: nodejs12.x
+
+    # # S3Bucket:
+    # #   Type: "AWS::S3::Bucket"
+    # #   DependsOn:
+    # #     - S3ExecutionPermission
+    # #   Properties:
+    # #     BucketName: !Ref BucketName
+    # #     NotificationConfiguration:
+    # #       LambdaConfigurations:
+    # #         - Event: "s3:ObjectCreated:*"
+    # #           Function: !GetAtt TranscodeVideoFunction.Arn
+    # #           Filter:
+    # #             S3Key:
+    # #               Rules:
+    # #                 - Name: prefix
+    # #                   Value: "originals/"
+
+    # # S3ExecutionPermission:
+    # #   Type: AWS::Lambda::Permission
+    # #   Properties:
+    # #     FunctionName: !GetAtt TranscodeVideoFunction.Arn
+    # #     Action: lambda:InvokeFunction
+    # #     Principal: s3.amazonaws.com
+    # #     SourceAccount: !Ref "AWS::AccountId"
+    # #     SourceArn: !Sub "arn:aws:s3:::${BucketName}"
+    TranscodekitMediaConvertPolicy:
+      Type: AWS::IAM::ManagedPolicy
+      Properties:
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - "s3:*"
+              Resource:
+                - !Join
+                  - "/"
+                  - - !GetAtt AssetsBucket.Arn
+                    - assets
+                    - "*"
+            - Effect: Allow
+              Action:
+                - "s3:GetObject"
+              Resource:
+                - !Join
+                  - "/"
+                  - - !GetAtt AssetsBucket.Arn
+                    - originals
+                    - "*"
+
+    MediaConvertRole:
+      Type: "AWS::IAM::Role"
+      Properties:
+        RoleName: MediaConvertExecution
+        Description: Allows MediaConvert to gain access to S3
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - mediaconvert.amazonaws.com
+              Action:
+                - sts:AssumeRole
+        Path: "/"
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/AmazonS3FullAccess
+          - !Ref TranscodekitMediaConvertPolicy
+
+    # TransCodeLambdaExecutionRole:
+    #   Type: "AWS::IAM::Role"
+    #   Properties:
+    #     RoleName: LambdaExecution
+    #     Description: Allows Transcodekit lambda function to start MediaConvert job
+    #     AssumeRolePolicyDocument:
+    #       Version: "2012-10-17"
+    #       Statement:
+    #         - Effect: Allow
+    #           Principal:
+    #             Service:
+    #               - lambda.amazonaws.com
+    #           Action:
+    #             - sts:AssumeRole
+    #     Path: "/"
+    #     ManagedPolicyArns:
+    #       - !Ref TranscodekitLambdaPolicy
+
+    # LambdaExecutionRole:
+    #   Type: "AWS::IAM::Role"
+    #   Properties:
+    #     RoleName: LambdaExecution
+    #     Description: Allows Transcodekit lambda function to start MediaConvert job
+    #     AssumeRolePolicyDocument:
+    #       Version: "2012-10-17"
+    #       Statement:
+    #         - Effect: Allow
+    #           Principal:
+    #             Service:
+    #               - lambda.amazonaws.com
+    #           Action:
+    #             - sts:AssumeRole
+    #         - Effect: Allow
+    #           Principal:
+    #             Service:
+    #               - lambda.amazonaws.com
+    #           Action:
+    #             - "iam:PassRole"
+    #     Path: "/"
+    #     ManagedPolicyArns:
+    #       - !Ref TranscodekitLambdaPolicy
+
+    TranscodekitLambdaPolicy:
+      Type: "AWS::IAM::ManagedPolicy"
+      Properties:
+        Description: Provides necessary access to MediaConvert and CloudWatch logs
+        ManagedPolicyName: !Join
+          - "-"
+          - - !Sub "${AWS::Region}"
+            - TranscodekitLambdaExecutor
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - mediaconvert:CreateJob
+                - mediaconvert:DescribeEndpoints
+              Resource:
+                - "*"
+            - Effect: Allow
+              Action:
+                - "logs:CreateLogGroup"
+                - "logs:CreateLogStream"
+                - "logs:PutLogEvents"
+              Resource:
+                - "*"
+            - Effect: Allow
+              Action:
+                - "iam:PassRole"
+              Resource:
+                # - !GetAtt MediaConvertRole.Arn
+                - "*"
+            - Effect: Allow
+              Action:
+                - "s3:*"
+              Resource:
+                - "*"
+            - Effect: Allow
+              Action:
+                - lambda:GetFunctionConfiguration
+              Resource:
+                - "*"
+
+            # - Effect: Allow
+            #   Action:
+            #     - "iam:PassRole"
+            #   Resource:
+            #     - !GetAtt LambdaExecutionRole.Arn

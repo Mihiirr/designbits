@@ -1,0 +1,15 @@
+.DS_Store
+node_modules
+
+.cache
+.vercel
+.output
+
+public/build
+api/build
+
+# Env variables
+.env
+
+# Docker
+.docker
