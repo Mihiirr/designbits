@@ -14,6 +14,8 @@ import InteractionFeedback from "~/components/InteractionFeedback"
 import Layout from "~/components/Layout"
 import { db } from "~/services/db/prisma.server"
 
+const ASSETS_CDN_LINK = process.env.ASSETS_CDN_LINK
+
 const sourcePriority = ["video/webm", "video/mp4"]
 
 export let loader: LoaderFunction = async ({ params }) => {
@@ -84,7 +86,7 @@ const Interaction = () => {
               {postData.VideoSources.map(source => (
                 <source
                   key={source.id}
-                  src={process.env.ASSETS_CDN_LINK + source.url}
+                  src={ASSETS_CDN_LINK + source.url}
                   type={source.type}
                 ></source>
               ))}
@@ -96,10 +98,7 @@ const Interaction = () => {
             <div className="flex justify-between items-center">
               <Avatar
                 slug={postData.CreatedBy.profileSlug}
-                imgSrc={
-                  process.env.ASSETS_CDN_LINK! +
-                  postData.CreatedBy.profilePicture
-                }
+                imgSrc={ASSETS_CDN_LINK! + postData.CreatedBy.profilePicture}
                 name={postData.CreatedBy.name}
               />
               <div className="flex items-center space-x-4">

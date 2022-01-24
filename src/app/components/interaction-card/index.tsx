@@ -12,6 +12,8 @@ type InteractionData = Post & {
   backgroundColorClass: string
 }
 
+const ASSETS_CDN_LINK = process.env.ASSETS_CDN_LINK
+
 export default function InteractionCard({
   interactions,
 }: {
@@ -50,7 +52,7 @@ export default function InteractionCard({
                       article.backgroundColorClass || "bg-gray-800",
                       "w-full h-full opacity-50 group-hover:opacity-100 object-cover object-center",
                     )}
-                    src={process.env.ASSETS_CDN_LINK + article.previewUrl}
+                    src={ASSETS_CDN_LINK + article.previewUrl}
                   />
                   <div className="absolute top-0 p-3 w-full h-full bg-gradient-to-b group-hover:bg-none from-gray-800 via-transparent transition-transform group-hover:-translate-y-full">
                     <Link
