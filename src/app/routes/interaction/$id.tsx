@@ -13,9 +13,7 @@ import LikeIcon from "~/components/icons/Like"
 import InteractionFeedback from "~/components/InteractionFeedback"
 import Layout from "~/components/Layout"
 import { db } from "~/services/db/prisma.server"
-
-const ASSETS_CDN_LINK = process.env.ASSETS_CDN_LINK
-
+import { ASSETS_CDN_LINK } from "~/utils/constants"
 const sourcePriority = ["video/webm", "video/mp4"]
 
 export let loader: LoaderFunction = async ({ params }) => {

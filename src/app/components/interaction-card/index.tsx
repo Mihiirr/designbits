@@ -4,6 +4,7 @@ import CommentIcon from "../icons/Comment"
 import { Link } from "remix"
 import { Post, Source, User } from "@prisma/client"
 import { motion } from "framer-motion"
+import { ASSETS_CDN_LINK } from "~/utils/constants"
 
 type InteractionData = Post & {
   Source: Source
@@ -11,8 +12,6 @@ type InteractionData = Post & {
 } & {
   backgroundColorClass: string
 }
-
-const ASSETS_CDN_LINK = process.env.ASSETS_CDN_LINK
 
 export default function InteractionCard({
   interactions,
