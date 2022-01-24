@@ -1,12 +1,10 @@
-const CDNLink = "https://dtom6jzmogd06.cloudfront.net/"
-
 const usersData = {
   Tirth: {
     connectOrCreate: {
       create: {
         email: "tirth@designbits.io",
         name: "Tirth Gajjar",
-        profilePicture: CDNLink + "DesignBits/dev/profile-pictures/tirth.jpeg",
+        profilePicture: "DesignBits/dev/profile-pictures/tirth.jpeg",
         profileSlug: "tirth-gajjar",
       },
       where: {
@@ -19,8 +17,7 @@ const usersData = {
       create: {
         email: "shreyas@designbits.io",
         name: "Shreyas Chaudhary",
-        profilePicture:
-          CDNLink + "DesignBits/dev/profile-pictures/Shreyas.jpeg",
+        profilePicture: "DesignBits/dev/profile-pictures/Shreyas.jpeg",
         profileSlug: "shreyas-chaudhary",
       },
       where: {

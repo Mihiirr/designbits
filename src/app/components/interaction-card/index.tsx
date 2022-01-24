@@ -5,8 +5,6 @@ import { Link } from "remix"
 import { Post, Source, User } from "@prisma/client"
 import { motion } from "framer-motion"
 
-const ASSETS_CDN_LINK = "https://d33dtx48sf6a61.cloudfront.net/"
-
 type InteractionData = Post & {
   Source: Source
   CreatedBy: User
@@ -52,7 +50,7 @@ export default function InteractionCard({
                       article.backgroundColorClass || "bg-gray-800",
                       "w-full h-full opacity-50 group-hover:opacity-100 object-cover object-center",
                     )}
-                    src={ASSETS_CDN_LINK + article.previewUrl}
+                    src={process.env.ASSETS_CDN_LINK + article.previewUrl}
                   />
                   <div className="absolute top-0 p-3 w-full h-full bg-gradient-to-b group-hover:bg-none from-gray-800 via-transparent transition-transform group-hover:-translate-y-full">
                     <Link

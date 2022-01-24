@@ -44,8 +44,6 @@ type PostData = Post & {
   VideoSources: VideoSource[]
 }
 
-const ASSETS_CDN_LINK = "https://d33dtx48sf6a61.cloudfront.net/"
-
 const Interaction = () => {
   const postData = useLoaderData<PostData>()
 
@@ -86,7 +84,7 @@ const Interaction = () => {
               {postData.VideoSources.map(source => (
                 <source
                   key={source.id}
-                  src={ASSETS_CDN_LINK + source.url}
+                  src={process.env.ASSETS_CDN_LINK + source.url}
                   type={source.type}
                 ></source>
               ))}
@@ -98,7 +96,10 @@ const Interaction = () => {
             <div className="flex justify-between items-center">
               <Avatar
                 slug={postData.CreatedBy.profileSlug}
-                imgSrc={postData.CreatedBy.profilePicture}
+                imgSrc={
+                  process.env.ASSETS_CDN_LINK! +
+                  postData.CreatedBy.profilePicture
+                }
                 name={postData.CreatedBy.name}
               />
               <div className="flex items-center space-x-4">
