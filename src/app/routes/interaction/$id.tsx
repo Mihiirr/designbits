@@ -44,7 +44,7 @@ type PostData = Post & {
   VideoSources: VideoSource[]
 }
 
-const ASSETS_CDN_LINK = "https://dtom6jzmogd06.cloudfront.net/"
+const ASSETS_CDN_LINK = "https://d33dtx48sf6a61.cloudfront.net/"
 
 const Interaction = () => {
   const postData = useLoaderData<PostData>()
