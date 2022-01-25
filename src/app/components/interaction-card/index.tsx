@@ -78,7 +78,9 @@ export default function InteractionCard({
                 >
                   <img
                     className="inline-block w-4 h-4 rounded-full"
-                    src={article.CreatedBy.profilePicture ?? ""}
+                    src={
+                      ASSETS_CDN_LINK + article.CreatedBy.profilePicture || ""
+                    }
                     alt="profile"
                   />
                   <span>{article.CreatedBy.name}</span>

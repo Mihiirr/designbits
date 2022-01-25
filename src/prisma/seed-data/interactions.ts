@@ -4,7 +4,7 @@ const usersData = {
       create: {
         email: "tirth@designbits.io",
         name: "Tirth Gajjar",
-        profilePicture: "DesignBits/dev/profile-pictures/tirth.jpeg",
+        profilePicture: "tirth.jpeg",
         profileSlug: "tirth-gajjar",
       },
       where: {
@@ -17,7 +17,7 @@ const usersData = {
       create: {
         email: "shreyas@designbits.io",
         name: "Shreyas Chaudhary",
-        profilePicture: "DesignBits/dev/profile-pictures/Shreyas.jpeg",
+        profilePicture: "Shreyas.jpeg",
         profileSlug: "shreyas-chaudhary",
       },
       where: {
