@@ -8,6 +8,7 @@ export default {
     file: "api/index.js",
     format: "cjs",
   },
+  inlineDynamicImports: true,
   plugins: [
     commonJs(),
     resolve({
