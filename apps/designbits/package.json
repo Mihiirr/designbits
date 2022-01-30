@@ -9,7 +9,7 @@
     "dev": "concurrently -n \"TailwindCSS,Remix Dev\"  -c \"#bada55.bold,#10b981.bold\" \"yarn dev:css\" \"remix dev\"",
     "dev:css": "tailwindcss -o ./src/app/styles/tailwind.css --watch",
     "dev:remix": "remix dev",
-    "build": "yarn run build:css && remix build",
+    "build": "yarn run build:css && remix build && rollup -c",
     "build:css": "tailwindcss -o ./src/app/styles/tailwind.css",
     "start": "remix-serve build",
     "lint": "eslint --fix --cache --cache-location ./node_modules/.cache/.eslintcache --ext js,jsx,ts,tsx .",
@@ -50,6 +50,9 @@
     "zod": "^3.11.6"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.1.3",
     "@babel/core": "^7.16.7",
     "@babel/eslint-parser": "^7.16.5",
     "@remix-run/dev": "^1.1.1",
