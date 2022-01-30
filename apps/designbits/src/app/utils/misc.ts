@@ -1,10 +1,8 @@
 import type { HeadersFunction } from "remix"
-import type { User } from "@prisma/client"
+import type { User } from "database"
 import * as dateFns from "date-fns"
 import md5 from "md5-hash"
 import React, { useLayoutEffect } from "react"
-import { ConditionalExcept } from "type-fest"
-import invariant from "tiny-invariant"
 
 const defaultAvatarSize = 128
 function getAvatar(
@@ -67,15 +65,6 @@ function getErrorStack(error: unknown) {
   if (typeof error === "string") return error
   if (error instanceof Error) return error.stack
   return "Unknown Error"
-}
-
-function getNonNull<Type extends Record<string, null | undefined | unknown>>(
-  obj: Type,
-): ConditionalExcept<Type, null> {
-  for (const [key, val] of Object.entries(obj)) {
-    invariant(val === null, `The value of ${key} is null but it should not be.`)
-  }
-  return obj
 }
 
 function typedBoolean<T>(

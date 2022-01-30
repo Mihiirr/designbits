@@ -2,8 +2,9 @@ import LikeIcon from "../icons/Like"
 import classNames from "../../utils/classnames"
 import CommentIcon from "../icons/Comment"
 import { Link } from "remix"
-import { Post, Source, User } from "@prisma/client"
+import type { Post, Source, User } from "database"
 import { motion } from "framer-motion"
+import { ASSETS_CDN_LINK } from "~/utils/constants"
 
 type InteractionData = Post & {
   Source: Source
@@ -50,7 +51,7 @@ export default function InteractionCard({
                       article.backgroundColorClass || "bg-gray-800",
                       "w-full h-full opacity-50 group-hover:opacity-100 object-cover object-center",
                     )}
-                    src={article.previewUrl}
+                    src={ASSETS_CDN_LINK + article.previewUrl}
                   />
                   <div className="absolute top-0 p-3 w-full h-full bg-gradient-to-b group-hover:bg-none from-gray-800 via-transparent transition-transform group-hover:-translate-y-full">
                     <Link
@@ -77,7 +78,9 @@ export default function InteractionCard({
                 >
                   <img
                     className="inline-block w-4 h-4 rounded-full"
-                    src={article.CreatedBy.profilePicture ?? ""}
+                    src={
+                      ASSETS_CDN_LINK + article.CreatedBy.profilePicture || ""
+                    }
                     alt="profile"
                   />
                   <span>{article.CreatedBy.name}</span>

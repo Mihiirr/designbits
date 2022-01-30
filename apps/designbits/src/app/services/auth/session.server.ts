@@ -1,5 +1,5 @@
 import { createCookieSessionStorage, redirect } from "remix"
-import type { User } from "@prisma/client"
+import type { User } from "database"
 import {
   getUserByEmail,
   getUserFromSessionId,
@@ -8,14 +8,14 @@ import {
 import { getLoginInfoSession } from "./login.server"
 import { getRequiredServerEnvVar } from "~/utils/env"
 import { sendMagicLinkEmail } from "../email/email.server"
-import { db } from "../db/prisma.server"
+import { db } from "~/services/db/client.server"
 import { getMagicLink, validateMagicLink } from "../db/magic-link.server"
 
 const sessionIdKey = "__session_id__"
 
 export const sessionExpirationTime = 1000 * 60 * 60 * 24 * 365
 
-const sessionStorage = createCookieSessionStorage({
+export const sessionStorage = createCookieSessionStorage({
   cookie: {
     name: "KCD_root_session",
     secure: true,

@@ -1,0 +1,38 @@
+{
+  "name": "database",
+  "version": "0.0.0",
+  "main": "dist/index.cjs",
+  "types": "./index.ts",
+  "license": "MIT",
+  "scripts": {
+    "prisma:create-migration": "npx prisma migrate dev",
+    "prisma:reset-database": "npx prisma migrate reset",
+    "prisma:generate": "npx prisma generate && npx prettier --write **/prisma/zod",
+    "build": "tsup --format esm,cjs index.ts",
+    "reset": "npx prisma migrate reset",
+    "reset:skip-upload": "SKIP_UPLOAD=true yarn reset",
+    "connect:databases": "concurrently -c \"#10b981.bold,#bada55.bold\" \"yarn:connect:database:*\"",
+    "connect:database:develop": "pscale connect designbits develop --port ${DATABASE_PORT:-3309}",
+    "connect:database:shadow": "pscale connect designbits shadow --port ${SHADOW_DATABASE_PORT:-3310}",
+    "connect:database:main": "pscale connect designbits main --port ${SHADOW_DATABASE_PORT:-3306}"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma",
+    "seed": "node --require esbuild-register prisma/seed.ts"
+  },
+  "dependencies": {
+    "prisma": "^3.5.0"
+  },
+  "devDependencies": {
+    "@prisma/client": "^3.7.0",
+    "@types/react": "^17.0.37",
+    "@types/react-dom": "^17.0.11",
+    "concurrently": "^6.4.0",
+    "config": "*",
+    "esbuild-register": "^3.3.1",
+    "tsconfig": "*",
+    "tsup": "^5.11.12",
+    "typescript": "^4.5.3",
+    "zod-prisma": "git+https://github.com/tirthGajjar/zod-prisma.git"
+  }
+}

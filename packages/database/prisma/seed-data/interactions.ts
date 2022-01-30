@@ -1,4 +1,4 @@
-const CDNLink = "https://dtom6jzmogd06.cloudfront.net/"
+import { UserRole } from "database";
 
 const usersData = {
   Tirth: {
@@ -6,8 +6,9 @@ const usersData = {
       create: {
         email: "tirth@designbits.io",
         name: "Tirth Gajjar",
-        profilePicture: CDNLink + "DesignBits/dev/profile-pictures/tirth.jpeg",
+        profilePicture: "tirth.jpeg",
         profileSlug: "tirth-gajjar",
+        role: UserRole.ADMIN,
       },
       where: {
         email: "tirth@designbits.io",
@@ -19,16 +20,16 @@ const usersData = {
       create: {
         email: "shreyas@designbits.io",
         name: "Shreyas Chaudhary",
-        profilePicture:
-          CDNLink + "DesignBits/dev/profile-pictures/Shreyas.jpeg",
+        profilePicture: "Shreyas.jpeg",
         profileSlug: "shreyas-chaudhary",
+        role: UserRole.ADMIN,
       },
       where: {
         email: "shreyas@designbits.io",
       },
     },
   },
-}
+};
 
 export default function getPosts() {
   return [
@@ -39,7 +40,8 @@ export default function getPosts() {
       Source: {
         connectOrCreate: {
           create: {
-            imageSrc: "https://github.githubassets.com/favicons/favicon.svg",
+            imageSrc:
+              "https://github.githubassets.com/favicons/favicon-dark.svg",
             name: "Github",
             url: "https://github.com/",
           },
@@ -81,5 +83,5 @@ export default function getPosts() {
       description:
         "Most unique way of expanding and collapsing panes. That transition of title is really brave. Love when tools still try to break the ideal design.",
     },
-  ]
+  ];
 }

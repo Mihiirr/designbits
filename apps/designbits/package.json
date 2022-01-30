@@ -1,36 +1,28 @@
 {
   "private": true,
-  "version": "0.0.1",
   "name": "designbits",
+  "version": "0.0.1",
   "description": "",
   "license": "",
   "scripts": {
     "prepare": "husky install",
     "postinstall": "remix setup node && yarn run install:dotenv-linter",
-    "dev": "concurrently -n \"Databases,TailwindCSS,Remix Dev\"  -c \"#bada55.bold,#bef264.bold,#10b981.bold\" \"yarn connect:databases\" \"yarn dev:css\" \"remix dev\"",
+    "dev": "concurrently -n \"TailwindCSS,Remix Dev\"  -c \"#bada55.bold,#10b981.bold\" \"yarn dev:css\" \"remix dev\"",
     "dev:css": "tailwindcss -o ./src/app/styles/tailwind.css --watch",
     "dev:remix": "remix dev",
     "build": "yarn run build:css && remix build",
     "build:css": "tailwindcss -o ./src/app/styles/tailwind.css",
     "start": "remix-serve build",
-    "connect:databases": "concurrently -c \"#10b981.bold,#bada55.bold\" \"yarn:connect:database:*\"",
-    "connect:database:develop": "pscale connect designbits develop --port ${DATABASE_PORT:-3309}",
-    "connect:database:shadow": "pscale connect designbits shadow --port ${SHADOW_DATABASE_PORT:-3310}",
-    "connect:database:main": "pscale connect designbits main --port ${SHADOW_DATABASE_PORT:-3306}",
     "lint": "eslint --fix --cache --cache-location ./node_modules/.cache/.eslintcache --ext js,jsx,ts,tsx .",
     "lint:staged": "eslint --fix --no-error-on-unmatched-pattern --cache --cache-location ./node_modules/.cache/.eslintcache",
     "typecheck": "concurrently --raw yarn:typecheck:*",
     "typecheck:app": "tsc --noEmit",
     "install:dotenv-linter": "curl -sSfL https://raw.githubusercontent.com/dotenv-linter/dotenv-linter/master/install.sh | sh -s -- -b node_modules/.bin",
-    "prisma:create-migration": "npx prisma migrate dev",
-    "prisma:reset-database": "npx prisma migrate reset",
-    "prisma:generate": "npx prisma generate && npx prettier --write **/prisma/zod",
     "vercel:env:push": "bash scripts/env.sh"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.2",
     "@heroicons/react": "^1.0.5",
-    "@prisma/client": "^3.7.0",
     "@reach/auto-id": "^0.16.0",
     "@remix-run/react": "^1.1.1",
     "@remix-run/serve": "^1.1.1",
@@ -52,17 +44,13 @@
     "rehype-parse": "^8.0.3",
     "rehype-stringify": "^9.0.2",
     "remix": "^1.1.1",
+    "remix-auth": "^3.2.1",
+    "remix-auth-google": "^1.1.0",
     "spin-delay": "^1.1.0",
     "tiny-invariant": "^1.2.0",
     "zod": "^3.11.6"
   },
-  "prisma": {
-    "schema": "src/prisma/schema.prisma",
-    "seed": "node --require esbuild-register src/prisma/seed.ts"
-  },
   "devDependencies": {
-    "config": "*",
-    "tsconfig": "*",
     "@babel/core": "^7.16.7",
     "@babel/eslint-parser": "^7.16.5",
     "@remix-run/dev": "^1.1.1",
@@ -84,12 +72,10 @@
     "husky": "^7.0.4",
     "lint-staged": "^12.1.4",
     "prettier": "^2.5.1",
-    "prisma": "^3.5.0",
     "rollup": "^2.61.1",
     "tailwindcss": "^3.0.8",
     "type-fest": "^2.8.0",
-    "typescript": "4.5.4",
-    "zod-prisma": "git+https://github.com/tirthGajjar/zod-prisma.git"
+    "typescript": "4.5.4"
   },
   "engines": {
     "node": ">=14"

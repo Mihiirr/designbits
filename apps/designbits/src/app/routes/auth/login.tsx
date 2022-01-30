@@ -127,74 +127,79 @@ const Login = (props: Props) => {
       title="Log in to your account."
       subtitle="Or sign up for an account."
       authForm={
-        <Form
-          onChange={event => {
-            const form = event.currentTarget
-            setFormValues({ email: form.email.value })
-          }}
-          onSubmit={() => setSubmitted(true)}
-          action="/auth/login"
-          method="post"
-          className="mb-10 lg:mb-12"
-        >
-          <div className="hidden">
-            <Label htmlFor="redirect-to">redirect to</Label>
-            <Input
-              id="redirect-to"
-              name="redirectTo"
-              type="text"
-              readOnly
-              defaultValue={searchParams.get("redirectTo") || ""}
-            />
-          </div>
-          <div className="mb-6">
-            <div className="flex flex-wrap justify-between items-baseline mb-4">
-              <Label htmlFor="email-address">Email address</Label>
+        <>
+          <Form
+            onChange={event => {
+              const form = event.currentTarget
+              setFormValues({ email: form.email.value })
+            }}
+            onSubmit={() => setSubmitted(true)}
+            action="/auth/login"
+            method="post"
+            className="mb-10 lg:mb-12"
+          >
+            <div className="hidden">
+              <Label htmlFor="redirect-to">redirect to</Label>
+              <Input
+                id="redirect-to"
+                name="redirectTo"
+                type="text"
+                readOnly
+                defaultValue={searchParams.get("redirectTo") || ""}
+              />
             </div>
-            <Input
-              ref={inputRef}
-              autoFocus
-              aria-describedby={
-                data.error ? "error-message" : "success-message"
-              }
-              id="email-address"
-              name="email"
-              type="email"
-              autoComplete="email"
-              defaultValue={formValues.email}
-              required
-              placeholder="Email address"
-            />
-          </div>
+            <div className="mb-6">
+              <div className="flex flex-wrap justify-between items-baseline mb-4">
+                <Label htmlFor="email-address">Email address</Label>
+              </div>
+              <Input
+                ref={inputRef}
+                autoFocus
+                aria-describedby={
+                  data.error ? "error-message" : "success-message"
+                }
+                id="email-address"
+                name="email"
+                type="email"
+                autoComplete="email"
+                defaultValue={formValues.email}
+                required
+                placeholder="Email address"
+              />
+            </div>
 
-          <div className="flex flex-wrap gap-4">
-            <Button type="submit" disabled={!formIsValid || submitted}>
-              Email a login link
-            </Button>
-          </div>
+            <div className="flex flex-wrap gap-4">
+              <Button type="submit" disabled={!formIsValid || submitted}>
+                Email a login link
+              </Button>
+            </div>
 
-          <div className="sr-only" aria-live="polite">
-            {formIsValid
-              ? "Sign in form is now valid and ready to submit"
-              : "Sign in form is now invalid."}
-          </div>
+            <div className="sr-only" aria-live="polite">
+              {formIsValid
+                ? "Sign in form is now valid and ready to submit"
+                : "Sign in form is now invalid."}
+            </div>
 
-          <div className="mt-2">
-            {data.error ? (
-              <InputError id="error-message">{data.error}</InputError>
-            ) : data.email ? (
-              <p
-                id="success-message"
-                className="text-lg text-gray-500 dark:text-blueGray-500"
-              >
-                <span role="img" aria-label="sparkles">
-                  ✨
-                </span>
-                {` A magic link has been sent to ${data.email}.`}
-              </p>
-            ) : null}
-          </div>
-        </Form>
+            <div className="mt-2">
+              {data.error ? (
+                <InputError id="error-message">{data.error}</InputError>
+              ) : data.email ? (
+                <p
+                  id="success-message"
+                  className="text-lg text-gray-500 dark:text-blueGray-500"
+                >
+                  <span role="img" aria-label="sparkles">
+                    ✨
+                  </span>
+                  {` A magic link has been sent to ${data.email}.`}
+                </p>
+              ) : null}
+            </div>
+          </Form>
+          <Form action="/auth/google" method="post">
+            <button>Login with Google</button>
+          </Form>
+        </>
       }
     />
   )

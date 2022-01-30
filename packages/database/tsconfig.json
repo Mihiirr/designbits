@@ -1,9 +1,8 @@
 {
-  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["*.ts"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2019"],
     "esModuleInterop": true,
-    "jsx": "react-jsx",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "strict": true,
@@ -12,7 +11,10 @@
     "paths": {
       "~/*": ["./src/app/*"]
     },
-    // Remix takes care of building everything in `remix build`.
-    "noEmit": true
+    "declaration": true,
+    "outDir": "dist",
+    // go to js file when using IDE functions like
+    // "Go to Definition" in VSCode
+    "declarationMap": true
   }
 }

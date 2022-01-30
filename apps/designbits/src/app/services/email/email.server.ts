@@ -1,4 +1,4 @@
-import type { User } from "@prisma/client"
+import type { User } from "database"
 import { markdownToHtmlDocument } from "./markdown.server"
 import sendGridSender from "@sendgrid/mail"
 import { RequireAtLeastOne } from "type-fest"

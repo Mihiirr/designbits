@@ -1,6 +1,6 @@
 import { json } from "remix"
-import { ConditionalExcept } from "type-fest"
-import { getErrorMessage, getNonNull } from "./misc"
+import { z, ZodObject, ZodRawShape } from "zod"
+import { getErrorMessage } from "./misc"
 
 type ErrorMessage = string
 type NoError = null
@@ -12,24 +12,18 @@ async function handleFormSubmission<
     fields: { [field: string]: FormValue }
     errors: { [field: string]: ErrorMessage | NoError }
   },
+  T extends ZodObject<ZodRawShape>,
 >({
   form,
   request,
-  validators,
+  validationSchema,
   // @ts-expect-error ts(2322) 🤷‍♂️
   actionData = { fields: {}, errors: {} },
   handleFormValues,
 }: {
-  validators: {
-    [Key in keyof ActionData["errors"]]: (
-      formValue: FormValue,
-      fields: ActionData["fields"],
-    ) => Promise<ErrorMessage | NoError> | ErrorMessage | NoError
-  }
+  validationSchema: T
   actionData?: ActionData
-  handleFormValues: (
-    formValues: ConditionalExcept<ActionData["fields"], null>,
-  ) => Response | Promise<Response>
+  handleFormValues: (formValues: z.infer<T>) => Response | Promise<Response>
 } & (
   | {
       form: URLSearchParams
@@ -47,7 +41,7 @@ async function handleFormSubmission<
     }
 
     // collect all values first because validators can reference them
-    for (const fieldName of Object.keys(validators)) {
+    for (const fieldName of Object.keys(validationSchema.shape)) {
       const formValue = form.get(fieldName)
       // Default the value to empty string so it doesn't have trouble with
       // getNonNull later. This allows us to have a validator that allows
@@ -55,30 +49,13 @@ async function handleFormSubmission<
       actionData.fields[fieldName] = formValue ?? ""
     }
 
-    await Promise.all(
-      Object.entries(validators).map(async ([fieldName, validator]) => {
-        const formValue = form!.get(fieldName)
-        // Default the value to empty string so it doesn't have trouble with
-        // getNonNull later. This allows us to have a validator that allows
-        // for optional values.
-        actionData.errors[fieldName] = await validator(
-          formValue,
-          actionData.fields,
-        )
-      }),
-    )
+    await validationSchema.parseAsync(actionData.fields)
 
-    if (Object.values(actionData.errors).some(err => err !== null)) {
-      return json({ ...actionData, status: "error" }, 400)
-    }
-
-    const nonNullFields = getNonNull(actionData.fields)
-    // not sure why, but it wasn't happy without the type cast 🤷‍♂️
-    const response = await handleFormValues(
-      nonNullFields as ConditionalExcept<ActionData["fields"], null>,
-    )
+    console.log(actionData.fields)
+    const response = await handleFormValues(actionData.fields)
     return response
   } catch (error: unknown) {
+    console.error(error)
     actionData.errors.generalError = getErrorMessage(error)
     return json(actionData, 500)
   }

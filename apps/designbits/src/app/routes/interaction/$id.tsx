@@ -3,7 +3,7 @@ import {
   DotsVerticalIcon,
   ShareIcon,
 } from "@heroicons/react/outline"
-import { Post, Source, User, VideoSource } from "@prisma/client"
+import type { Post, Source, User, VideoSource } from "database"
 import React from "react"
 import { LoaderFunction, MetaFunction, useLoaderData } from "remix"
 import Avatar from "~/components/Avatar"
@@ -12,8 +12,8 @@ import AndroidIcon from "~/components/icons/Android"
 import LikeIcon from "~/components/icons/Like"
 import InteractionFeedback from "~/components/InteractionFeedback"
 import Layout from "~/components/Layout"
-import { db } from "~/services/db/prisma.server"
-
+import { db } from "~/services/db/client.server"
+import { ASSETS_CDN_LINK } from "~/utils/constants"
 const sourcePriority = ["video/webm", "video/mp4"]
 
 export let loader: LoaderFunction = async ({ params }) => {
@@ -43,8 +43,6 @@ type PostData = Post & {
   CreatedBy: User
   VideoSources: VideoSource[]
 }
-
-const ASSETS_CDN_LINK = "https://dtom6jzmogd06.cloudfront.net/"
 
 const Interaction = () => {
   const postData = useLoaderData<PostData>()
@@ -98,7 +96,7 @@ const Interaction = () => {
             <div className="flex justify-between items-center">
               <Avatar
                 slug={postData.CreatedBy.profileSlug}
-                imgSrc={postData.CreatedBy.profilePicture}
+                imgSrc={ASSETS_CDN_LINK! + postData.CreatedBy.profilePicture}
                 name={postData.CreatedBy.name}
               />
               <div className="flex items-center space-x-4">
