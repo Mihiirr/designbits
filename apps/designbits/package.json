@@ -50,6 +50,9 @@
     "zod": "^3.11.6",
     "db-client": "*"
   },
+  "bundledDependencies": [
+    "db-client"
+  ],
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-json": "^4.1.0",
