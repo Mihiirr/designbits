@@ -1,5 +1,5 @@
 import type { HeadersFunction } from "remix"
-import type { User } from "database"
+import type { User } from "db-client"
 import * as dateFns from "date-fns"
 import md5 from "md5-hash"
 import React, { useLayoutEffect } from "react"
