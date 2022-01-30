@@ -27,7 +27,8 @@
           ".next/**",
           "public/build/**",
           "api/**"
-        ]
+        ],
+        "cache": false
       },
       "lint": {
         "outputs": []
