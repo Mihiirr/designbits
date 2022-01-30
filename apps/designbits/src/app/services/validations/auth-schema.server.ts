@@ -16,3 +16,8 @@ export const SignUpSchema = z.object({
     .string({ required_error: "Name is required" })
     .max(60, { message: "Name is too long" }),
 })
+
+export const LoginSchema = z.object({
+  email: z.string().email().max(256),
+  redirectTo: z.string().nullable(),
+})

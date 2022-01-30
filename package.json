@@ -31,7 +31,10 @@
         "outputs": []
       },
       "dev": {
-        "cache": false
+        "cache": false,
+        "dependsOn": [
+          "^dev"
+        ]
       }
     }
   },
