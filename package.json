@@ -25,7 +25,8 @@
         "outputs": [
           "dist/**",
           ".next/**"
-        ]
+        ],
+        "cache": false
       },
       "lint": {
         "outputs": []
