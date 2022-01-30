@@ -12,7 +12,7 @@ export default {
   plugins: [
     commonJs(),
     resolve({
-      moduleDirectories: ["../../node_modulesnode_modules"],
+      moduleDirectories: ["../../node_modules"],
     }),
     jsonPlugin(),
   ],
