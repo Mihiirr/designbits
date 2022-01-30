@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { PostReaction, PostReactionTypes } from "../../dist"
+import { PostReaction, PostReactionTypes } from "@prisma/client"
 import { CompleteUser, RelatedUserModel } from "./index"
 
 export const PostReactionModel = z.object({

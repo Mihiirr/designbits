@@ -1,15 +1,14 @@
 {
   "name": "db-client",
   "version": "0.0.1",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "prisma:create-migration": "npx prisma migrate dev",
     "prisma:reset-database": "npx prisma migrate reset",
     "prisma:generate": "npx prisma generate",
     "dev": "concurrently -n \"Databases,build:watch\"  -c \"#bada55.bold,#10b981.bold\"  \"yarn connect:databases\" \"tsup --format esm,cjs --watch index.ts --dts\"",
-    "build": "npx prisma generate && tsup --format esm,cjs index.ts --dts",
+    "build": "npx prisma generate && tsc index.ts --outDir dist --declaration --emitDeclarationOnly",
     "reset": "npx prisma migrate reset",
     "reset:skip-upload": "SKIP_UPLOAD=true yarn reset",
     "connect:databases": "concurrently -c \"#10b981.bold,#bada55.bold\" \"yarn:connect:database:*\"",

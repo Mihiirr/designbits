@@ -1,5 +1,5 @@
 import * as z from "zod"
-import type { PostView } from "../../dist"
+import type { PostView } from "@prisma/client"
 import { CompleteUser, RelatedUserModel } from "./index"
 
 export const PostViewModel = z.object({

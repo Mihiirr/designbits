@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import chalk from "chalk";
+import * as chalk from "chalk";
 
 let db: PrismaClient;
 

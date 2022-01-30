@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { User, UserStatus, UserRole } from "../../dist"
+import { User, UserStatus, UserRole } from "@prisma/client"
 import { CompletePost, RelatedPostModel, CompletePostView, RelatedPostViewModel, CompletePostReaction, RelatedPostReactionModel, CompleteSession, RelatedSessionModel, CompleteFollower, RelatedFollowerModel } from "./index"
 
 export const UserModel = z.object({
