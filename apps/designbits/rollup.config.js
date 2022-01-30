@@ -9,10 +9,12 @@ export default {
     format: "cjs",
   },
   inlineDynamicImports: true,
+  external: ["database"],
   plugins: [
     commonJs(),
     resolve({
       moduleDirectories: ["node_modules"],
+      rootDir: "../../",
     }),
     jsonPlugin(),
   ],
