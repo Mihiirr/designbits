@@ -1,5 +1,5 @@
 {
-  "name": "prisma-client",
+  "name": "database",
   "version": "0.0.0",
   "main": "dist/index.cjs",
   "types": "dist/index.d.ts",
