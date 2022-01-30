@@ -1,8 +1,9 @@
 {
   "name": "db-client",
   "version": "0.0.1",
-  "main": "dist/index.cjs",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "prisma:create-migration": "npx prisma migrate dev",
     "prisma:reset-database": "npx prisma migrate reset",
@@ -16,6 +17,9 @@
     "connect:database:shadow": "pscale connect designbits shadow --port ${SHADOW_DATABASE_PORT:-3310}",
     "connect:database:main": "pscale connect designbits main --port ${SHADOW_DATABASE_PORT:-3306}"
   },
+  "files": [
+    "dist/**"
+  ],
   "prisma": {
     "schema": "prisma/schema.prisma",
     "seed": "node --require esbuild-register prisma/seed.ts"
