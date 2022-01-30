@@ -24,9 +24,9 @@
         ],
         "outputs": [
           "dist/**",
-          ".next/**"
-        ],
-        "cache": false
+          ".next/**",
+          "public/build/**"
+        ]
       },
       "lint": {
         "outputs": []
