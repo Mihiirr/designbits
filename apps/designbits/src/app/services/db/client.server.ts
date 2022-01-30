@@ -1,3 +1,3 @@
-import { db } from "prisma-client"
+import { db } from "database"
 
 export { db }

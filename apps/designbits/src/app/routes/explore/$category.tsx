@@ -1,4 +1,4 @@
-import type { Post, Source, User } from "prisma-client"
+import type { Post, Source, User } from "database"
 import groupBy from "lodash.groupby"
 import { LoaderFunction, MetaFunction, useLoaderData } from "remix"
 import { navItems } from "~/components/CategoriesNav"

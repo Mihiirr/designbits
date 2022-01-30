@@ -3,7 +3,7 @@ import {
   DotsVerticalIcon,
   ShareIcon,
 } from "@heroicons/react/outline"
-import type { Post, Source, User, VideoSource } from "prisma-client"
+import type { Post, Source, User, VideoSource } from "database"
 import React from "react"
 import { LoaderFunction, MetaFunction, useLoaderData } from "remix"
 import Avatar from "~/components/Avatar"
