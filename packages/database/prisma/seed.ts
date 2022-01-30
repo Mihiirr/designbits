@@ -1,4 +1,4 @@
-import { PrismaClient } from "database";
+import { PrismaClient } from "@prisma/client";
 import pProps from "p-props";
 import getPosts from "./seed-data/interactions";
 import { uploadToS3 } from "./seed-data/upload";

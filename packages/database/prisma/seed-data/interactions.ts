@@ -1,5 +1,3 @@
-import { UserRole } from "database";
-
 const usersData = {
   Tirth: {
     connectOrCreate: {
@@ -8,7 +6,7 @@ const usersData = {
         name: "Tirth Gajjar",
         profilePicture: "tirth.jpeg",
         profileSlug: "tirth-gajjar",
-        role: UserRole.ADMIN,
+        role: "ADMIN",
       },
       where: {
         email: "tirth@designbits.io",
@@ -22,7 +20,7 @@ const usersData = {
         name: "Shreyas Chaudhary",
         profilePicture: "Shreyas.jpeg",
         profileSlug: "shreyas-chaudhary",
-        role: UserRole.ADMIN,
+        role: "ADMIN",
       },
       where: {
         email: "shreyas@designbits.io",
