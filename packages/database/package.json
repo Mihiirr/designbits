@@ -8,7 +8,7 @@
     "prisma:reset-database": "npx prisma migrate reset",
     "prisma:generate": "npx prisma generate && npx prettier --write **/prisma/zod",
     "dev": "concurrently -n \"Databases,build:watch\"  -c \"#bada55.bold,#10b981.bold\"  \"yarn connect:databases\" \"tsup --format esm,cjs --watch index.ts --dts\"",
-    "build": "tsup --format esm,cjs index.ts --dts",
+    "build": "yarn prisma:generate && tsup --format esm,cjs index.ts --dts",
     "reset": "npx prisma migrate reset",
     "reset:skip-upload": "SKIP_UPLOAD=true yarn reset",
     "connect:databases": "concurrently -c \"#10b981.bold,#bada55.bold\" \"yarn:connect:database:*\"",
