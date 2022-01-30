@@ -9,6 +9,7 @@ export default {
     format: "cjs",
   },
   inlineDynamicImports: true,
+  external: ["database"],
   plugins: [
     commonJs(),
     resolve({
