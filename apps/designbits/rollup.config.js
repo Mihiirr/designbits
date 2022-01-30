@@ -8,6 +8,7 @@ export default {
     file: "api/index.js",
     format: "cjs",
   },
+  external: ["database"],
   inlineDynamicImports: true,
   plugins: [
     commonJs(),
