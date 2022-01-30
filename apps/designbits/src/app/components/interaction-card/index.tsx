@@ -2,7 +2,7 @@ import LikeIcon from "../icons/Like"
 import classNames from "../../utils/classnames"
 import CommentIcon from "../icons/Comment"
 import { Link } from "remix"
-import type { Post, Source, User } from "db-client"
+import type { Post, Source, User } from "database"
 import { motion } from "framer-motion"
 import { ASSETS_CDN_LINK } from "~/utils/constants"
 

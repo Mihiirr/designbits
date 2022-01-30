@@ -1,4 +1,4 @@
-import type { Session, User } from "db-client"
+import type { Session, User } from "database"
 import { Except } from "type-fest"
 import { sessionExpirationTime } from "../auth/session.server"
 import { db } from "~/services/db/client.server"

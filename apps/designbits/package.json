@@ -48,10 +48,10 @@
     "spin-delay": "^1.1.0",
     "tiny-invariant": "^1.2.0",
     "zod": "^3.11.6",
-    "db-client": "*"
+    "database": "*"
   },
   "bundledDependencies": [
-    "db-client"
+    "database"
   ],
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",

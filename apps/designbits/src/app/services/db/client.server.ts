@@ -1,3 +1,3 @@
-import { db } from "db-client"
+import { db } from "database"
 
 export { db }

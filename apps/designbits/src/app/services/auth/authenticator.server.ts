@@ -1,6 +1,6 @@
 import { GoogleStrategy } from "remix-auth-google"
 import { Authenticator } from "remix-auth"
-import type { User } from "db-client"
+import type { User } from "database"
 import { db } from "~/services/db/client.server"
 import { sessionStorage } from "./session.server"
 import { getRequiredServerEnvVar } from "~/utils/env"

@@ -1,5 +1,5 @@
 import { createCookieSessionStorage, redirect } from "remix"
-import type { User } from "db-client"
+import type { User } from "database"
 import {
   getUserByEmail,
   getUserFromSessionId,
