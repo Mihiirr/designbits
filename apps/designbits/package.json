@@ -5,7 +5,6 @@
   "description": "",
   "license": "",
   "scripts": {
-    "prepare": "husky install",
     "postinstall": "remix setup node && yarn run install:dotenv-linter",
     "dev": "concurrently -n \"TailwindCSS,Remix Dev\"  -c \"#bada55.bold,#10b981.bold\" \"yarn dev:css\" \"remix dev\"",
     "dev:css": "tailwindcss -o ./src/app/styles/tailwind.css --watch",
@@ -69,7 +68,6 @@
     "eslint-plugin-file-progress": "^1.2.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-tailwindcss": "^3.0.4",
-    "husky": "^7.0.4",
     "lint-staged": "^12.1.4",
     "prettier": "^2.5.1",
     "rollup": "^2.61.1",
