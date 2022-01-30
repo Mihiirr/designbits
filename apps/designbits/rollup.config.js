@@ -8,7 +8,7 @@ export default {
     file: "api/index.js",
     format: "cjs",
   },
-  external: ["database", "fs/promises"],
+  external: ["fs/promises"],
   inlineDynamicImports: true,
   plugins: [
     commonJs(),
