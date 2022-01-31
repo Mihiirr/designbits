@@ -9,7 +9,7 @@ export default {
     dir: "api",
     format: "cjs",
   },
-  external: ["fs/promises", "database"],
+  external: ["fs/promises"],
   plugins: [
     commonJs(),
     resolve({
