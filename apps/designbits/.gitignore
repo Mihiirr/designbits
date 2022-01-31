@@ -18,3 +18,5 @@ bin/dotenv-linter
 
 # Docker
 .docker
+
+.parcel-cache

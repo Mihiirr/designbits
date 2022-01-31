@@ -1,19 +1,10 @@
 {
-  "include": ["*.ts"],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2019"],
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "strict": true,
-    "module": "es2020",
-    "target": "es2020",
-    "paths": {
-      "~/*": ["./src/app/*"]
-    },
-    "declaration": true,
-    "outDir": "dist",
-    // go to js file when using IDE functions like
-    // "Go to Definition" in VSCode
-    "declarationMap": true
-  }
+    "lib": ["ES2015"],
+    "module": "ESNext",
+    "target": "ES6",
+    "moduleResolution": "Node"
+  },
+  "include": ["*.ts"],
+  "exclude": ["dist", "build", "node_modules"]
 }
