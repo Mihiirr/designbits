@@ -4,13 +4,12 @@ import resolve from "@rollup/plugin-node-resolve"
 import * as path from "path"
 
 export default {
-  input: "api/api.js",
+  input: "deploy/index.js",
   output: {
-    file: "api/index.js",
+    dir: "api",
     format: "cjs",
   },
-  external: ["fs/promises"],
-  inlineDynamicImports: true,
+  external: ["fs/promises", "database"],
   plugins: [
     commonJs(),
     resolve({
