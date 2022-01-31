@@ -13,7 +13,7 @@
     "prisma:reset-database": "npx prisma migrate reset",
     "prisma:generate": "npx prisma generate",
     "dev": "concurrently -n \"Databases,build:watch\"  -c \"#bada55.bold,#10b981.bold\"  \"yarn connect:databases\" \"tsc index.ts --outDir dist\"",
-    "build": "npx prisma generate && tsc index.ts --outDir dist --declaration --emitDeclarationOnly",
+    "build": "npx prisma generate && rollup -c",
     "reset": "npx prisma migrate reset",
     "reset:skip-upload": "SKIP_UPLOAD=true yarn reset",
     "connect:databases": "concurrently -c \"#10b981.bold,#bada55.bold\" \"yarn:connect:database:*\"",
@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@prisma/client": "^3.7.0",
+    "@rollup/plugin-typescript": "^8.3.0",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
     "concurrently": "^6.4.0",
