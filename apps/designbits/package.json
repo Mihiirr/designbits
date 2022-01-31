@@ -9,7 +9,7 @@
     "dev": "concurrently -n \"TailwindCSS,Remix Dev\"  -c \"#bada55.bold,#10b981.bold\" \"yarn dev:css\" \"remix dev\"",
     "dev:css": "tailwindcss -o ./src/app/styles/tailwind.css --watch",
     "dev:remix": "remix dev",
-    "build": "yarn run build:css && remix build && rollup -v && npx parcel build deploy/index.js --dist-dir api",
+    "build": "yarn run build:css && remix build && rollup -v && rollup -c",
     "build:css": "tailwindcss -o ./src/app/styles/tailwind.css",
     "start": "remix-serve build",
     "lint": "eslint --fix --cache --cache-location ./node_modules/.cache/.eslintcache --ext js,jsx,ts,tsx .",
