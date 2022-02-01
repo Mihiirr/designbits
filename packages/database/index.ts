@@ -1,4 +1,4 @@
-import { PrismaClient } from "./dist/prisma";
+import { PrismaClient } from "@prisma/client";
 import * as chalk from "chalk";
 
 let db: PrismaClient;
@@ -58,4 +58,4 @@ if (process.env.NODE_ENV === "production") {
 }
 
 export { db };
-export * from "./dist/prisma";
+export * from "@prisma/client";
