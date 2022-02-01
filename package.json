@@ -7,23 +7,14 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npx prisma generate && turbo run build",
+    "build": " turbo run build",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
-  "prisma": {
-    "schema": "prisma/schema.prisma",
-    "seed": "node --require esbuild-register prisma/seed.ts"
-  },
   "devDependencies": {
     "prettier": "^2.5.1",
-    "turbo": "latest",
-    "@prisma/client": "^3.7.0",
-    "@rollup/plugin-typescript": "^8.3.0",
-    "concurrently": "^6.4.0",
-    "esbuild-register": "^3.3.1",
-    "zod-prisma": "git+https://github.com/tirthGajjar/zod-prisma.git"
+    "turbo": "latest"
   },
   "turbo": {
     "pipeline": {
@@ -35,7 +26,8 @@
           "dist/**",
           ".next/**",
           "public/build/**",
-          "api/**"
+          "api/**",
+          "prisma/generated/**"
         ],
         "cache": false
       },
