@@ -16,7 +16,7 @@ export default {
       targets: [
         {
           src: "../../node_modules/.prisma/client/schema.prisma",
-          dest: "api/schema.prisma",
+          dest: "api",
         },
       ],
     }),
