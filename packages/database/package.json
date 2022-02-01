@@ -14,7 +14,7 @@
     "prisma:generate": "npx prisma generate",
     "generate": "cd ../.. && npx prisma generate",
     "dev": "concurrently -n \"Databases,build:watch\"  -c \"#bada55.bold,#10b981.bold\"  \"yarn connect:databases\" \"tsc index.ts --outDir dist\"",
-    "build": "rollup -c",
+    "build": "tsc index.ts --outDir dist",
     "reset": "npx prisma migrate reset",
     "reset:skip-upload": "SKIP_UPLOAD=true yarn reset",
     "connect:databases": "concurrently -c \"#10b981.bold,#bada55.bold\" \"yarn:connect:database:*\"",
