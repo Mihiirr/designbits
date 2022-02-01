@@ -20,6 +20,7 @@
     "vercel:env:push": "bash scripts/env.sh"
   },
   "dependencies": {
+    "@prisma/client": "^3.7.0",
     "@headlessui/react": "^1.4.2",
     "@heroicons/react": "^1.0.5",
     "@reach/auto-id": "^0.16.0",
