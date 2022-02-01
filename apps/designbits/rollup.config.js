@@ -9,7 +9,7 @@ export default {
     dir: "api",
     format: "cjs",
   },
-  external: ["fs/promises"],
+  external: ["fs/promises", "@prisma/client"],
   plugins: [
     commonJs(),
     resolve({

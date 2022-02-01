@@ -1,8 +1,8 @@
 {
   "name": "database",
   "version": "0.0.1",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
   "types": "./dist/index.d.ts",
   "type": "module",
   "sideEffects": false,
@@ -14,7 +14,7 @@
     "prisma:generate": "npx prisma generate",
     "generate": "cd ../.. && npx prisma generate",
     "dev": "concurrently -n \"Databases,build:watch\"  -c \"#bada55.bold,#10b981.bold\"  \"yarn connect:databases\" \"tsc index.ts --outDir dist\"",
-    "build": "npx tsup index.ts --format esm,cjs --dts",
+    "build": "rollup -c && tsc --declaration --emitDeclarationOnly --outDir dist",
     "reset": "npx prisma migrate reset",
     "reset:skip-upload": "SKIP_UPLOAD=true yarn reset",
     "connect:databases": "concurrently -c \"#10b981.bold,#bada55.bold\" \"yarn:connect:database:*\"",
@@ -25,24 +25,10 @@
   "files": [
     "dist/**"
   ],
-  "prisma": {
-    "schema": "prisma/schema.prisma",
-    "seed": "node --require esbuild-register prisma/seed.ts"
-  },
-  "dependencies": {
-    "prisma": "^3.5.0"
-  },
   "devDependencies": {
-    "@prisma/client": "^3.7.0",
-    "@rollup/plugin-typescript": "^8.3.0",
-    "@types/react": "^17.0.37",
-    "@types/react-dom": "^17.0.11",
-    "concurrently": "^6.4.0",
     "config": "*",
-    "esbuild-register": "^3.3.1",
     "tsconfig": "*",
     "tsup": "^5.11.12",
-    "typescript": "^4.5.3",
-    "zod-prisma": "git+https://github.com/tirthGajjar/zod-prisma.git"
+    "typescript": "^4.5.3"
   }
 }
