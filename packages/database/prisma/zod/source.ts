@@ -1,5 +1,5 @@
 import * as z from "zod"
-import type { Source } from "../generated/output"
+import type { Source } from "@prisma/client"
 import { CompletePost, RelatedPostModel } from "./index"
 
 export const SourceModel = z.object({

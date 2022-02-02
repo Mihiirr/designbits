@@ -1,8 +1,8 @@
 {
   "name": "database",
   "version": "0.0.1",
-  "main": "prisma/generated/output/index.js",
-  "types": "prisma/generated/output/index.d.ts",
+  "main": "index.ts",
+  "types": "index.ts",
   "sideEffects": false,
   "private": true,
   "license": "MIT",
@@ -10,7 +10,6 @@
     "prisma:create-migration": "npx prisma migrate dev",
     "prisma:reset-database": "npx prisma migrate reset",
     "prisma:generate": "npx prisma generate",
-    "generate": "cd ../.. && npx prisma generate",
     "dev": "concurrently -n \"Databases,build:watch\"  -c \"#bada55.bold,#10b981.bold\"  \"yarn connect:databases\" \"npx prisma generate\"",
     "build": "npx prisma generate",
     "reset": "npx prisma migrate reset",
@@ -28,10 +27,10 @@
     "seed": "node --require esbuild-register prisma/seed.ts"
   },
   "dependencies": {
-    "prisma": "^3.5.0"
+    "@prisma/client": "^3.9.0",
+    "prisma": "^3.9.0"
   },
   "devDependencies": {
-    "@prisma/client": "^3.7.0",
     "@rollup/plugin-typescript": "^8.3.0",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
