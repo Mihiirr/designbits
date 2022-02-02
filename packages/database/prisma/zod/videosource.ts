@@ -1,5 +1,5 @@
 import * as z from "zod"
-import type { VideoSource } from "@prisma/client"
+import type { VideoSource } from "../../../../node_modules/.prisma/client"
 import { CompletePost, RelatedPostModel } from "./index"
 
 export const VideoSourceModel = z.object({

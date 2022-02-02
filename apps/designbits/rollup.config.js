@@ -7,7 +7,7 @@ export default {
   input: "deploy/index.js",
   output: {
     file: "api/index.js",
-    format: "esm",
+    format: "cjs",
   },
   inlineDynamicImports: true,
   external: ["fs/promises", "_http_common", "encoding"],

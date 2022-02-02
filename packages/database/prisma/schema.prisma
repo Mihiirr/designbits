@@ -9,7 +9,7 @@ generator zod {
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
-  // output          = "./generated/output"
+  output          = "../../../node_modules/.prisma/client"
 }
 
 datasource db {
