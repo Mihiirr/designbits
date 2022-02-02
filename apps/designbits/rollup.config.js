@@ -6,9 +6,10 @@ import * as path from "path"
 export default {
   input: "deploy/index.js",
   output: {
-    dir: "api",
-    format: "cjs",
+    file: "api/index.js",
+    format: "esm",
   },
+  inlineDynamicImports: true,
   external: ["fs/promises", "_http_common", "encoding"],
   plugins: [
     commonJs(),

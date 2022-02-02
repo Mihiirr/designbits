@@ -26,8 +26,7 @@
           "dist/**",
           ".next/**",
           "public/build/**",
-          "api/**",
-          "prisma/generated/**"
+          "api/**"
         ],
         "cache": false
       },

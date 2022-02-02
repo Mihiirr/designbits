@@ -13,6 +13,7 @@ export default [
       format: "esm",
     },
     external: ["@prisma/client"],
+
     plugins: [
       typescript(),
       commonJs(),
