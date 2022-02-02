@@ -1,5 +1,5 @@
 import * as z from "zod"
-import type { Follower } from "../../../../node_modules/.prisma/client"
+import type { Follower } from "@prisma/client"
 import { CompleteUser, RelatedUserModel } from "./index"
 
 export const FollowerModel = z.object({
