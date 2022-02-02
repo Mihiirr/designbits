@@ -1,4 +1,4 @@
-import type { Session, User } from "database"
+import type { Session, User } from "@prisma/client"
 import { Except } from "type-fest"
 import { sessionExpirationTime } from "../auth/session.server"
 import { db } from "~/services/db/client.server"

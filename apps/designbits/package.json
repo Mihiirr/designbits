@@ -9,7 +9,7 @@
     "dev": "concurrently -n \"TailwindCSS,Remix Dev\"  -c \"#bada55.bold,#10b981.bold\" \"yarn dev:css\" \"remix dev\"",
     "dev:css": "tailwindcss -o ./src/app/styles/tailwind.css --watch",
     "dev:remix": "remix dev",
-    "build": "yarn run build:css && remix build && rollup -v && rollup -c",
+    "build": "yarn prisma:generate && yarn run build:css && remix build && rollup -v && rollup -c",
     "build:css": "tailwindcss -o ./src/app/styles/tailwind.css",
     "start": "remix-serve build",
     "lint": "eslint --fix --cache --cache-location ./node_modules/.cache/.eslintcache --ext js,jsx,ts,tsx .",
@@ -17,9 +17,21 @@
     "typecheck": "concurrently --raw yarn:typecheck:*",
     "typecheck:app": "tsc --noEmit",
     "install:dotenv-linter": "curl -sSfL https://raw.githubusercontent.com/dotenv-linter/dotenv-linter/master/install.sh | sh -s -- -b node_modules/.bin",
-    "vercel:env:push": "bash scripts/env.sh"
+    "vercel:env:push": "bash scripts/env.sh",
+    "prisma:generate": "npx prisma generate",
+    "reset": "npx prisma migrate reset",
+    "reset:skip-upload": "SKIP_UPLOAD=true yarn reset",
+    "connect:databases": "concurrently -c \"#10b981.bold,#bada55.bold\" \"yarn:connect:database:*\"",
+    "connect:database:develop": "pscale connect designbits develop --port ${DATABASE_PORT:-3309}",
+    "connect:database:shadow": "pscale connect designbits shadow --port ${SHADOW_DATABASE_PORT:-3310}",
+    "connect:database:main": "pscale connect designbits main --port ${SHADOW_DATABASE_PORT:-3306}"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma",
+    "seed": "node --require esbuild-register prisma/seed.ts"
   },
   "dependencies": {
+    "@prisma/client": "^3.9.0",
     "@headlessui/react": "^1.4.2",
     "@heroicons/react": "^1.0.5",
     "@reach/auto-id": "^0.16.0",
@@ -30,7 +42,6 @@
     "aws-sdk": "^2.1066.0",
     "chalk": "^4.1.2",
     "clsx": "^1.1.1",
-    "database": "*",
     "framer-motion": "^6.2.3",
     "hast-util-to-string": "^2.0.0",
     "lodash.groupby": "^4.6.0",
@@ -51,7 +62,7 @@
     "zod": "^3.11.6"
   },
   "bundledDependencies": [
-    "database"
+    "@prisma/client"
   ],
   "devDependencies": {
     "@babel/core": "^7.16.7",
@@ -81,7 +92,12 @@
     "rollup-plugin-copy": "^3.4.0",
     "tailwindcss": "^3.0.18",
     "type-fest": "^2.8.0",
-    "typescript": "4.5.5"
+    "typescript": "4.5.5",
+    "config": "*",
+    "tsconfig": "*",
+    "tsup": "^5.11.12",
+    "prisma": "^3.9.0",
+    "zod-prisma": "git+https://github.com/tirthGajjar/zod-prisma.git"
   },
   "engines": {
     "node": ">=14"
