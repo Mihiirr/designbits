@@ -1,7 +1,7 @@
 import type { Session, User } from "@prisma/client"
 import { Except } from "type-fest"
 import { sessionExpirationTime } from "../auth/session.server"
-import { db } from "./prisma.server"
+import { db } from "~/services/db/client.server"
 
 async function createSession(
   sessionData: Omit<Session, "id" | "expirationDate" | "createdAt">,

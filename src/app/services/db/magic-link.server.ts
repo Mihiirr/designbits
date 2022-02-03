@@ -1,25 +1,26 @@
+import { LoginFields } from "~/types/auth"
 import { decrypt, encrypt } from "../utils/encryption.server"
 
 export const linkExpirationTime = 1000 * 60 * 30
 const magicLinkSearchParam = "kodyKey"
 
 type MagicLinkPayload = {
-  emailAddress: string
   creationDate: string
   validateSessionMagicLink: boolean
-}
+} & LoginFields
 
 export function getMagicLink({
-  emailAddress,
+  email,
+  redirectTo,
   validateSessionMagicLink,
   domainUrl,
 }: {
-  emailAddress: string
   validateSessionMagicLink: boolean
   domainUrl: string
-}) {
+} & LoginFields) {
   const payload: MagicLinkPayload = {
-    emailAddress,
+    email,
+    redirectTo,
     validateSessionMagicLink,
     creationDate: new Date().toISOString(),
   }
@@ -52,7 +53,7 @@ export async function validateMagicLink(
   try {
     const decryptedString = decrypt(linkCode)
     const payload = JSON.parse(decryptedString) as MagicLinkPayload
-    emailAddress = payload.emailAddress
+    emailAddress = payload.email
     linkCreationDateString = payload.creationDate
     validateSessionMagicLink = payload.validateSessionMagicLink
   } catch (error: unknown) {

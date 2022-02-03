@@ -1,3 +1,5 @@
+import { UserRole } from "@prisma/client"
+
 const usersData = {
   Tirth: {
     connectOrCreate: {
@@ -6,6 +8,7 @@ const usersData = {
         name: "Tirth Gajjar",
         profilePicture: "tirth.jpeg",
         profileSlug: "tirth-gajjar",
+        role: UserRole.ADMIN,
       },
       where: {
         email: "tirth@designbits.io",
@@ -19,6 +22,7 @@ const usersData = {
         name: "Shreyas Chaudhary",
         profilePicture: "Shreyas.jpeg",
         profileSlug: "shreyas-chaudhary",
+        role: UserRole.ADMIN,
       },
       where: {
         email: "shreyas@designbits.io",
@@ -36,7 +40,8 @@ export default function getPosts() {
       Source: {
         connectOrCreate: {
           create: {
-            imageSrc: "https://github.githubassets.com/favicons/favicon.svg",
+            imageSrc:
+              "https://github.githubassets.com/favicons/favicon-dark.svg",
             name: "Github",
             url: "https://github.com/",
           },

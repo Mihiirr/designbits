@@ -1,11 +1,9 @@
-import AuthHeading from "~/components/auth/AuthHeading"
 import AuthLayout from "~/components/AuthLayout"
 import {
   json,
   redirect,
   useLoaderData,
   useActionData,
-  Form,
   useSearchParams,
 } from "remix"
 import type { ActionFunction, LoaderFunction } from "remix"
@@ -14,16 +12,10 @@ import { handleFormSubmission } from "~/utils/actions.server"
 import { getLoginInfoSession } from "~/services/auth/login.server"
 import { getSession, getUser } from "~/services/auth/session.server"
 import { validateMagicLink } from "~/services/db/magic-link.server"
-import { db } from "~/services/db/prisma.server"
-import { useState } from "react"
+import { db } from "~/services/db/client.server"
 import SignUpForm from "~/components/auth/SignUpForm"
-import { z, ZodError } from "zod"
-import { RequireAtLeastOne } from "type-fest"
-
-const SignUpSchema = z.object({
-  email: z.string().email().max(256),
-  firstName: z.string().max(256),
-})
+import { z } from "zod"
+import { SignUpSchema } from "~/services/validations/auth-schema.server"
 
 type SignUpFormFields = z.infer<typeof SignUpSchema>
 
@@ -35,12 +27,6 @@ export type SignUpActionData = {
 
 export type SignUpLoaderData = {
   email: string
-}
-
-function getErrorForFirstName(name: string | null) {
-  if (!name) return `Name is required`
-  if (name.length > 60) return `Name is too long`
-  return null
 }
 
 const actionIds = {
@@ -81,15 +67,11 @@ export const action: ActionFunction = async ({ request }) => {
     })
   }
 
-  return handleFormSubmission<SignUpActionData>({
+  return handleFormSubmission<SignUpActionData, typeof SignUpSchema>({
     form,
-    validators: {
-      firstName: getErrorForFirstName,
-      email: email => email,
-    },
+    validationSchema: SignUpSchema,
     handleFormValues: async formData => {
       const { firstName } = formData
-
       try {
         const user = await db.user.create({
           data: { email, name: firstName, profileSlug: firstName ?? "" },

@@ -23,13 +23,21 @@ export async function uploadToS3(
   fileName: string,
   filePath: string = "",
 ): Promise<any> {
+  const skipUpload = process.env.SKIP_UPLOAD
+  if (skipUpload) {
+    console.log("SKIPPING UPLOAD... ", fileName)
+    return {
+      Key: `DesignBits/${process.env.S3_FOLDER}/${filePath}/${fileName}`,
+    }
+  }
+
   const readStream = fs.createReadStream(
     path.join(__dirname, filePath, fileName),
   )
 
   const params: S3.PutObjectRequest = {
     Bucket: BUCKET_NAME,
-    Key: `DesignBits/${process.env.S3_FOLDER}/${fileName}`,
+    Key: `DesignBits/${process.env.S3_FOLDER}/${filePath}/${fileName}`,
     Body: readStream,
     ACL: "public-read",
     CacheControl: "max-age=3600",

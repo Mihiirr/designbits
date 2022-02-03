@@ -9,6 +9,7 @@ generator zod {
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
+  // output          = "../../../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -35,7 +36,7 @@ model User {
   /// @zod.email({ message: "Invalid email address" })
   email          String         @unique
   name           String?
-  profilePicture String?
+  profilePicture String?        @db.VarChar(1024)
   profileSlug    String
   UserStatus     UserStatus     @default(ACTIVE)
   role           UserRole       @default(USER)

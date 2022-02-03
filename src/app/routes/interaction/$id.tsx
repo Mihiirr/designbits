@@ -3,7 +3,7 @@ import {
   DotsVerticalIcon,
   ShareIcon,
 } from "@heroicons/react/outline"
-import { Post, Source, User, VideoSource } from "@prisma/client"
+import type { Post, Source, User, VideoSource } from "@prisma/client"
 import React from "react"
 import { LoaderFunction, MetaFunction, useLoaderData } from "remix"
 import Avatar from "~/components/Avatar"
@@ -12,7 +12,7 @@ import AndroidIcon from "~/components/icons/Android"
 import LikeIcon from "~/components/icons/Like"
 import InteractionFeedback from "~/components/InteractionFeedback"
 import Layout from "~/components/Layout"
-import { db } from "~/services/db/prisma.server"
+import { db } from "~/services/db/client.server"
 import { ASSETS_CDN_LINK } from "~/utils/constants"
 const sourcePriority = ["video/webm", "video/mp4"]
 

@@ -7,7 +7,7 @@ declare global {
   var __db: PrismaClient | undefined
 }
 
-const logThreshold = 50
+const logThreshold = process.env.NODE_ENV === "development" ? 500 : 50
 
 function getClient(): PrismaClient {
   console.log(`Setting up prisma client`)
@@ -23,7 +23,7 @@ function getClient(): PrismaClient {
     ],
   })
   client.$on("query", (e: { duration: number; query: any }) => {
-    // if (e.duration < logThreshold) return
+    if (e.duration < logThreshold) return
 
     const color =
       e.duration < 30

@@ -8,14 +8,15 @@ import {
 import { getLoginInfoSession } from "./login.server"
 import { getRequiredServerEnvVar } from "~/utils/env"
 import { sendMagicLinkEmail } from "../email/email.server"
-import { db } from "../db/prisma.server"
+import { db } from "~/services/db/client.server"
 import { getMagicLink, validateMagicLink } from "../db/magic-link.server"
+import { LoginFields } from "~/types/auth"
 
 const sessionIdKey = "__session_id__"
 
 export const sessionExpirationTime = 1000 * 60 * 60 * 24 * 365
 
-const sessionStorage = createCookieSessionStorage({
+export const sessionStorage = createCookieSessionStorage({
   cookie: {
     name: "KCD_root_session",
     secure: true,
@@ -28,25 +29,26 @@ const sessionStorage = createCookieSessionStorage({
 })
 
 async function sendToken({
-  emailAddress,
+  payload: { email, redirectTo },
   domainUrl,
 }: {
-  emailAddress: string
+  payload: LoginFields
   domainUrl: string
 }) {
   const magicLink = getMagicLink({
-    emailAddress,
+    email,
+    redirectTo,
     validateSessionMagicLink: true,
     domainUrl,
   })
 
-  const user = await getUserByEmail(emailAddress).catch(() => {
+  const user = await getUserByEmail(email).catch(() => {
     /* ignore... */
     return null
   })
 
   await sendMagicLinkEmail({
-    emailAddress,
+    email: email,
     magicLink,
     user,
     domainUrl,

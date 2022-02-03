@@ -1,9 +1,9 @@
-import { Post, Source, User } from "@prisma/client"
+import type { Post, Source, User } from "@prisma/client"
 import groupBy from "lodash.groupby"
 import { LoaderFunction, MetaFunction, useLoaderData } from "remix"
 import { navItems } from "~/components/CategoriesNav"
 import InteractionCard from "~/components/interaction-card"
-import { db } from "~/services/db/prisma.server"
+import { db } from "~/services/db/client.server"
 
 interface Props {}
 
