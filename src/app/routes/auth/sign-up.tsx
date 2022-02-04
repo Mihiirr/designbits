@@ -5,6 +5,7 @@ import {
   useLoaderData,
   useActionData,
   useSearchParams,
+  MetaFunction,
 } from "remix"
 import type { ActionFunction, LoaderFunction } from "remix"
 import { getErrorStack } from "~/utils/misc"
@@ -158,6 +159,12 @@ const SignUp = (props: Props) => {
       }
     />
   )
+}
+export const meta: MetaFunction = () => {
+  return {
+    title: "Signup | DesignBits",
+    description: `Create an account to discover interactions.`,
+  }
 }
 
 export default SignUp

@@ -2,13 +2,14 @@ import {
   Form,
   json,
   LoaderFunction,
+  MetaFunction,
   redirect,
   useLoaderData,
   useSearchParams,
 } from "remix"
 import type { ActionFunction } from "remix"
 import AuthLayout from "~/components/AuthLayout"
-import { ZodError } from "zod"
+import { z, ZodError } from "zod"
 import { RequireAtLeastOne } from "type-fest"
 import { getLoginInfoSession } from "~/services/auth/login.server"
 import { getDomainUrl, getErrorMessage } from "~/utils/misc"
@@ -16,8 +17,13 @@ import { getUser, sendToken } from "~/services/auth/session.server"
 import { useRef, useState } from "react"
 import Button from "~/components/Button"
 import { Input, InputError, Label } from "~/components/form-elements"
-import { LoginSchema } from "~/services/validations/auth-schema.server"
 import type { LoginFields } from "~/types/auth"
+import GoogleIcon from "~/components/icons/Google"
+
+const LoginSchema = z.object({
+  email: z.string().email().max(256),
+  redirectTo: z.string().nullable(),
+})
 
 export type LoginActionData = {
   error: RequireAtLeastOne<
@@ -181,12 +187,22 @@ const Login = () => {
             </div>
           </Form>
           <Form action="/auth/google" method="post">
-            <button>Login with Google</button>
+            <Button variant="secondary" type="submit">
+              <GoogleIcon />
+              <span className="pl-2">Login with Google</span>
+            </Button>
           </Form>
         </>
       }
     />
   )
+}
+
+export const meta: MetaFunction = () => {
+  return {
+    title: "Login | DesignBits",
+    description: `login to discover interactions.`,
+  }
 }
 
 export default Login
