@@ -11,9 +11,7 @@ let googleStrategy = new GoogleStrategy(
   {
     clientID: getRequiredServerEnvVar("GOOGLE_AUTH_CLIENT_ID"),
     clientSecret: getRequiredServerEnvVar("GOOGLE_AUTH_CLIENT_SECRET"),
-    callbackURL: `${getRequiredServerEnvVar(
-      "DOMAIN_URL",
-    )}/auth/google/callback`,
+    callbackURL: `${getRequiredServerEnvVar("DOMAIN_URL")}auth/google/callback`,
   },
   async ({ accessToken, refreshToken, extraParams, profile }) => {
     // Get the user data from your DB or API using the tokens and profile
