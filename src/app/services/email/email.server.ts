@@ -21,6 +21,13 @@ type MailData = RequireAtLeastOne<
   "text" | "html"
 >
 
+type SendEmailOptions<User> = {
+  emailAddress: string
+  magicLink: string
+  user?: User | null
+  domainUrl: string
+}
+
 async function sendEmail({ to, from, subject, text, html }: MailData) {
   // if they didn't specify it and it's not
   if (html === undefined) {
@@ -41,16 +48,11 @@ async function sendEmail({ to, from, subject, text, html }: MailData) {
 }
 
 async function sendMagicLinkEmail({
-  email,
+  emailAddress,
   magicLink,
   user,
   domainUrl,
-}: {
-  email: string
-  magicLink: string
-  user?: User | null
-  domainUrl: string
-}) {
+}: SendEmailOptions<User>) {
   const sender = `DesignBits Team <contact@tirth.dev>`
   const { hostname } = new URL(domainUrl)
   const userExists = Boolean(user)
@@ -62,9 +64,9 @@ async function sendMagicLinkEmail({
 
 ${
   userExists
-    ? `Welcome back ${email}!`
+    ? `Welcome back ${emailAddress}!`
     : `
-      Clicking the link above will create a *new* account on ${hostname} with the email ${email}. Welcome!
+      Clicking the link above will create a *new* account on ${hostname} with the email ${emailAddress}. Welcome!
       If you'd instead like to change your email address for an existing account, please send an email to team+email-change@kentcdodds.com from the original email address.
     `.trim()
 }
@@ -107,7 +109,7 @@ ${
       <h2 style="text-align: center">${
         user
           ? `Hey ${user.name}! Welcome back to ${hostname}!`
-          : `Hey ${email}! Welcome to ${hostname}`
+          : `Hey ${emailAddress}! Welcome to ${hostname}`
       }</h2>
 
       
@@ -136,7 +138,7 @@ ${
 
   const message = {
     from: sender,
-    to: email,
+    to: emailAddress,
     subject: `Here's your Magic ✨ sign-in link for DesignBits.io`,
     text,
     html,

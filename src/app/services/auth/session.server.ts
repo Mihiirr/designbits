@@ -48,7 +48,7 @@ async function sendToken({
   })
 
   await sendMagicLinkEmail({
-    email: email,
+    emailAddress: email,
     magicLink,
     user,
     domainUrl,

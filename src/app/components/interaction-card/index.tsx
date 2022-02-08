@@ -46,13 +46,26 @@ export default function InteractionCard({
                   to={`/interaction/${article.slug}`}
                   prefetch="intent"
                 >
-                  <img
+                  <video
+                    loop
+                    muted
+                    playsInline
                     className={classNames(
                       article.backgroundColorClass || "bg-gray-800",
                       "w-full h-full opacity-50 group-hover:opacity-100 object-cover object-center",
                     )}
-                    src={ASSETS_CDN_LINK + article.previewUrl}
-                  />
+                    onMouseOver={event =>
+                      (event.target as HTMLVideoElement).play()
+                    }
+                    onMouseOut={event =>
+                      (event.target as HTMLVideoElement).pause()
+                    }
+                  >
+                    <source
+                      src={ASSETS_CDN_LINK + article.previewUrl}
+                      type="video/webm"
+                    />
+                  </video>
                   <div className="absolute top-0 p-3 w-full h-full bg-gradient-to-b group-hover:bg-none from-gray-800 via-transparent transition-transform group-hover:-translate-y-full">
                     <Link
                       to="/test"
