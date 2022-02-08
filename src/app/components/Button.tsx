@@ -7,7 +7,7 @@ const variantProps = {
   },
   secondary: {
     className:
-      "inline-flex items-center py-2 px-4 text-sm font-medium text-gray-800 bg-gray-100 hover:bg-slate-100 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-gary-200 focus:ring-offset-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed",
+      "inline-flex w-full items-center justify-center shadow-md py-2 px-4 text-sm font-medium text-gray-800 bg-gray-50 hover:bg-slate-100 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-gary-200 focus:ring-offset-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed",
   },
 }
 

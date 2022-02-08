@@ -1,5 +1,6 @@
 import {
   Form,
+  HeadersFunction,
   json,
   LoaderFunction,
   MetaFunction,
@@ -12,7 +13,11 @@ import AuthLayout from "~/components/AuthLayout"
 import { z, ZodError } from "zod"
 import { RequireAtLeastOne } from "type-fest"
 import { getLoginInfoSession } from "~/services/auth/login.server"
-import { getDomainUrl, getErrorMessage } from "~/utils/misc"
+import {
+  getDomainUrl,
+  getErrorMessage,
+  reuseUsefulLoaderHeaders,
+} from "~/utils/misc"
 import { getUser, sendToken } from "~/services/auth/session.server"
 import { useRef, useState } from "react"
 import Button from "~/components/Button"
@@ -43,6 +48,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   if (user) return redirect("/explore/all")
 
   const loginSession = await getLoginInfoSession(request)
+  console.log(loginSession, loginSession.getEmail())
 
   const data: LoaderData = {
     email: loginSession.getEmail(),
@@ -176,7 +182,7 @@ const Login = () => {
               ) : data.email ? (
                 <p
                   id="success-message"
-                  className="text-lg text-gray-500 dark:text-blueGray-500"
+                  className="text-lg text-gray-500 dark:text-slate-500"
                 >
                   <span role="img" aria-label="sparkles">
                     ✨
@@ -197,6 +203,8 @@ const Login = () => {
     />
   )
 }
+
+export const headers: HeadersFunction = reuseUsefulLoaderHeaders
 
 export const meta: MetaFunction = () => {
   return {
