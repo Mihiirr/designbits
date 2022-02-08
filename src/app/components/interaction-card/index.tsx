@@ -5,6 +5,8 @@ import { Link } from "remix"
 import type { Post, Source, User } from "@prisma/client"
 import { motion } from "framer-motion"
 import { ASSETS_CDN_LINK } from "~/utils/constants"
+import { formatDistanceToNow } from "date-fns"
+import { enUS } from "date-fns/locale"
 
 type InteractionData = Post & {
   Source: Source
@@ -99,7 +101,13 @@ export default function InteractionCard({
                   <span>{article.CreatedBy.name}</span>
                 </a>
                 <span>&middot;</span>
-                <span>6 hrs ago</span>
+                <span>
+                  {formatDistanceToNow(new Date(article.createdAt), {
+                    locale: enUS,
+                    includeSeconds: true,
+                    addSuffix: true,
+                  })}
+                </span>
                 <span>&middot;</span>
                 <span>{"6k"}</span>
               </div>
