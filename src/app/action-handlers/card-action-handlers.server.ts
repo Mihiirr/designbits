@@ -4,10 +4,10 @@ import { db } from "~/services/db/client.server"
 import { LikeActionSchema } from "~/services/validations/action-schemas.server"
 import { ActionFormData } from "~/types/utilities"
 import { handleFormSubmission } from "~/utils/actions.server"
-import { ProtectedActionFunction } from "~/utils/api-handler.server"
+import { ProtectedActionFunction } from "~/utils/api-handler"
 import { successResponse } from "~/utils/response-helpers.server"
 
-export const handlePostRealtedActions: ProtectedActionFunction = async ({
+export const handlePostRelatedActions: ProtectedActionFunction = async ({
   request,
   user,
 }) => {

@@ -39,7 +39,7 @@ const isProtectedRouteHandler = (
   return handler.protect
 }
 
-export default function apiHandler(
+export function apiHandler(
   handlers: Partial<
     Record<
       HTTP_METHODS,

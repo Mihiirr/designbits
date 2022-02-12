@@ -6,7 +6,7 @@ import {
   MetaFunction,
   useLoaderData,
 } from "remix"
-import { handlePostRealtedActions } from "~/action-handlers/card-action-handlers.server"
+import { handlePostRelatedActions } from "~/action-handlers/card-action-handlers.server"
 import { navItems } from "~/components/CategoriesNav"
 import InteractionCard from "~/components/Post"
 import { getLoggedInUser } from "~/services/auth/session.server"
@@ -15,7 +15,7 @@ import {
   FormattedInteractionsPostData,
 } from "~/services/db/formatters.server"
 import { findInteractionsForCategory } from "~/services/db/queries/post.server"
-import apiHandler from "~/utils/api-handler.server"
+import { apiHandler } from "~/utils/api-handler"
 
 interface Props {}
 
@@ -42,7 +42,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
 export const action: ActionFunction = apiHandler({
   POST: {
-    handler: handlePostRealtedActions,
+    handler: handlePostRelatedActions,
     protect: true,
     allowedRoles: [UserRole.USER],
   },
