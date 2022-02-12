@@ -5,6 +5,8 @@ import {
   RelatedUserModel,
   CompleteSource,
   RelatedSourceModel,
+  CompletePostReaction,
+  RelatedPostReactionModel,
   CompleteVideoSource,
   RelatedVideoSourceModel,
 } from "./index"
@@ -24,6 +26,7 @@ export const PostModel = z.object({
 export interface CompletePost extends Post {
   CreatedBy: CompleteUser
   Source: CompleteSource
+  PostReactions: CompletePostReaction[]
   VideoSources: CompleteVideoSource[]
 }
 
@@ -36,6 +39,7 @@ export const RelatedPostModel: z.ZodSchema<CompletePost> = z.lazy(() =>
   PostModel.extend({
     CreatedBy: RelatedUserModel,
     Source: RelatedSourceModel,
+    PostReactions: RelatedPostReactionModel.array(),
     VideoSources: RelatedVideoSourceModel.array(),
   }),
 )

@@ -1,40 +1,52 @@
-import type { Post, Source, User } from "@prisma/client"
+import { UserRole } from "@prisma/client"
 import groupBy from "lodash.groupby"
-import { LoaderFunction, MetaFunction, useLoaderData } from "remix"
+import {
+  ActionFunction,
+  LoaderFunction,
+  MetaFunction,
+  useLoaderData,
+} from "remix"
+import { handlePostRealtedActions } from "~/action-handlers/card-action-handlers.server"
 import { navItems } from "~/components/CategoriesNav"
-import InteractionCard from "~/components/interaction-card"
-import { db } from "~/services/db/client.server"
+import InteractionCard from "~/components/Post"
+import { getLoggedInUser } from "~/services/auth/session.server"
+import {
+  formatInteractionData,
+  FormattedInteractionsPostData,
+} from "~/services/db/formatters.server"
+import { findInteractionsForCategory } from "~/services/db/queries/post.server"
+import apiHandler from "~/utils/api-handler.server"
 
 interface Props {}
 
-type InteractionData = Post & {
-  Source: Source
-  CreatedBy: User
-} & {
-  backgroundColorClass: string
-}
-
 interface LoaderData {
   category: string
-  interactions: InteractionData[]
+  interactions: FormattedInteractionsPostData[]
 }
 
 const categoryMap = groupBy(navItems, "id")
 
-export let loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ params, request }) => {
   const categoryId = params.category
   if (!categoryId) {
     return
   }
+  const user = await getLoggedInUser(request)
 
-  const data = await db.post.findMany({
-    include: {
-      Source: true,
-      CreatedBy: true,
-    },
-  })
-  return { category: categoryMap[categoryId][0].name, interactions: data }
+  const interactions = formatInteractionData(
+    await findInteractionsForCategory({ userId: user?.id }),
+  )
+
+  return { category: categoryMap[categoryId][0].name, interactions }
 }
+
+export const action: ActionFunction = apiHandler({
+  POST: {
+    handler: handlePostRealtedActions,
+    protect: true,
+    allowedRoles: [UserRole.USER],
+  },
+})
 
 const CategoryPage: React.FC<Props> = () => {
   const { category, interactions } = useLoaderData<LoaderData>()

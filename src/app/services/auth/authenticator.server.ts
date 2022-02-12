@@ -5,7 +5,7 @@ import { db } from "~/services/db/client.server"
 import { sessionStorage } from "./session.server"
 import { getRequiredServerEnvVar } from "~/utils/env"
 // import { EmailLinkStrategy } from "remix-auth-email-link"
-import { getUserByEmail } from "../db/query-db.server"
+import { getUserByEmail } from "~/services/db/queries/query-db.server"
 // import { sendMagicLinkEmail } from "../email/email.server"
 
 export let authenticator = new Authenticator<User | null>(sessionStorage)

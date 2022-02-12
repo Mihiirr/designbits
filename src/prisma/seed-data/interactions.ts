@@ -53,7 +53,7 @@ export default function getPosts() {
       media: {
         videoMp4: "github-watch-dropdown.mp4",
         videoWebM: "github-watch-dropdown.webm",
-        preview: "github-watch-dropdown.gif",
+        preview: "github-watch-dropdown.webm",
       },
       description:
         "Platformas like Github that handles complex and large amount of data often need to keep that interface compact with more nested approach. Eg., Photoshop, After effects, editors, etc. In such scarios, github's nested dropdown aviation is quite smooth and clean. Cognitively easy. Is this pattern actually good? Or such complexity can be avoided/handled in a better way.",
@@ -78,7 +78,7 @@ export default function getPosts() {
       media: {
         videoMp4: "codepen-pane-expand-collapse.mp4",
         videoWebM: "codepen-pane-expand-collapse.webm",
-        preview: "codepen-pane-expand-collapse.gif",
+        preview: "codepen-pane-expand-collapse.webm",
       },
       description:
         "Most unique way of expanding and collapsing panes. That transition of title is really brave. Love when tools still try to break the ideal design.",

@@ -1,20 +1,46 @@
 import { createCookieSessionStorage, redirect } from "remix"
 import type { User } from "@prisma/client"
-import {
-  getUserByEmail,
-  getUserFromSessionId,
-  createSession,
-} from "~/services/db/query-db.server"
-import { getLoginInfoSession } from "./login.server"
+import { getUserByEmail } from "~/services/db/queries/query-db.server"
+import { getLoginInfoSession } from "~/services/auth/login.server"
 import { getRequiredServerEnvVar } from "~/utils/env"
-import { sendMagicLinkEmail } from "../email/email.server"
+import { sendMagicLinkEmail } from "~/services/email/email.server"
 import { db } from "~/services/db/client.server"
-import { getMagicLink, validateMagicLink } from "../db/magic-link.server"
+import {
+  getMagicLink,
+  validateMagicLink,
+} from "~/services/db/magic-link.server"
 import { LoginFields } from "~/types/auth"
+import {
+  createSession,
+  deleteSession,
+  findSession,
+  updateSession,
+} from "~/services/db/queries/session.server"
 
 const sessionIdKey = "__session_id__"
 
 export const sessionExpirationTime = 1000 * 60 * 60 * 24 * 365
+
+async function getUserFromSessionId(sessionId: string) {
+  const session = await findSession(sessionId)
+  if (!session) {
+    throw new Error("No user found")
+  }
+
+  if (Date.now() > session.expirationDate.getTime()) {
+    await deleteSession(sessionId)
+    throw new Error("Session expired. Please request a new magic link.")
+  }
+
+  // if there's less than ~six months left, extend the session
+  const twoWeeks = 1000 * 60 * 60 * 24 * 30 * 6
+  if (Date.now() + twoWeeks > session.expirationDate.getTime()) {
+    const newExpirationDate = new Date(Date.now() + sessionExpirationTime)
+    await updateSession(newExpirationDate, sessionId)
+  }
+
+  return session.User
+}
 
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
@@ -54,6 +80,12 @@ async function sendToken({
     domainUrl,
   })
   return magicLink
+}
+
+async function getLoggedInUser(request: Request): Promise<User | null> {
+  const session = await getSession(request)
+  const user = await session.getUser()
+  return user
 }
 
 async function getSession(request: Request) {
@@ -190,4 +222,5 @@ export {
   requireAdminUser,
   getUser,
   sendToken,
+  getLoggedInUser,
 }

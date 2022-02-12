@@ -16,7 +16,8 @@ import { validateMagicLink } from "~/services/db/magic-link.server"
 import { db } from "~/services/db/client.server"
 import SignUpForm from "~/components/auth/SignUpForm"
 import { z } from "zod"
-import { SignUpSchema } from "~/services/validations/auth-schema.server"
+import { SignUpSchema } from "~/services/validations/action-schemas.server"
+import { ActionFormData } from "~/types/utilities"
 
 type SignUpFormFields = z.infer<typeof SignUpSchema>
 
@@ -38,14 +39,8 @@ const actionIds = {
 export const action: ActionFunction = async ({ request }) => {
   const loginInfoSession = await getLoginInfoSession(request)
 
-  const requestText = await request.text()
-  const form = new URLSearchParams(requestText)
-  if (form.get("actionId") === actionIds.cancel) {
-    loginInfoSession.clean()
-    return redirect("/", {
-      headers: await loginInfoSession.getHeaders(),
-    })
-  }
+  const formData = await request.formData()
+  const form = Object.fromEntries(formData) as ActionFormData
 
   const session = await getSession(request)
   const magicLink = loginInfoSession.getMagicLink()

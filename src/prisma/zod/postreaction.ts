@@ -1,15 +1,22 @@
 import * as z from "zod"
 import { PostReaction, PostReactionTypes } from "@prisma/client"
-import { CompleteUser, RelatedUserModel } from "./index"
+import {
+  CompletePost,
+  RelatedPostModel,
+  CompleteUser,
+  RelatedUserModel,
+} from "./index"
 
 export const PostReactionModel = z.object({
   id: z.string(),
+  postId: z.string(),
   reaction: z.nativeEnum(PostReactionTypes),
   reactedBy: z.string(),
   viewedAt: z.date(),
 })
 
 export interface CompletePostReaction extends PostReaction {
+  Post: CompletePost
   ReactedBy: CompleteUser
 }
 
@@ -21,6 +28,7 @@ export interface CompletePostReaction extends PostReaction {
 export const RelatedPostReactionModel: z.ZodSchema<CompletePostReaction> =
   z.lazy(() =>
     PostReactionModel.extend({
+      Post: RelatedPostModel,
       ReactedBy: RelatedUserModel,
     }),
   )

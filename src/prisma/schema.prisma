@@ -61,18 +61,19 @@ model Follower {
 }
 
 model Post {
-  id           String        @id @default(cuid())
-  title        String
-  slug         String        @unique
-  createdById  String
-  createdAt    DateTime      @default(now())
-  modifiedAt   DateTime      @default(now())
-  CreatedBy    User          @relation(fields: [createdById], references: [id])
-  Source       Source        @relation(fields: [sourceId], references: [id])
-  sourceId     String
-  previewUrl   String
-  description  String        @db.MediumText
-  VideoSources VideoSource[]
+  id            String         @id @default(cuid())
+  title         String
+  slug          String         @unique
+  createdById   String
+  createdAt     DateTime       @default(now())
+  modifiedAt    DateTime       @default(now())
+  CreatedBy     User           @relation(fields: [createdById], references: [id])
+  Source        Source         @relation(fields: [sourceId], references: [id])
+  sourceId      String
+  previewUrl    String
+  description   String         @db.MediumText
+  PostReactions PostReaction[]
+  VideoSources  VideoSource[]
 }
 
 model VideoSource {
@@ -92,7 +93,7 @@ model Source {
 }
 
 model PostView {
-  id       String   @id
+  id       String   @id @default(cuid())
   viewedBy String   @map("userId")
   viewedAt DateTime @default(now())
   ViewedBy User     @relation(fields: [viewedBy], references: [id], onDelete: Cascade)
@@ -104,7 +105,9 @@ enum PostReactionTypes {
 }
 
 model PostReaction {
-  id        String            @id
+  id        String            @id @default(cuid())
+  postId    String
+  Post      Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
   reaction  PostReactionTypes @default(LIKE)
   reactedBy String            @map("userId")
   viewedAt  DateTime          @default(now())
