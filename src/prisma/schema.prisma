@@ -112,6 +112,8 @@ model PostReaction {
   reactedBy String            @map("userId")
   viewedAt  DateTime          @default(now())
   ReactedBy User              @relation(fields: [reactedBy], references: [id], onDelete: Cascade)
+
+  @@unique([postId, reactedBy])
 }
 
 model Session {

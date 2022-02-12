@@ -11,10 +11,9 @@ const InteractionCardBtn: React.FC<Props> = ({ postId, value, children }) => {
   return (
     <Form method="post">
       <input type="hidden" name="postId" value={postId} />
+      <input type="hidden" name="_action" value={value} />
       <button
         type="submit"
-        name="_action"
-        value={value}
         className="flex items-center py-0.5 px-1 space-x-1 hover:text-indigo-500 focus:text-indigo-500 hover:bg-indigo-50 focus:bg-indigo-50 rounded-sm"
       >
         {children}

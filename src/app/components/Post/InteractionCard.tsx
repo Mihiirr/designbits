@@ -18,6 +18,7 @@ type Props = {
 
 export enum CARD_ACTIONS {
   LIKE = "like",
+  UNDO_LIKE = "undo_like",
   COMMENT = "comment",
 }
 
@@ -100,7 +101,14 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
         <span>{"6k"}</span>
       </div>
       <div className="flex mt-2 space-x-4 text-xs text-gray-500">
-        <PostButton postId={post.id} value={CARD_ACTIONS.LIKE}>
+        <PostButton
+          postId={post.id}
+          value={
+            post.reactedByLoggedInUser
+              ? CARD_ACTIONS.UNDO_LIKE
+              : CARD_ACTIONS.LIKE
+          }
+        >
           <LikeIcon
             height={16}
             width={16}

@@ -12,6 +12,18 @@ export function successResponse(data: any) {
   )
 }
 
+export function badRequestResponse(data: any) {
+  return json(
+    {
+      ok: false,
+      ...data,
+    },
+    {
+      status: 400,
+    },
+  )
+}
+
 export function unAuthorizedResponse(data: any) {
   return json(
     {

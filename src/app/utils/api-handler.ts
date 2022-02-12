@@ -82,7 +82,10 @@ export function apiHandler(
         return routeHandler.handler({ request, params, context })
       }
 
-      return protectAPIRoute(routeHandler.handler, routeHandler.allowedRoles)
+      return protectAPIRoute(
+        routeHandler.handler,
+        routeHandler.allowedRoles,
+      )({ request, params, context })
     } catch (err) {
       // global error handler
       return errorHandler(err)
