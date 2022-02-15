@@ -1,17 +1,21 @@
-import { Outlet, useCatch } from "remix"
+import { LoaderFunction, Outlet, useCatch, useLoaderData } from "remix"
 import type { LinksFunction } from "remix"
 import React from "react"
 import { useSpinDelay } from "spin-delay"
 
 import tailwindStyles from "~/styles/tailwind.css"
+import videoStyles from "~/styles/video.css"
 import Layout from "~/components/Layout"
 import Link from "~/components/Link"
 import Document from "~/components/common/Document"
-import { getThemeSession } from "~/utils/theme.server"
 import { useTransition } from "remix"
 import { NotificationMessage } from "./components/NotificationMessage"
 import { AnimatePresence, motion } from "framer-motion"
 import Spinner from "./components/Spinner"
+import { getLoggedInUser } from "./services/auth/session.server"
+import { successResponse } from "./utils/response-helpers.server"
+import { User } from "@prisma/client"
+import { RootContextProvider } from "./context/root"
 
 const LOADER_WORDS = [
   "loading",
@@ -40,7 +44,7 @@ function PageLoadingMessage() {
   const [words, setWords] = React.useState<Array<string>>([])
   const [pendingPath, setPendingPath] = React.useState("")
   const showLoader = useSpinDelay(Boolean(transition.state !== "idle"), {
-    delay: 400,
+    delay: 1000,
     minDuration: 1000,
   })
 
@@ -123,19 +127,39 @@ export const links: LinksFunction = () => {
     },
     {
       rel: "stylesheet",
+      href: videoStyles,
+    },
+    {
+      rel: "stylesheet",
       href: "/fonts/wotfard/wotfard-font.css",
     },
   ]
 }
 
+export const loader: LoaderFunction = async ({ request }) => {
+  const user = await getLoggedInUser(request)
+  return successResponse({ user })
+}
+
+interface SuccessResponse {
+  ok: boolean
+}
+interface LoaderData extends SuccessResponse {
+  user: User | null
+}
+
 // https://remix.run/api/conventions#default-export
 // https://remix.run/api/conventions#route-filenames
 export default function App() {
+  const loaderData = useLoaderData<LoaderData>()
+  const rootContextData = { user: loaderData.user }
   return (
-    <Document>
-      <PageLoadingMessage></PageLoadingMessage>
-      <Outlet />
-    </Document>
+    <RootContextProvider initState={rootContextData}>
+      <Document>
+        <PageLoadingMessage></PageLoadingMessage>
+        <Outlet />
+      </Document>
+    </RootContextProvider>
   )
 }
 
@@ -186,7 +210,7 @@ export function CatchBoundary() {
   return (
     <Document title={`${caught.status} ${caught.statusText}`}>
       <Layout>
-        <div className="py-16 px-4 my-auto mx-auto min-h-full bg-white sm:py-24 sm:px-6 md:grid md:place-items-center lg:px-8">
+        <div className="py-16 px-4 m-auto min-h-full bg-white sm:py-24 sm:px-6 md:grid md:place-items-center lg:px-8">
           <div className="mx-auto max-w-max">
             <main className="sm:flex">
               <p className="text-4xl font-extrabold text-indigo-600 sm:text-5xl">

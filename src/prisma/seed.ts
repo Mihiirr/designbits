@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client"
-import pProps from "p-props"
 import getPosts from "./seed-data/interactions"
 import { uploadToS3 } from "./seed-data/upload"
 
@@ -7,6 +6,8 @@ const db = new PrismaClient()
 
 async function seed() {
   const postsData = getPosts()
+  const { default: pProps } = await import("p-props")
+
   await Promise.all(
     postsData.map(async post => {
       const { title, slug, media, Source, CreatedBy, description } = post

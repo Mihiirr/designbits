@@ -8,6 +8,7 @@ import { formatDistanceToNow } from "date-fns"
 import { enUS } from "date-fns/locale"
 import PostButton from "./PostButton"
 import { FormattedInteractionsPostData } from "~/services/db/formatters.server"
+import VideoPlayer from "./VideoPlayer"
 
 type Props = {
   post: FormattedInteractionsPostData & {
@@ -46,19 +47,10 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
           to={`/interaction/${post.slug}`}
           prefetch="intent"
         >
-          <video
-            loop
-            muted
-            playsInline
-            className={classNames(
-              post.backgroundColorClass || "bg-gray-800",
-              "w-full h-full opacity-50 group-hover:opacity-100 object-cover object-center",
-            )}
-            onMouseOver={event => (event.target as HTMLVideoElement).play()}
-            onMouseOut={event => (event.target as HTMLVideoElement).pause()}
-          >
-            <source src={ASSETS_CDN_LINK + post.previewUrl} type="video/webm" />
-          </video>
+          <VideoPlayer
+            src={ASSETS_CDN_LINK + post.previewUrl}
+            backgroundColorClass={post.backgroundColorClass}
+          />
           <div className="absolute top-0 p-3 w-full h-full bg-gradient-to-b group-hover:bg-none from-gray-800 via-transparent transition-transform group-hover:-translate-y-full">
             <Link
               to="/test"
@@ -114,7 +106,7 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
             width={16}
             variant={post.reactedByLoggedInUser ? "filled" : "outline"}
           />
-          <span>{post._count.PostReactions}</span>
+          <span>{post.reactionsCount}</span>
         </PostButton>
         <PostButton postId={post.id} value={CARD_ACTIONS.COMMENT}>
           <CommentIcon height={16} width={16} />

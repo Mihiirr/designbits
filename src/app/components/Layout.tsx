@@ -1,4 +1,4 @@
-import { Disclosure, Menu, Transition } from "@headlessui/react"
+import { Disclosure } from "@headlessui/react"
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline"
 import { Fragment } from "react"
 import DesignBitsLogo from "./Logo"
@@ -12,13 +12,15 @@ import SearchBox from "./SearchBox"
 import Button from "./Button"
 import UploadIcon from "./icons/Upload"
 import { NavLink } from "remix"
+import { useRootContext } from "~/context/root"
+import ProfileDropdown from "./NavBar/ProfileDropdown"
+import { RemixLinkProps } from "@remix-run/react/components"
 
-const user = {
-  name: "Tom Cook",
-  email: "tom@example.com",
-  imageUrl:
-    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-}
+const userNavigation: {
+  name: string
+  href: string
+  prefetch?: RemixLinkProps["prefetch"]
+}[] = [{ name: "Sign out", href: "/auth/logout", prefetch: "none" }]
 
 const iconProps = {
   height: "24",
@@ -40,13 +42,10 @@ const navigation = [
   },
 ]
 
-const userNavigation = [
-  { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
-  { name: "Sign out", href: "#" },
-]
-
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const {
+    rootState: { user },
+  } = useRootContext()
   return (
     <>
       <div className="min-h-full bg-white dark:bg-gray-900">
@@ -87,53 +86,30 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   </div>
                   <div className="hidden space-x-6 sm:flex sm:items-center sm:ml-6">
                     <SearchBox />
-                    <Button>
-                      <div className="flex space-x-2">
-                        <UploadIcon />
-                        <span>Upload</span>
-                      </div>
-                    </Button>
-
-                    {/* Profile dropdown */}
-                    <Menu as="div" className="relative">
-                      <div>
-                        <Menu.Button className="flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                          <span className="sr-only">Open user menu</span>
-                          <img
-                            className="w-8 h-8 rounded-full"
-                            src={user.imageUrl}
-                            alt=""
-                          />
-                        </Menu.Button>
-                      </div>
-                      <Transition
-                        as={Fragment}
-                        enter="transition ease-out duration-200"
-                        enterFrom="transform opacity-0 scale-95"
-                        enterTo="transform opacity-100 scale-100"
-                        leave="transition ease-in duration-75"
-                        leaveFrom="transform opacity-100 scale-100"
-                        leaveTo="transform opacity-0 scale-95"
+                    {user ? (
+                      <>
+                        <Button>
+                          <div className="flex space-x-2">
+                            <UploadIcon />
+                            <span>Upload</span>
+                          </div>
+                        </Button>
+                        <ProfileDropdown
+                          user={user}
+                          navigationMenu={userNavigation}
+                        />
+                      </>
+                    ) : (
+                      <Link
+                        to="/auth/login"
+                        prefetch="intent"
+                        className="flex items-center py-2 px-4 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <Menu.Items className="absolute right-0 py-1 mt-2 w-48 bg-white rounded-md focus:outline-none ring-1 ring-black shadow-lg origin-top-right ring-opacity-5">
-                          {userNavigation.map(item => (
-                            <Menu.Item key={item.name}>
-                              {({ active }) => (
-                                <a
-                                  href={item.href}
-                                  className={classNames(
-                                    active ? "bg-gray-100" : "",
-                                    "block px-4 py-2 text-gray-700 text-sm",
-                                  )}
-                                >
-                                  {item.name}
-                                </a>
-                              )}
-                            </Menu.Item>
-                          ))}
-                        </Menu.Items>
-                      </Transition>
-                    </Menu>
+                        <div className="flex space-x-2">
+                          <span>Login</span>
+                        </div>
+                      </Link>
+                    )}
                   </div>
                   <div className="flex items-center -mr-2 sm:hidden">
                     {/* Mobile menu button */}
@@ -179,10 +155,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </div>
                     <div className="ml-3">
                       <div className="text-base font-medium text-gray-800">
-                        {user.name}
+                        {user?.name}
                       </div>
                       <div className="text-sm font-medium text-gray-500">
-                        {user.email}
+                        {user?.email}
                       </div>
                     </div>
                     <button

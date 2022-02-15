@@ -9,7 +9,7 @@ const SearchBox = (props: Props) => {
       <label htmlFor="search" className="sr-only">
         Quick search
       </label>
-      <div className="flex relative items-center mt-1 text-gray-400">
+      <div className="flex relative items-center text-gray-400">
         <div className="flex absolute inset-y-0 left-0 items-center py-1.5 pl-2">
           <SearchIcon height="20" width="20" role="presentation" />
         </div>

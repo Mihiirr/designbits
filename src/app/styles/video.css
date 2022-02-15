@@ -1,0 +1,69 @@
+progress[value] {
+  appearance: none;
+  border: none;
+  border-radius: 3px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25) inset;
+  color: dodgerblue;
+  order: 1;
+  width: 100%;
+}
+
+/* WebKit styles */
+progress[value]::-webkit-progress-bar {
+  background-color: whitesmoke;
+}
+
+progress[value]::-webkit-progress-value {
+  background-image: linear-gradient(
+    to right,
+    rgb(16, 160, 173),
+    rgb(0, 160, 182),
+    rgb(0, 160, 191),
+    rgb(0, 159, 200),
+    rgb(0, 158, 209),
+    rgb(0, 156, 217),
+    rgb(0, 154, 224),
+    rgb(0, 151, 230),
+    rgb(51, 147, 234),
+    rgb(81, 143, 237),
+    rgb(106, 138, 238),
+    rgb(130, 133, 236),
+    rgb(151, 126, 233),
+    rgb(171, 119, 227),
+    rgb(190, 110, 219),
+    rgb(207, 101, 208),
+    rgb(222, 91, 196),
+    rgb(235, 81, 182),
+    rgb(246, 71, 166),
+    rgb(255, 62, 149)
+  );
+  transition: width 300ms linear;
+}
+
+/* Firefox styles */
+progress[value]::-moz-progress-bar {
+  background-image: linear-gradient(
+    to right,
+    rgb(16, 160, 173),
+    rgb(0, 160, 182),
+    rgb(0, 160, 191),
+    rgb(0, 159, 200),
+    rgb(0, 158, 209),
+    rgb(0, 156, 217),
+    rgb(0, 154, 224),
+    rgb(0, 151, 230),
+    rgb(51, 147, 234),
+    rgb(81, 143, 237),
+    rgb(106, 138, 238),
+    rgb(130, 133, 236),
+    rgb(151, 126, 233),
+    rgb(171, 119, 227),
+    rgb(190, 110, 219),
+    rgb(207, 101, 208),
+    rgb(222, 91, 196),
+    rgb(235, 81, 182),
+    rgb(246, 71, 166),
+    rgb(255, 62, 149)
+  );
+  transition: width 300ms linear;
+}
