@@ -21,28 +21,89 @@ It is generally recommended to use a Git repository, because future commits will
 then automatically be deployed by Vercel, through its
 [Git Integration](https://vercel.com/docs/concepts/git).
 
-## Development
+# Install yarn
 
-To run your Remix app locally, make sure your project's local dependencies are
-installed:
-
-```sh
-npm install
-```
-
-Afterwards, start the Remix development server like so:
+`Step:1` We are using yarn package manager so install yarn using. if you're
+using it already then skip this step:
 
 ```sh
-npm run dev
+npm install -g yarn
 ```
 
-Open up [http://localhost:3000](http://localhost:3000) and you should be ready
-to go!
+`Step:2` Install all dependencies:
 
-If you're used to using the `vercel dev` command provided by
-[Vercel CLI](https://vercel.com/cli) instead, you can also use that, but it's
-not needed.
+```sh
+yarn install
+```
 
-# Install PlanetScale CLI
+# Install PlanetScale CLI - Windows
 
-https://planetscale.com/cli
+`Step:3` Make sure PowerShell 5 (or later, include PowerShell Core) and .NET
+Framework 4.5 (or later) are installed. Then run:
+
+```sh
+Invoke-Expression (New-ObjectSystem.Net.WebClient).DownloadString('https://get.scoop.sh')
+```
+
+Note: if you get an error you might need to change the execution policy (i.e.
+enable Powershell) with below code and run again step:1
+
+```sh
+Set-ExecutionPolicy RemoteSigned -scope CurrentUser
+```
+
+`Step:4` Scoop installs the tools you know and love:
+
+```sh
+scoop install curl
+```
+
+`Step:5`
+
+```sh
+scoop bucket add pscale https://github.com/planetscale/scoop-bucket.git
+```
+
+`Step:6` Install pscale:
+
+```sh
+scoop install pscale
+```
+
+To upgrade to the latest version:
+
+```sh
+scoop update pscale
+```
+
+`Step:7` Verify that you're using the latest version:
+
+```sh
+pscale version
+```
+
+# Connect database
+
+`Step:8` Generate prisma client:
+
+```sh
+yarn prisma:generate
+```
+
+If this throws error run:
+
+```sh
+npx prisma generate
+```
+
+`Step:9` Connect database using:
+
+```sh
+yarn connect:database:develop
+```
+
+# Run locally
+
+```sh
+yarn dev
+```

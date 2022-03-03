@@ -14,9 +14,19 @@ import InteractionFeedback from "~/components/InteractionFeedback"
 import Layout from "~/components/Layout"
 import { db } from "~/services/db/client.server"
 import { ASSETS_CDN_LINK } from "~/utils/constants"
+import { getLoggedInUser } from "~/services/auth/session.server"
+import {
+  formatInteractionData,
+  FormattedInteractionsPostData,
+} from "~/services/db/formatters.server"
+import { findInteractionsForCategory } from "~/services/db/queries/post.server"
 const sourcePriority = ["video/webm", "video/mp4"]
 
-export let loader: LoaderFunction = async ({ params }) => {
+interface LoaderData {
+  interactions: FormattedInteractionsPostData[]
+}
+
+export let loader: LoaderFunction = async ({ params, request }) => {
   const postId = params.id
 
   const data = await db.post.findUnique({
@@ -32,9 +42,14 @@ export let loader: LoaderFunction = async ({ params }) => {
   const videoSourcesSorted = data?.VideoSources.sort(function (a, b) {
     return sourcePriority.indexOf(a.type) - sourcePriority.indexOf(b.type)
   })
+  const user = await getLoggedInUser(request)
+  const interactions = formatInteractionData(
+    await findInteractionsForCategory({ userId: user?.id }),
+  )
   return {
     ...data,
     VideoSources: videoSourcesSorted,
+    interactions,
   }
 }
 
@@ -46,6 +61,9 @@ type PostData = Post & {
 
 const Interaction = () => {
   const postData = useLoaderData<PostData>()
+  const { interactions } = useLoaderData<LoaderData>()
+
+  const currentInteraction = interactions.find(x => x.title === postData.title)
 
   return (
     <Layout>
@@ -64,8 +82,16 @@ const Interaction = () => {
             </div>
             <div className="flex space-x-4">
               <button className="flex py-2 px-4 space-x-2 text-gray-800 rounded-lg border border-gray-200">
-                <LikeIcon height="24" width="24" />
-                <span>{256}</span>
+                <LikeIcon
+                  height="24"
+                  width="24"
+                  variant={
+                    currentInteraction?.reactedByLoggedInUser
+                      ? "filled"
+                      : "outline"
+                  }
+                />
+                <span>{currentInteraction?.reactionsCount}</span>
               </button>
               <button className="flex p-2 space-x-2 text-gray-800 rounded-lg border border-gray-200">
                 <CollectionIcon height="24" width="24" />
