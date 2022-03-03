@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient, WatchReason } from "@prisma/client"
 import getPosts from "./seed-data/interactions"
 import { uploadToS3 } from "./seed-data/upload"
 
@@ -21,7 +21,7 @@ async function seed() {
           "profile-pictures",
         ),
       })
-      return db.post.create({
+      const createdPost = await db.post.create({
         data: {
           title,
           slug,
@@ -53,6 +53,15 @@ async function seed() {
           previewUrl: uploadedMedia.preview.Key,
         },
       })
+
+      const watchList = await db.watchlist.create({
+        data: {
+          userId: createdPost.createdById,
+          postId: createdPost.id,
+          watchReason: WatchReason.CREATED,
+        },
+      })
+      return { createdPost, watchList }
     }),
   )
 }

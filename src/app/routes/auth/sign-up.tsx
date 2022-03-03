@@ -17,7 +17,7 @@ import { db } from "~/services/db/client.server"
 import SignUpForm from "~/components/auth/SignUpForm"
 import { z } from "zod"
 import { SignUpSchema } from "~/services/validations/action-schemas.server"
-import { ActionFormData } from "~/types/utilities"
+import { CardActionFormData } from "~/types/utilities"
 
 type SignUpFormFields = z.infer<typeof SignUpSchema>
 
@@ -40,7 +40,7 @@ export const action: ActionFunction = async ({ request }) => {
   const loginInfoSession = await getLoginInfoSession(request)
 
   const formData = await request.formData()
-  const form = Object.fromEntries(formData) as ActionFormData
+  const form = Object.fromEntries(formData) as CardActionFormData
 
   const session = await getSession(request)
   const magicLink = loginInfoSession.getMagicLink()

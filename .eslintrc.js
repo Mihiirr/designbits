@@ -37,5 +37,6 @@ module.exports = {
 
     // for CatchBoundaries
     "@typescript-eslint/no-throw-literal": "off",
+    "tailwindcss/classnames-order": "off",
   },
 }

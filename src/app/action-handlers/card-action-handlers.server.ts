@@ -1,10 +1,10 @@
 import { PostReactionTypes } from "@prisma/client"
-import { CARD_ACTIONS } from "~/components/Post/InteractionCard"
 import { db } from "~/services/db/client.server"
 import { LikeActionSchema } from "~/services/validations/action-schemas.server"
-import { ActionFormData } from "~/types/utilities"
+import { CardActionFormData } from "~/types/utilities"
 import { handleFormSubmission } from "~/utils/actions.server"
 import { ProtectedActionFunction } from "~/utils/api-handler"
+import { CARD_ACTIONS } from "~/utils/constants"
 import {
   badRequestResponse,
   successResponse,
@@ -17,7 +17,7 @@ export const handlePostRelatedActions: ProtectedActionFunction = async ({
   const formData = await request.formData()
   const { _action, ...formValues } = Object.fromEntries(
     formData,
-  ) as ActionFormData
+  ) as CardActionFormData
 
   console.log({ _action, formValues })
 

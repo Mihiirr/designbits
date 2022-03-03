@@ -5,6 +5,7 @@ import { useSpinDelay } from "spin-delay"
 
 import tailwindStyles from "~/styles/tailwind.css"
 import videoStyles from "~/styles/video.css"
+
 import Layout from "~/components/Layout"
 import Link from "~/components/Link"
 import Document from "~/components/common/Document"
@@ -75,16 +76,16 @@ function PageLoadingMessage() {
 
   return (
     <NotificationMessage position="bottom-right" visible={showLoader}>
-      <div className="flex items-center w-64">
+      <div className="flex w-64 items-center">
         <motion.div
           transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
           animate={{ rotate: 360 }}
         >
           <Spinner height={48} width={48} />
         </motion.div>
-        <div className="inline-grid ml-4">
+        <div className="ml-4 inline-grid">
           <AnimatePresence>
-            <div className="flex overflow-hidden col-start-1 row-start-1">
+            <div className="col-start-1 row-start-1 flex overflow-hidden">
               <motion.span
                 key={action}
                 initial={{ y: 15, opacity: 0 }}
@@ -210,30 +211,30 @@ export function CatchBoundary() {
   return (
     <Document title={`${caught.status} ${caught.statusText}`}>
       <Layout>
-        <div className="py-16 px-4 m-auto min-h-full bg-white sm:py-24 sm:px-6 md:grid md:place-items-center lg:px-8">
+        <div className="m-auto min-h-full bg-white py-16 px-4 sm:py-24 sm:px-6 md:grid md:place-items-center lg:px-8">
           <div className="mx-auto max-w-max">
             <main className="sm:flex">
               <p className="text-4xl font-extrabold text-indigo-600 sm:text-5xl">
                 {caught.status}
               </p>
               <div className="sm:ml-6">
-                <div className="sm:pl-6 sm:border-l sm:border-gray-200">
+                <div className="sm:border-l sm:border-gray-200 sm:pl-6">
                   <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
                     {caught.statusText}
                   </h1>
                   <p className="mt-1 text-base text-gray-500">{message}</p>
                 </div>
-                <div className="flex mt-10 space-x-3 sm:pl-6 sm:border-l sm:border-transparent">
+                <div className="mt-10 flex space-x-3 sm:border-l sm:border-transparent sm:pl-6">
                   <Link
                     prefetch="intent"
                     to="/explore"
-                    className="inline-flex items-center py-2 px-4 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm"
+                    className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                   >
                     Explore
                   </Link>
                   <a
                     href="/"
-                    className="inline-flex items-center py-2 px-4 text-sm font-medium text-indigo-700 bg-indigo-100 hover:bg-indigo-200 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    className="inline-flex items-center rounded-md border border-transparent bg-indigo-100 py-2 px-4 text-sm font-medium text-indigo-700 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                   >
                     Go back home
                   </a>

@@ -24,11 +24,7 @@ import Button from "~/components/Button"
 import { Input, InputError, Label } from "~/components/form-elements"
 import type { LoginFields } from "~/types/auth"
 import GoogleIcon from "~/components/icons/Google"
-
-const LoginSchema = z.object({
-  email: z.string().email().max(256),
-  redirectTo: z.string().nullable(),
-})
+import { LoginSchema } from "~/services/validations/action-schemas.server"
 
 export type LoginActionData = {
   error: RequireAtLeastOne<
@@ -75,6 +71,8 @@ export const action: ActionFunction = async ({ request }) => {
     email: emailAddress,
   })
 
+  console.log({ emailValidation })
+
   if (!emailValidation.success) {
     loginSession.flashError("A valid email is required")
     return redirect(`/auth/login`, {
@@ -112,9 +110,11 @@ const Login = () => {
 
   const [formValues, setFormValues] = useState({
     email: data.email ?? "",
+    redirectTo: data.email ?? "",
   })
 
   const { success: formIsValid } = LoginSchema.safeParse(formValues)
+  console.log({ formIsValid, formValues })
 
   const [searchParams] = useSearchParams()
 
@@ -127,7 +127,10 @@ const Login = () => {
           <Form
             onChange={event => {
               const form = event.currentTarget
-              setFormValues({ email: form.email.value })
+              setFormValues({
+                email: form.email.value,
+                redirectTo: form.redirectTo.value,
+              })
             }}
             onSubmit={() => setSubmitted(true)}
             action="/auth/login"
@@ -145,7 +148,7 @@ const Login = () => {
               />
             </div>
             <div className="mb-6">
-              <div className="flex flex-wrap justify-between items-baseline mb-4">
+              <div className="mb-4 flex flex-wrap items-baseline justify-between">
                 <Label htmlFor="email-address">Email address</Label>
               </div>
               <Input
