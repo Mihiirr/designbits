@@ -46,17 +46,14 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
             backgroundColorClass={post.backgroundColorClass}
           />
           <div className="absolute top-0 h-full w-full bg-gradient-to-b from-gray-800 via-transparent p-3 transition-transform group-hover:-translate-y-full group-hover:bg-none">
-            <Link
-              to="/test"
-              className="flex items-center space-x-2 text-xs font-semibold text-gray-200"
-            >
+            <div className="flex items-center space-x-2 text-xs font-semibold text-gray-200">
               <img
                 src={post.Source.imageSrc}
                 alt={post.Source.name}
                 className="h-5 w-5 rounded-full"
               />
               <span>{post.Source.name}</span>
-            </Link>
+            </div>
           </div>
         </Link>
       </motion.div>

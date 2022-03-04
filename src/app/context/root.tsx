@@ -1,17 +1,21 @@
 import { User } from "@prisma/client"
-import * as React from "react"
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react"
 
-type Dispatch = React.Dispatch<React.SetStateAction<State>>
-type State = { user: User | null }
+type State = { user: User | null; isAuthModalOpen?: boolean }
 type RootContextProviderProps = {
   children: React.ReactNode
-  initState: {
-    user: User | null
-  }
+  initState: State
 }
 
-const RootContext = React.createContext<
-  { rootState: State; setRootState: Dispatch } | undefined
+const RootContext = createContext<
+  | { rootState: State; setAuthModalOpen: (isAuthModalOpen: boolean) => void }
+  | undefined
 >(undefined)
 
 // function rootStateReducer(state: State, action: Action) {
@@ -29,22 +33,28 @@ function RootContextProvider({
   children,
   initState,
 }: RootContextProviderProps) {
-  const [rootState, setRootState] = React.useState(initState)
-  // NOTE: you *might* need to memoize this value
-  // Learn more in http://kcd.im/optimize-context
-  const value = { rootState, setRootState }
+  const [rootState, setRootState] = useState(initState)
+
+  const setAuthModalOpen = useCallback(
+    (isAuthModalOpen: boolean) => {
+      setRootState({ ...rootState, isAuthModalOpen })
+    },
+    [rootState],
+  )
+
+  const value = useMemo(
+    () => ({ rootState, setAuthModalOpen }),
+    [rootState, setAuthModalOpen],
+  )
+
   return <RootContext.Provider value={value}>{children}</RootContext.Provider>
 }
 
 function useRootContext() {
-  const context = React.useContext(RootContext) || {
-    rootState: {
-      user: null,
-    },
+  const context = useContext(RootContext)
+  if (context === undefined) {
+    throw new Error("useRootContext must be used within a RootContextProvider")
   }
-  // if (context === undefined) {
-  //   throw new Error("useRootContext must be used within a RootContextProvider")
-  // }
   return context
 }
 

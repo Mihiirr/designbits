@@ -1,10 +1,9 @@
-import * as React from "react"
 import { Dialog } from "@headlessui/react"
 import { motion, AnimatePresence } from "framer-motion"
 
 type ModalProps = {
-  isOpen: boolean
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  isOpen?: boolean
+  setIsOpen: (isAuthModalOpen: boolean) => void
 }
 
 export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
@@ -27,7 +26,7 @@ export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
             </div>
 
             <motion.div
-              className="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0"
+              className="z-10 flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0"
               initial={{
                 opacity: 0,
                 scale: 0.75,

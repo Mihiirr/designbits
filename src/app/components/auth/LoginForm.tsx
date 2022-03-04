@@ -52,7 +52,7 @@ const LoginForm = (props: Props) => {
             type="email"
             autoComplete="email"
             required
-            className="block py-2 px-3 w-full placeholder:text-gray-400 rounded-md border border-gray-300 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 shadow-sm appearance-none sm:text-sm"
+            className="block w-full appearance-none rounded-md border border-gray-300 py-2 px-3 shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
             aria-invalid={Boolean(error?.fieldErrors?.email)}
             aria-describedby={
               error?.fieldErrors?.email ? "username-error" : undefined
@@ -71,17 +71,17 @@ const LoginForm = (props: Props) => {
         </div>
       </div>
 
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div className="flex items-center">
           <input
             id="remember-me"
             name="remember-me"
             type="checkbox"
-            className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
           />
           <label
             htmlFor="remember-me"
-            className="block ml-2 text-sm text-gray-900"
+            className="ml-2 block text-sm text-gray-900"
           >
             Remember me
           </label>
@@ -90,7 +90,7 @@ const LoginForm = (props: Props) => {
       <div id="form-error-message">
         {error?.formErrors?.length ? (
           <p
-            className="py-1 px-2 text-sm text-red-500 bg-red-50 rounded-sm"
+            className="rounded-sm bg-red-50 py-1 px-2 text-sm text-red-500"
             role="alert"
           >
             {error?.formErrors.join(" & ")}
@@ -100,7 +100,7 @@ const LoginForm = (props: Props) => {
       <div>
         <button
           type="submit"
-          className="flex justify-center py-2 px-4 w-full text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm"
+          className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
           Sign in
         </button>

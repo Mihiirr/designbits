@@ -28,7 +28,7 @@ const HOTKEYS = {
   "mod+e": "code",
 }
 
-const MentionExample: React.FC<{
+const NewComment: React.FC<{
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
   uniqueKey: string
   postId: string
@@ -192,4 +192,4 @@ const initialValue: Descendant[] = [
   },
 ]
 
-export default MentionExample
+export default NewComment

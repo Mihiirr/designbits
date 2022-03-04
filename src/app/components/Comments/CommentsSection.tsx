@@ -2,7 +2,7 @@ import clsx from "clsx"
 import { useState } from "react"
 import { usePostData } from "~/context/postContext"
 import { useRootContext } from "~/context/root"
-import Comment from "./Comment"
+import NewComment from "./NewComment"
 
 type Props = {}
 
@@ -26,7 +26,7 @@ const CommentsSection = (props: Props) => {
           alt="profile"
         />
         {isEditing ? (
-          <Comment
+          <NewComment
             setIsEditing={setIsEditing}
             uniqueKey={commentKey}
             postId={postData?.id || ""}

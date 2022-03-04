@@ -15,6 +15,7 @@ import { NavLink } from "remix"
 import { useRootContext } from "~/context/root"
 import ProfileDropdown from "./NavBar/ProfileDropdown"
 import { RemixLinkProps } from "@remix-run/react/components"
+import { Modal } from "./common/Modal"
 
 const userNavigation: {
   name: string
@@ -44,7 +45,8 @@ const navigation = [
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const {
-    rootState: { user },
+    rootState: { user, isAuthModalOpen },
+    setAuthModalOpen,
   } = useRootContext()
   return (
     <>
@@ -53,9 +55,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {({ open }) => (
             <>
               <div className="px-4">
-                <div className="flex justify-between h-16">
+                <div className="flex h-16 justify-between">
                   <div className="flex">
-                    <div className="flex shrink-0 items-center w-40 lg:w-56">
+                    <div className="flex w-40 shrink-0 items-center lg:w-56">
                       <Link prefetch="intent" to="/" className="px-2">
                         <DesignBitsLogo />
                       </Link>
@@ -63,7 +65,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     <nav
                       role="navigation"
                       aria-label="main-nav"
-                      className="hidden sm:flex sm:-my-px sm:space-x-8"
+                      className="hidden sm:-my-px sm:flex sm:space-x-8"
                     >
                       {navigation.map(item => (
                         <NavLink
@@ -72,9 +74,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                           className={({ isActive }) =>
                             classNames(
                               isActive
-                                ? "border-indigo-700 text-indigo-700 font-semibold"
+                                ? "border-indigo-700 font-semibold text-indigo-700"
                                 : "border-transparent text-gray-500 hover:text-indigo-500",
-                              "inline-flex items-center pt-1 px-1 text-sm font-medium border-b-2 space-x-2",
+                              "inline-flex items-center space-x-2 border-b-2 px-1 pt-1 text-sm font-medium",
                             )
                           }
                         >
@@ -84,7 +86,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       ))}
                     </nav>
                   </div>
-                  <div className="hidden space-x-6 sm:flex sm:items-center sm:ml-6">
+                  <div className="hidden space-x-6 sm:ml-6 sm:flex sm:items-center">
                     <SearchBox />
                     {user ? (
                       <>
@@ -103,7 +105,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       <Link
                         to="/auth/login"
                         prefetch="intent"
-                        className="flex items-center py-2 px-4 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <div className="flex space-x-2">
                           <span>Login</span>
@@ -111,15 +113,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       </Link>
                     )}
                   </div>
-                  <div className="flex items-center -mr-2 sm:hidden">
+                  <div className="-mr-2 flex items-center sm:hidden">
                     {/* Mobile menu button */}
-                    <Disclosure.Button className="inline-flex justify-center items-center p-2 text-gray-400 hover:text-gray-500 bg-white hover:bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                       <span className="sr-only">Open main menu</span>
                       {open ? (
-                        <XIcon className="block w-6 h-6" aria-hidden="true" />
+                        <XIcon className="block h-6 w-6" aria-hidden="true" />
                       ) : (
                         <MenuIcon
-                          className="block w-6 h-6"
+                          className="block h-6 w-6"
                           aria-hidden="true"
                         />
                       )}
@@ -129,7 +131,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </div>
 
               <Disclosure.Panel className="sm:hidden">
-                <div className="pt-2 pb-3 space-y-1">
+                <div className="space-y-1 pt-2 pb-3">
                   {navigation.map(item => (
                     <Disclosure.Button key={item.name} as="div">
                       <NavLink
@@ -137,9 +139,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         className={({ isActive }) =>
                           classNames(
                             isActive
-                              ? "bg-indigo-50 border-indigo-500 text-indigo-700"
-                              : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800",
-                            "block pl-3 pr-4 py-2 text-base font-medium border-l-4",
+                              ? "border-indigo-500 bg-indigo-50 text-indigo-700"
+                              : "border-transparent text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800",
+                            "block border-l-4 py-2 pl-3 pr-4 text-base font-medium",
                           )
                         }
                       >
@@ -148,7 +150,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </Disclosure.Button>
                   ))}
                 </div>
-                <div className="pt-4 pb-3 border-t border-gray-200">
+                <div className="border-t border-gray-200 pt-4 pb-3">
                   <div className="flex items-center px-4">
                     <div className="shrink-0">
                       <DesignBitsLogo />
@@ -163,10 +165,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </div>
                     <button
                       type="button"
-                      className="shrink-0 p-1 ml-auto text-gray-400 hover:text-gray-500 bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      className="ml-auto shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
                       <span className="sr-only">View notifications</span>
-                      <BellIcon className="w-6 h-6" aria-hidden="true" />
+                      <BellIcon className="h-6 w-6" aria-hidden="true" />
                     </button>
                   </div>
                   <div className="mt-3 space-y-1">
@@ -175,7 +177,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         key={item.name}
                         as="a"
                         href={item.href}
-                        className="block py-2 px-4 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                        className="block py-2 px-4 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
                       >
                         {item.name}
                       </Disclosure.Button>
@@ -186,7 +188,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </>
           )}
         </Disclosure>
-
+        <Modal isOpen={isAuthModalOpen} setIsOpen={setAuthModalOpen} />
         <div className="flex py-10">{children}</div>
       </div>
     </>
