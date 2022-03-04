@@ -17,7 +17,7 @@ export const ActionButton: React.FC<Props> = ({
   return (
     <Form method="post">
       {Object.entries(formPayload).map(([key, value]) => (
-        <input type="hidden" name={key} value={value} />
+        <input type="hidden" name={key} value={value} key={key} />
       ))}
       <input type="hidden" name="_action" value={actionName} />
       <button
