@@ -1,6 +1,6 @@
 import { PostReactionTypes } from "@prisma/client"
 import { db } from "~/services/db/client.server"
-import { LikeActionSchema } from "~/services/validations/action-schemas.server"
+import { LikeActionSchema } from "~/services/validations/client-action-schemas"
 import { CardActionFormData } from "~/types/utilities"
 import { handleFormSubmission } from "~/utils/actions.server"
 import { ProtectedActionFunction } from "~/utils/api-handler"

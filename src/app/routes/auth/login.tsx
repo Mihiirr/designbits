@@ -10,7 +10,7 @@ import {
 } from "remix"
 import type { ActionFunction } from "remix"
 import AuthLayout from "~/components/AuthLayout"
-import { z, ZodError } from "zod"
+import { ZodError } from "zod"
 import { RequireAtLeastOne } from "type-fest"
 import { getLoginInfoSession } from "~/services/auth/login.server"
 import {
@@ -24,7 +24,7 @@ import Button from "~/components/Button"
 import { Input, InputError, Label } from "~/components/form-elements"
 import type { LoginFields } from "~/types/auth"
 import GoogleIcon from "~/components/icons/Google"
-import { LoginSchema } from "~/services/validations/action-schemas.server"
+import { LoginSchema } from "~/services/validations/client-action-schemas"
 
 export type LoginActionData = {
   error: RequireAtLeastOne<

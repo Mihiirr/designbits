@@ -17,16 +17,6 @@ export const SignUpSchema = z.object({
     .max(60, { message: "Name is too long" }),
 })
 
-export const LoginSchema = z.object({
-  email: z.string().email().max(256),
-  redirectTo: z.string().nullable().optional(),
-})
-
-export const LikeActionSchema = z.object({
-  postId: z.string(),
-  userId: z.string(),
-})
-
 export const AddCommentActionSchema = z.object({
   postId: z.string().refine(async postId => {
     const post = await db.post.findUnique({

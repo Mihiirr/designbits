@@ -10,7 +10,7 @@ const CommingSoon = (props: Props) => {
     <Layout>
       <div className="my-10 mx-auto h-full text-center md:my-24">
         <svg
-          className="mx-auto w-12 h-12 text-gray-400"
+          className="mx-auto h-12 w-12 text-gray-400"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
