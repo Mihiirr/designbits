@@ -15,7 +15,7 @@ import Spinner from "./components/Spinner"
 import { getLoggedInUser } from "./services/auth/session.server"
 import { successResponse } from "./utils/response-helpers.server"
 import { User } from "@prisma/client"
-import { RootContextProvider } from "./context/root"
+import { RootContextProvider } from "./context/root-context"
 
 const LOADER_WORDS = [
   "loading",
@@ -152,7 +152,7 @@ interface LoaderData extends SuccessResponse {
 // https://remix.run/api/conventions#route-filenames
 export default function App() {
   const loaderData = useLoaderData<LoaderData>()
-  const rootContextData = { user: loaderData.user }
+  const rootContextData = { user: loaderData.user, isAuthModalOpen: false }
   return (
     <RootContextProvider initState={rootContextData}>
       <Document>

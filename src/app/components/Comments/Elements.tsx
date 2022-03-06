@@ -63,10 +63,10 @@ export const Mention = (props: RenderElementProps) => {
       contentEditable={false}
       data-cy={`mention-${element.character.replace(" ", "-")}`}
       className={clsx(
-        "mx-1 my-0 inline-block rounded-sm  px-1 py-0.5 text-sm text-gray-700 ring-emerald-500 transition-colors hover:bg-emerald-200",
+        "mx-1 my-0 inline-block rounded-sm  px-1 py-0.5 text-sm text-gray-700 ring-indigo-500 transition-colors hover:bg-indigo-200",
         selected && focused
-          ? "bg-emerald-100/80 shadow shadow-emerald-400 ring-2 ring-emerald-500 focus:outline"
-          : "bg-emerald-100/50 ring-1",
+          ? "bg-indigo-100/80 shadow shadow-indigo-400 ring-2 ring-indigo-500 focus:outline"
+          : "bg-indigo-100/50 ring-1",
       )}
     >
       @{element.character}

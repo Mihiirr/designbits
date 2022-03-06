@@ -1,6 +1,6 @@
 import React, { useCallback } from "react"
 import { Form } from "remix"
-import { useRootContext } from "~/context/root"
+import { useRootContext } from "~/context/root-context"
 import { CARD_ACTIONS, COMMENT_ACTIONS } from "~/utils/constants"
 
 type Props = {
@@ -46,7 +46,7 @@ export const PostActionButton: React.FC<PostActionButtonProps> = ({
 }) => {
   const {
     rootState: { user, isAuthModalOpen },
-    setAuthModalOpen,
+    openAuthModal,
   } = useRootContext()
 
   const isLoggedIn = requiresLogin && !!user
@@ -54,9 +54,9 @@ export const PostActionButton: React.FC<PostActionButtonProps> = ({
   const onClickHandler = useCallback(() => {
     console.log("setting modal open")
     if (!isLoggedIn && !isAuthModalOpen) {
-      setAuthModalOpen(true)
+      openAuthModal()
     }
-  }, [isLoggedIn, isAuthModalOpen, setAuthModalOpen])
+  }, [isLoggedIn, isAuthModalOpen, openAuthModal])
 
   return isLoggedIn ? (
     <ActionButton {...rest}>{children}</ActionButton>

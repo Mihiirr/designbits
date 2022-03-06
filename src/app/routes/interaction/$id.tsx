@@ -4,10 +4,8 @@ import {
   ShareIcon,
 } from "@heroicons/react/outline"
 import { Post, Source, User, UserRole, VideoSource } from "@prisma/client"
-import React from "react"
 import {
   ActionFunction,
-  json,
   LoaderFunction,
   MetaFunction,
   useLoaderData,
@@ -20,7 +18,7 @@ import AndroidIcon from "~/components/icons/Android"
 import LikeIcon from "~/components/icons/Like"
 import InteractionFeedback from "~/components/InteractionFeedback"
 import Layout from "~/components/Layout"
-import { PostContextProvider } from "~/context/postContext"
+import { PostContextProvider } from "~/context/post-context"
 import { db } from "~/services/db/client.server"
 import { apiHandler } from "~/utils/api-handler"
 import { ASSETS_CDN_LINK } from "~/utils/constants"
