@@ -3,14 +3,7 @@ import {
   DotsVerticalIcon,
   ShareIcon,
 } from "@heroicons/react/outline"
-import {
-  Post,
-  Source,
-  User,
-  VideoSource,
-  PostReaction,
-  UserRole,
-} from "@prisma/client"
+import { UserRole } from "@prisma/client"
 import {
   LoaderFunction,
   MetaFunction,
@@ -28,12 +21,9 @@ import Layout from "~/components/Layout"
 import { db } from "~/services/db/client.server"
 import { ASSETS_CDN_LINK, ERROR_CODES } from "~/utils/constants"
 import {
-  formatInteractionPostsData,
   formatSingleInteractionPostData,
-  FormattedInteractionsPostData,
   FormattedSingleInteractionsPostData,
 } from "~/services/db/formatters.server"
-import { findInteractionsForCategory } from "~/services/db/queries/post.server"
 import { getLoggedInUser } from "~/services/auth/session.server"
 import { apiHandler } from "~/utils/api-handler"
 import { NotFoundException } from "~/utils/response-helpers.server"
@@ -114,7 +104,6 @@ const Interaction = () => {
               </div>
             </div>
             <div className="flex space-x-4">
-              {/* <button className="flex py-2 px-4 space-x-2 text-gray-800 rounded-lg border border-gray-200"> */}
               <PostButton
                 btnProps={{
                   className:

@@ -38,13 +38,6 @@ type RawInteractionsPostData = {
   totalReactionsOnPost: RawTotalReactionsOnPost[]
 }
 
-// export type FormattedInteractionsPostData = StrictExclude<
-//   RawInteractionsPostData,
-//   "PostReactions"
-// > & {
-//   reactedByLoggedInUser: boolean
-// }
-
 type Copy<T> = { [K in keyof T]: T[K] }
 
 function formatTotalReactionsData(
@@ -91,7 +84,7 @@ function formatInteractionPostsData(
   })
 }
 
-type xyz =
+type SingleInteractionPostData =
   | Post & {
       PostReactions: PostReaction[]
       Source: Source
@@ -124,7 +117,7 @@ function videoSourcesSorter(a: VideoSource, b: VideoSource) {
 }
 
 function formatSingleInteractionPostData(
-  data: xyz,
+  data: SingleInteractionPostData,
 ): FormattedSingleInteractionsPostData {
   const {
     _count: { PostReactions },
