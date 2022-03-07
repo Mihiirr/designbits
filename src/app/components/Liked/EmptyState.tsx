@@ -11,7 +11,7 @@ const EmptyState = (props: Props) => {
           <div className="sm:ml-6">
             <div className="sm:pl-6 sm:border-l sm:border-gray-200">
               <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
-                You have not Like any design
+                You have not liked any design
               </h1>
               <p className="mt-1 text-base text-gray-500">
                 please explore for some more design{" "}

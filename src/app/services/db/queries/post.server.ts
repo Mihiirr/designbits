@@ -1,4 +1,5 @@
 import { Post, PostReaction, Prisma, Source, User } from "@prisma/client"
+import { SetOptional } from "type-fest"
 import { db } from "~/services/db/client.server"
 
 type props = {
@@ -28,7 +29,7 @@ async function findPostsIncludingUserReaction({ userId }: props) {
   })
 }
 
-async function findInteractionReactedByUser({ userId }: props) {
+async function findPostsReactedByUser({ userId }: props) {
   return db.post.findMany({
     where: {
       PostReactions: {
@@ -52,6 +53,25 @@ async function findPostReactionsCount() {
     },
   })
 }
+type TotalReactionsOnPost = (Prisma.PickArray<
+  Prisma.PostReactionGroupByOutputType,
+  "postId"[]
+> & {
+  _count: {
+    id: number
+  }
+})[]
+
+type PostWithCurrentUserReactionData = Post & {
+  Source: Source
+  CreatedBy: User
+  PostReactions: PostReaction[]
+}
+
+type PostIncludingCurrentUserReactionData = SetOptional<
+  PostWithCurrentUserReactionData,
+  "PostReactions"
+>
 
 async function findInteractionsForCategory({ userId }: props) {
   const { default: pProps } = await import("p-props")
@@ -62,19 +82,8 @@ async function findInteractionsForCategory({ userId }: props) {
     }),
     totalReactionsOnPost: findPostReactionsCount(),
   }) as unknown as {
-    postsWithCurrentUserReactionData: (Post & {
-      Source: Source
-      CreatedBy: User
-      PostReacritions?: PostReaction[]
-    })[]
-    totalReactionsOnPost: (Prisma.PickArray<
-      Prisma.PostReactionGroupByOutputType,
-      "postId"[]
-    > & {
-      _count: {
-        id: number
-      }
-    })[]
+    postsWithCurrentUserReactionData: PostIncludingCurrentUserReactionData[]
+    totalReactionsOnPost: TotalReactionsOnPost
   }
 }
 
@@ -82,24 +91,13 @@ async function findPostReactedByUser({ userId }: props) {
   const { default: pProps } = await import("p-props")
 
   return pProps({
-    postsWithCurrentUserReactionData: findInteractionReactedByUser({
+    postsWithCurrentUserReactionData: findPostsReactedByUser({
       userId,
     }),
     totalReactionsOnPost: findPostReactionsCount(),
   }) as unknown as {
-    postsWithCurrentUserReactionData: (Post & {
-      Source: Source
-      CreatedBy: User
-      PostReacritions: PostReaction[]
-    })[]
-    totalReactionsOnPost: (Prisma.PickArray<
-      Prisma.PostReactionGroupByOutputType,
-      "postId"[]
-    > & {
-      _count: {
-        id: number
-      }
-    })[]
+    postsWithCurrentUserReactionData: PostWithCurrentUserReactionData[]
+    totalReactionsOnPost: TotalReactionsOnPost
   }
 }
 
