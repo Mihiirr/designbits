@@ -16,6 +16,8 @@ export enum ERROR_CODES {
   USER_DOES_NOT_EXIST = "USER_DOES_NOT_EXIST",
   USER_DELETED = "USER_DELETED",
   USER_BLOCKED = "USER_BLOCKED",
+  // post
+  POST_NOT_FOUND = "POST_NOT_FOUND",
 }
 
 export const ERROR_MESSAGES: Record<`${ERROR_CODES}`, string> = {
@@ -31,6 +33,7 @@ export const ERROR_MESSAGES: Record<`${ERROR_CODES}`, string> = {
   DATABASE_ERROR: "Something went wrong! DATABASE_ERROR",
   USER_DELETED: "Account has been deleted, Please contact admin!",
   USER_BLOCKED: "Account has been blocked, Please contact admin!",
+  POST_NOT_FOUND: "post you are finding for is not found!",
 }
 
 export const IS_PRODUCTION = process.env.NODE_ENV === "production"

@@ -3,68 +3,101 @@ import {
   DotsVerticalIcon,
   ShareIcon,
 } from "@heroicons/react/outline"
-import type { Post, Source, User, VideoSource } from "@prisma/client"
-import React from "react"
-import { LoaderFunction, MetaFunction, useLoaderData } from "remix"
+import {
+  Post,
+  Source,
+  User,
+  VideoSource,
+  PostReaction,
+  UserRole,
+} from "@prisma/client"
+import {
+  LoaderFunction,
+  MetaFunction,
+  useLoaderData,
+  ActionFunction,
+} from "remix"
+import { handlePostRelatedActions } from "~/action-handlers/card-action-handlers.server"
 import Avatar from "~/components/Avatar"
 import Button from "~/components/Button"
 import AndroidIcon from "~/components/icons/Android"
 import LikeIcon from "~/components/icons/Like"
 import InteractionFeedback from "~/components/InteractionFeedback"
+import PostButton from "~/components/Post/PostButton"
 import Layout from "~/components/Layout"
 import { db } from "~/services/db/client.server"
-import { ASSETS_CDN_LINK } from "~/utils/constants"
-import { getLoggedInUser } from "~/services/auth/session.server"
+import { ASSETS_CDN_LINK, ERROR_CODES } from "~/utils/constants"
 import {
-  formatInteractionData,
+  formatInteractionPostsData,
+  formatSingleInteractionPostData,
   FormattedInteractionsPostData,
+  FormattedSingleInteractionsPostData,
 } from "~/services/db/formatters.server"
 import { findInteractionsForCategory } from "~/services/db/queries/post.server"
-const sourcePriority = ["video/webm", "video/mp4"]
-
-interface LoaderData {
-  interactions: FormattedInteractionsPostData[]
-}
+import { getLoggedInUser } from "~/services/auth/session.server"
+import { apiHandler } from "~/utils/api-handler"
+import { NotFoundException } from "~/utils/response-helpers.server"
 
 export let loader: LoaderFunction = async ({ params, request }) => {
-  const postId = params.id
+  const postSlug = params.id
+  const user = await getLoggedInUser(request)
 
   const data = await db.post.findUnique({
     where: {
-      slug: postId,
+      slug: postSlug,
     },
     include: {
       Source: true,
       CreatedBy: true,
       VideoSources: true,
+      PostReactions: user?.id
+        ? {
+            select: {
+              reaction: true,
+            },
+            where: {
+              reactedBy: user.id,
+            },
+          }
+        : false,
+      _count: {
+        select: {
+          PostReactions: true,
+        },
+      },
     },
   })
-  const videoSourcesSorted = data?.VideoSources.sort(function (a, b) {
-    return sourcePriority.indexOf(a.type) - sourcePriority.indexOf(b.type)
-  })
-  const user = await getLoggedInUser(request)
-  const interactions = formatInteractionData(
-    await findInteractionsForCategory({ userId: user?.id }),
-  )
-  return {
-    ...data,
-    VideoSources: videoSourcesSorted,
-    interactions,
+
+  if (data === null) {
+    return NotFoundException({
+      error: {
+        type: ERROR_CODES.POST_NOT_FOUND,
+      },
+    })
+  } else {
+    return formatSingleInteractionPostData(data)
   }
 }
 
-type PostData = Post & {
-  Source: Source
-  CreatedBy: User
-  VideoSources: VideoSource[]
+export const action: ActionFunction = apiHandler({
+  POST: {
+    handler: handlePostRelatedActions,
+    protect: true,
+    allowedRoles: [UserRole.USER],
+  },
+})
+
+type PostData = FormattedSingleInteractionsPostData
+
+export enum CARD_ACTIONS {
+  LIKE = "like",
+  UNDO_LIKE = "undo_like",
+  COMMENT = "comment",
 }
 
 const Interaction = () => {
   const postData = useLoaderData<PostData>()
-  const { interactions } = useLoaderData<LoaderData>()
-
-  const currentInteraction = interactions.find(x => x.title === postData.title)
-
+  console.log({ postData })
   return (
     <Layout>
       <div className="grid grid-cols-7 w-full">
@@ -81,18 +114,30 @@ const Interaction = () => {
               </div>
             </div>
             <div className="flex space-x-4">
-              <button className="flex py-2 px-4 space-x-2 text-gray-800 rounded-lg border border-gray-200">
+              {/* <button className="flex py-2 px-4 space-x-2 text-gray-800 rounded-lg border border-gray-200"> */}
+              <PostButton
+                btnProps={{
+                  className:
+                    "flex py-2 px-4 space-x-2 text-gray-800 rounded-lg border border-gray-200",
+                }}
+                postId={postData.id}
+                value={
+                  postData?.PostReactions?.length > 0
+                    ? CARD_ACTIONS.UNDO_LIKE
+                    : CARD_ACTIONS.LIKE
+                }
+              >
                 <LikeIcon
                   height="24"
                   width="24"
                   variant={
-                    currentInteraction?.reactedByLoggedInUser
-                      ? "filled"
-                      : "outline"
+                    postData?.PostReactions?.length > 0 ? "filled" : "outline"
                   }
                 />
-                <span>{currentInteraction?.reactionsCount}</span>
-              </button>
+                {postData?.reactionCount !== 0 && (
+                  <span>{postData?.reactionCount}</span>
+                )}
+              </PostButton>
               <button className="flex p-2 space-x-2 text-gray-800 rounded-lg border border-gray-200">
                 <CollectionIcon height="24" width="24" />
               </button>
