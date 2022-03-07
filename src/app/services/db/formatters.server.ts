@@ -97,6 +97,7 @@ type SingleInteractionPostData =
 
 export type FormattedSingleInteractionsPostData = {
   reactionCount: number
+  reactedByLoggedInUser: boolean
   id: string
   title: string
   slug: string
@@ -106,7 +107,6 @@ export type FormattedSingleInteractionsPostData = {
   sourceId: string
   previewUrl: string
   description: string
-  PostReactions: PostReaction[]
   Source: Source
   CreatedBy: User
   VideoSources: VideoSource[]
@@ -120,14 +120,16 @@ function formatSingleInteractionPostData(
   data: SingleInteractionPostData,
 ): FormattedSingleInteractionsPostData {
   const {
-    _count: { PostReactions },
+    _count: { PostReactions: reactionCount },
     VideoSources,
+    PostReactions,
     ...rest
   } = data
   return {
     ...rest,
-    reactionCount: PostReactions,
+    reactionCount,
     VideoSources: VideoSources.sort(videoSourcesSorter),
+    reactedByLoggedInUser: PostReactions?.length ? true : false,
   }
 }
 

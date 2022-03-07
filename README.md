@@ -21,7 +21,7 @@ It is generally recommended to use a Git repository, because future commits will
 then automatically be deployed by Vercel, through its
 [Git Integration](https://vercel.com/docs/concepts/git).
 
-# Install PlanetScale CLI - Windows
+# Install PlanetScale CLI
 
 `Step:3`
 

@@ -33,7 +33,7 @@ export const ERROR_MESSAGES: Record<`${ERROR_CODES}`, string> = {
   DATABASE_ERROR: "Something went wrong! DATABASE_ERROR",
   USER_DELETED: "Account has been deleted, Please contact admin!",
   USER_BLOCKED: "Account has been blocked, Please contact admin!",
-  POST_NOT_FOUND: "post you are finding for is not found!",
+  POST_NOT_FOUND: "The post you are looking for is no longer available!",
 }
 
 export const IS_PRODUCTION = process.env.NODE_ENV === "production"

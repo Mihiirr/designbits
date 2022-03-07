@@ -61,4 +61,37 @@ async function findInteractionsForCategory({ userId }: props) {
   }
 }
 
-export { findInteractionsForCategory }
+type FindPostPageDataProps = {
+  postSlug: Post["slug"]
+  userId?: User["id"]
+}
+
+function findPostPageData({ postSlug, userId }: FindPostPageDataProps) {
+  return db.post.findUnique({
+    where: {
+      slug: postSlug,
+    },
+    include: {
+      Source: true,
+      CreatedBy: true,
+      VideoSources: true,
+      PostReactions: userId
+        ? {
+            select: {
+              reaction: true,
+            },
+            where: {
+              reactedBy: userId,
+            },
+          }
+        : false,
+      _count: {
+        select: {
+          PostReactions: true,
+        },
+      },
+    },
+  })
+}
+
+export { findInteractionsForCategory, findPostPageData }

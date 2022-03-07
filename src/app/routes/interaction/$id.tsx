@@ -9,6 +9,7 @@ import {
   MetaFunction,
   useLoaderData,
   ActionFunction,
+  redirect,
 } from "remix"
 import { handlePostRelatedActions } from "~/action-handlers/card-action-handlers.server"
 import Avatar from "~/components/Avatar"
@@ -27,35 +28,22 @@ import {
 import { getLoggedInUser } from "~/services/auth/session.server"
 import { apiHandler } from "~/utils/api-handler"
 import { NotFoundException } from "~/utils/response-helpers.server"
+import { findPostPageData } from "~/services/db/queries/post.server"
 
 export let loader: LoaderFunction = async ({ params, request }) => {
   const postSlug = params.id
+
+  if (!postSlug) {
+    return redirect("/explore/all", {
+      status: 307,
+    })
+  }
+
   const user = await getLoggedInUser(request)
 
-  const data = await db.post.findUnique({
-    where: {
-      slug: postSlug,
-    },
-    include: {
-      Source: true,
-      CreatedBy: true,
-      VideoSources: true,
-      PostReactions: user?.id
-        ? {
-            select: {
-              reaction: true,
-            },
-            where: {
-              reactedBy: user.id,
-            },
-          }
-        : false,
-      _count: {
-        select: {
-          PostReactions: true,
-        },
-      },
-    },
+  const data = await findPostPageData({
+    postSlug,
+    userId: user?.id,
   })
 
   if (data === null) {
@@ -87,7 +75,6 @@ export enum CARD_ACTIONS {
 
 const Interaction = () => {
   const postData = useLoaderData<PostData>()
-  console.log({ postData })
   return (
     <Layout>
       <div className="grid grid-cols-7 w-full">
@@ -111,7 +98,7 @@ const Interaction = () => {
                 }}
                 postId={postData.id}
                 value={
-                  postData?.PostReactions?.length > 0
+                  postData?.reactedByLoggedInUser
                     ? CARD_ACTIONS.UNDO_LIKE
                     : CARD_ACTIONS.LIKE
                 }
@@ -120,7 +107,7 @@ const Interaction = () => {
                   height="24"
                   width="24"
                   variant={
-                    postData?.PostReactions?.length > 0 ? "filled" : "outline"
+                    postData?.reactedByLoggedInUser ? "filled" : "outline"
                   }
                 />
                 {postData?.reactionCount !== 0 && (
