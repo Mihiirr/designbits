@@ -3,50 +3,78 @@ import {
   DotsVerticalIcon,
   ShareIcon,
 } from "@heroicons/react/outline"
-import type { Post, Source, User, VideoSource } from "@prisma/client"
-import React from "react"
-import { LoaderFunction, MetaFunction, useLoaderData } from "remix"
+import { UserRole } from "@prisma/client"
+import {
+  LoaderFunction,
+  MetaFunction,
+  useLoaderData,
+  ActionFunction,
+  redirect,
+} from "remix"
+import { handlePostRelatedActions } from "~/action-handlers/card-action-handlers.server"
 import Avatar from "~/components/Avatar"
 import Button from "~/components/Button"
 import AndroidIcon from "~/components/icons/Android"
 import LikeIcon from "~/components/icons/Like"
 import InteractionFeedback from "~/components/InteractionFeedback"
+import PostButton from "~/components/Post/PostButton"
 import Layout from "~/components/Layout"
 import { db } from "~/services/db/client.server"
-import { ASSETS_CDN_LINK } from "~/utils/constants"
-const sourcePriority = ["video/webm", "video/mp4"]
+import { ASSETS_CDN_LINK, ERROR_CODES } from "~/utils/constants"
+import {
+  formatSingleInteractionPostData,
+  FormattedSingleInteractionsPostData,
+} from "~/services/db/formatters.server"
+import { getLoggedInUser } from "~/services/auth/session.server"
+import { apiHandler } from "~/utils/api-handler"
+import { NotFoundException } from "~/utils/response-helpers.server"
+import { findPostPageData } from "~/services/db/queries/post.server"
 
-export let loader: LoaderFunction = async ({ params }) => {
-  const postId = params.id
+export let loader: LoaderFunction = async ({ params, request }) => {
+  const postSlug = params.id
 
-  const data = await db.post.findUnique({
-    where: {
-      slug: postId,
-    },
-    include: {
-      Source: true,
-      CreatedBy: true,
-      VideoSources: true,
-    },
+  if (!postSlug) {
+    return redirect("/explore/all", {
+      status: 307,
+    })
+  }
+
+  const user = await getLoggedInUser(request)
+
+  const data = await findPostPageData({
+    postSlug,
+    userId: user?.id,
   })
-  const videoSourcesSorted = data?.VideoSources.sort(function (a, b) {
-    return sourcePriority.indexOf(a.type) - sourcePriority.indexOf(b.type)
-  })
-  return {
-    ...data,
-    VideoSources: videoSourcesSorted,
+
+  if (data === null) {
+    return NotFoundException({
+      error: {
+        type: ERROR_CODES.POST_NOT_FOUND,
+      },
+    })
+  } else {
+    return formatSingleInteractionPostData(data)
   }
 }
 
-type PostData = Post & {
-  Source: Source
-  CreatedBy: User
-  VideoSources: VideoSource[]
+export const action: ActionFunction = apiHandler({
+  POST: {
+    handler: handlePostRelatedActions,
+    protect: true,
+    allowedRoles: [UserRole.USER],
+  },
+})
+
+type PostData = FormattedSingleInteractionsPostData
+
+export enum CARD_ACTIONS {
+  LIKE = "like",
+  UNDO_LIKE = "undo_like",
+  COMMENT = "comment",
 }
 
 const Interaction = () => {
   const postData = useLoaderData<PostData>()
-
   return (
     <Layout>
       <div className="grid grid-cols-7 w-full">
@@ -63,10 +91,29 @@ const Interaction = () => {
               </div>
             </div>
             <div className="flex space-x-4">
-              <button className="flex py-2 px-4 space-x-2 text-gray-800 rounded-lg border border-gray-200">
-                <LikeIcon height="24" width="24" />
-                <span>{256}</span>
-              </button>
+              <PostButton
+                btnProps={{
+                  className:
+                    "flex py-2 px-4 space-x-2 text-gray-800 rounded-lg border border-gray-200",
+                }}
+                postId={postData.id}
+                value={
+                  postData?.reactedByLoggedInUser
+                    ? CARD_ACTIONS.UNDO_LIKE
+                    : CARD_ACTIONS.LIKE
+                }
+              >
+                <LikeIcon
+                  height="24"
+                  width="24"
+                  variant={
+                    postData?.reactedByLoggedInUser ? "filled" : "outline"
+                  }
+                />
+                {postData?.reactionCount !== 0 && (
+                  <span>{postData?.reactionCount}</span>
+                )}
+              </PostButton>
               <button className="flex p-2 space-x-2 text-gray-800 rounded-lg border border-gray-200">
                 <CollectionIcon height="24" width="24" />
               </button>
