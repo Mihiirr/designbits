@@ -11,7 +11,7 @@ import { navItems } from "~/components/CategoriesNav"
 import InteractionCard from "~/components/Post"
 import { getLoggedInUser } from "~/services/auth/session.server"
 import {
-  formatInteractionData,
+  formatInteractionPostsData,
   FormattedInteractionsPostData,
 } from "~/services/db/formatters.server"
 import { findInteractionsForCategory } from "~/services/db/queries/post.server"
@@ -33,7 +33,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   }
   const user = await getLoggedInUser(request)
 
-  const interactions = formatInteractionData(
+  const interactions = formatInteractionPostsData(
     await findInteractionsForCategory({ userId: user?.id }),
   )
 
