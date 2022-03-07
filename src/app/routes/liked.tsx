@@ -1,20 +1,14 @@
 import { UserRole } from "@prisma/client"
-import groupBy from "lodash.groupby"
 import Layout from "~/components/Layout"
-import { LoaderFunction, ActionFunction, useLoaderData, Link } from "remix"
+import { LoaderFunction, ActionFunction, useLoaderData } from "remix"
 import { handlePostRelatedActions } from "~/action-handlers/card-action-handlers.server"
-
-import { navItems } from "~/components/CategoriesNav"
 import InteractionCard from "~/components/Post"
 import { getLoggedInUser } from "~/services/auth/session.server"
 import {
-  formatInteractionData,
+  formatInteractionPostsData,
   FormattedInteractionsPostData,
 } from "~/services/db/formatters.server"
-import {
-  findInteractionsForCategory,
-  findPostReactedByUser,
-} from "~/services/db/queries/post.server"
+import { findPostReactedByUser } from "~/services/db/queries/post.server"
 
 import { apiHandler } from "~/utils/api-handler"
 import EmptyState from "~/components/Liked/EmptyState"
@@ -28,7 +22,7 @@ interface LoaderData {
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await getLoggedInUser(request)
 
-  const interactions = formatInteractionData(
+  const interactions = formatInteractionPostsData(
     await findPostReactedByUser({ userId: user?.id }),
   )
 
@@ -46,19 +40,17 @@ export const action: ActionFunction = apiHandler({
 const LikedPage: React.FC<Props> = () => {
   const { interactions } = useLoaderData<LoaderData>()
 
-  // console.log({ interactions })
-
   return (
     <>
       <Layout>
         {
           <div>
-            {interactions.length > 0 ? (
+            {interactions.length === 0 ? (
+              <EmptyState />
+            ) : (
               <div className="sm:px-6 lg:px-8">
                 <InteractionCard interactions={interactions} />
               </div>
-            ) : (
-              <EmptyState />
             )}
           </div>
         }
