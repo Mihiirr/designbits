@@ -1,7 +1,7 @@
 import { UserRole } from "@prisma/client"
 import groupBy from "lodash.groupby"
 import Layout from "~/components/Layout"
-import { LoaderFunction, ActionFunction, useLoaderData } from "remix"
+import { LoaderFunction, ActionFunction, useLoaderData, Link } from "remix"
 import { handlePostRelatedActions } from "~/action-handlers/card-action-handlers.server"
 
 import { navItems } from "~/components/CategoriesNav"
@@ -15,8 +15,9 @@ import {
   findInteractionsForCategory,
   findPostReactedByUser,
 } from "~/services/db/queries/post.server"
-// import { findPostsIncludingUserReaction } from "~/services/db/queries/post.server"
+
 import { apiHandler } from "~/utils/api-handler"
+import EmptyState from "~/components/Liked/EmptyState"
 
 interface Props {}
 
@@ -44,29 +45,26 @@ export const action: ActionFunction = apiHandler({
 
 const LikedPage: React.FC<Props> = () => {
   const { interactions } = useLoaderData<LoaderData>()
-  console.log({ interactions })
+
+  // console.log({ interactions })
 
   return (
     <>
       <Layout>
         {
-          <div className="sm:px-6 lg:px-8">
-            <InteractionCard interactions={interactions} />
+          <div>
+            {interactions.length > 0 ? (
+              <div className="sm:px-6 lg:px-8">
+                <InteractionCard interactions={interactions} />
+              </div>
+            ) : (
+              <EmptyState />
+            )}
           </div>
         }
       </Layout>
     </>
   )
 }
-
-// export const meta: MetaFunction = ({ params }) => {
-//   const categoryId = params.category || ""
-
-//   return {
-//     title:
-//       (categoryMap[categoryId]?.[0]?.name || "") + " interactions | DesignBits",
-//     description: `discover ${categoryId} interactions.`,
-//   }
-// }
 
 export default LikedPage
