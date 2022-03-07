@@ -10,7 +10,7 @@ import {
   MetaFunction,
   useLoaderData,
 } from "remix"
-import { handleCommentActions } from "~/action-handlers/comment-action-handlers.server"
+import { handleCommentActions } from "~/action-handlers/comment-actions.server"
 import Avatar from "~/components/Avatar"
 import Button from "~/components/Button"
 import CommentsSection from "~/components/Comments/CommentsSection"
@@ -35,6 +35,18 @@ export let loader: LoaderFunction = async ({ params }) => {
       Source: true,
       CreatedBy: true,
       VideoSources: true,
+      PostComments: {
+        include: {
+          CommentReactions: true,
+          CreatedBy: true,
+          Mentions: true,
+          _count: {
+            select: {
+              ReplyComments: true,
+            },
+          },
+        },
+      },
     },
   })
   const videoSourcesSorted = data?.VideoSources.sort(function (a, b) {
@@ -58,10 +70,12 @@ type PostData = Post & {
   Source: Source
   CreatedBy: User
   VideoSources: VideoSource[]
+  PostComments: Comment[]
 }
 
 const Interaction = () => {
   const postData = useLoaderData<PostData>()
+  console.log({ postData })
 
   return (
     <Layout>

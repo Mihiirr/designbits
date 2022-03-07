@@ -5,7 +5,6 @@ import { useOnClickOutside } from "usehooks-ts"
 import {
   createEditor,
   Descendant,
-  BaseElement,
   Editor,
   Element as SlateElement,
 } from "slate"
@@ -20,6 +19,7 @@ import { useLocalStorage } from "usehooks-ts"
 import { Form } from "remix"
 import { PostActionButton } from "../ActionButton"
 import { COMMENT_ACTIONS } from "~/utils/constants"
+import { isMentionElement } from "~/utils/editor"
 
 const HOTKEYS = {
   "mod+b": "bold",
@@ -129,18 +129,12 @@ const CommentInput: React.FC<{
           )}
         </AnimatePresence>
       </Slate>
-      <input
-        className="sr-only hidden"
-        name="comment"
-        aria-hidden
-        readOnly
-        value={JSON.stringify(value)}
-      />
       <div className="my-4 flex space-x-3">
         <PostActionButton
           actionName={COMMENT_ACTIONS.CREATE_COMMENT}
           formPayload={{
             postId: postId,
+            comment: JSON.stringify(value),
           }}
         >
           <button
@@ -159,12 +153,6 @@ const CommentInput: React.FC<{
       </div>
     </Form>
   )
-}
-
-function isMentionElement(
-  element: MentionElement | BaseElement,
-): element is MentionElement {
-  return (element as MentionElement).type === "mention"
 }
 
 const withMentions = (editor: Editor) => {

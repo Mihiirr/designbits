@@ -61,7 +61,7 @@ export const Mention = (props: RenderElementProps) => {
     <span
       {...attributes}
       contentEditable={false}
-      data-cy={`mention-${element.character.replace(" ", "-")}`}
+      data-cy={`mention-${element.name.replace(" ", "-")}`}
       className={clsx(
         "mx-1 my-0 inline-block rounded-sm  px-1 py-0.5 text-sm text-gray-700 ring-indigo-500 transition-colors hover:bg-indigo-200",
         selected && focused
@@ -69,7 +69,7 @@ export const Mention = (props: RenderElementProps) => {
           : "bg-indigo-100/50 ring-1",
       )}
     >
-      @{element.character}
+      @{element.name}
       {children}
     </span>
   )

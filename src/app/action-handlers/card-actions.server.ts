@@ -1,13 +1,13 @@
 import { PostReactionTypes } from "@prisma/client"
 import { db } from "~/services/db/client.server"
-import { LikeActionSchema } from "~/services/validations/client-action-schemas"
+import { LikeActionSchema } from "~/services/validations/form-schemas"
 import { CardActionFormData } from "~/types/utilities"
 import { handleFormSubmission } from "~/utils/actions.server"
 import { ProtectedActionFunction } from "~/utils/api-handler"
 import { CARD_ACTIONS } from "~/utils/constants"
 import {
-  badRequestResponse,
-  successResponse,
+  BadRequestException,
+  OkResponse,
 } from "~/utils/response-helpers.server"
 
 export const handlePostRelatedActions: ProtectedActionFunction = async ({
@@ -80,7 +80,7 @@ export async function handleLikeAction({ form }: Props): Promise<Response> {
           reaction: PostReactionTypes.LIKE,
         },
       })
-      return successResponse(data)
+      return OkResponse(data)
     },
   })
 }
@@ -102,7 +102,7 @@ export async function handleUndoLikeAction({ form }: Props): Promise<Response> {
       })
 
       if (!reaction) {
-        return badRequestResponse({ error: "No reaction found" })
+        return BadRequestException({ error: "No reaction found" })
       }
 
       const unlikedPost = await db.postReaction.delete({
@@ -110,7 +110,7 @@ export async function handleUndoLikeAction({ form }: Props): Promise<Response> {
           id: reaction.id,
         },
       })
-      return successResponse(unlikedPost)
+      return OkResponse(unlikedPost)
     },
   })
 }

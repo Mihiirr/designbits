@@ -13,7 +13,7 @@ import { NotificationMessage } from "./components/NotificationMessage"
 import { AnimatePresence, motion } from "framer-motion"
 import Spinner from "./components/Spinner"
 import { getLoggedInUser } from "./services/auth/session.server"
-import { successResponse } from "./utils/response-helpers.server"
+import { OkResponse } from "./utils/response-helpers.server"
 import { User } from "@prisma/client"
 import { RootContextProvider } from "./context/root-context"
 
@@ -138,12 +138,13 @@ export const links: LinksFunction = () => {
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await getLoggedInUser(request)
-  return successResponse({ user })
+  return OkResponse({ user })
 }
 
 interface SuccessResponse {
   ok: boolean
 }
+
 interface LoaderData extends SuccessResponse {
   user: User | null
 }

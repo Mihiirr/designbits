@@ -13,10 +13,11 @@ export default function useMentionPlugin(editor: Editor) {
     c.toLowerCase().startsWith(search.toLowerCase()),
   ).slice(0, 10)
 
-  const insertMention = useCallback((editor: Editor, character: string) => {
+  const insertMention = useCallback((editor: Editor, name: string) => {
     const mention: MentionElement = {
       type: "mention",
-      character,
+      name,
+      userId: "",
       children: [{ text: "" }],
     }
     Transforms.insertNodes(editor, mention)
