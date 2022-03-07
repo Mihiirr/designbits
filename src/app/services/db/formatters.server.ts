@@ -1,5 +1,13 @@
-import { Post, PostReaction, Prisma, Source, User } from "@prisma/client"
+import {
+  Post,
+  PostReaction,
+  Prisma,
+  Source,
+  User,
+  VideoSource,
+} from "@prisma/client"
 import property from "lodash.property"
+const sourcePriority = ["video/webm", "video/mp4"]
 
 function processGroupedByResult<T extends Record<string | number, unknown>>(
   xs: Array<T>,
@@ -51,22 +59,6 @@ function formatTotalReactionsData(
   return reactionsCountByPostId
 }
 
-function formatInteractionData(
-  data: RawInteractionsPostData,
-): FormattedInteractionsPostData[] {
-  const { postsWithCurrentUserReactionData, totalReactionsOnPost } = data
-
-  const reactionsCountByPostId = formatTotalReactionsData(totalReactionsOnPost)
-  return postsWithCurrentUserReactionData.map(interactionPost => {
-    const { PostReactions, ...rest } = interactionPost
-    return {
-      ...rest,
-      reactionsCount: reactionsCountByPostId?.[interactionPost.id],
-      reactedByLoggedInUser: PostReactions?.length ? true : false,
-    }
-  })
-}
-
 export type FormattedInteractionsPostData = {
   reactionsCount: number
   reactedByLoggedInUser: boolean
@@ -83,4 +75,67 @@ export type FormattedInteractionsPostData = {
   CreatedBy: User
 }
 
-export { formatInteractionData }
+function formatInteractionPostsData(
+  data: RawInteractionsPostData,
+): FormattedInteractionsPostData[] {
+  const { postsWithCurrentUserReactionData, totalReactionsOnPost } = data
+
+  const reactionsCountByPostId = formatTotalReactionsData(totalReactionsOnPost)
+  return postsWithCurrentUserReactionData.map(interactionPost => {
+    const { PostReactions, ...rest } = interactionPost
+    return {
+      ...rest,
+      reactionsCount: reactionsCountByPostId?.[interactionPost.id],
+      reactedByLoggedInUser: PostReactions?.length ? true : false,
+    }
+  })
+}
+
+type xyz =
+  | Post & {
+      PostReactions: PostReaction[]
+      Source: Source
+      CreatedBy: User
+      VideoSources: VideoSource[]
+      _count: {
+        PostReactions: number
+      }
+    }
+
+export type FormattedSingleInteractionsPostData = {
+  reactionCount: number
+  id: string
+  title: string
+  slug: string
+  createdById: string
+  createdAt: Date
+  modifiedAt: Date
+  sourceId: string
+  previewUrl: string
+  description: string
+  PostReactions: PostReaction[]
+  Source: Source
+  CreatedBy: User
+  VideoSources: VideoSource[]
+}
+
+function videoSourcesSorter(a: VideoSource, b: VideoSource) {
+  return sourcePriority.indexOf(a.type) - sourcePriority.indexOf(b.type)
+}
+
+function formatSingleInteractionPostData(
+  data: xyz,
+): FormattedSingleInteractionsPostData {
+  const {
+    _count: { PostReactions },
+    VideoSources,
+    ...rest
+  } = data
+  return {
+    ...rest,
+    reactionCount: PostReactions,
+    VideoSources: VideoSources.sort(videoSourcesSorter),
+  }
+}
+
+export { formatInteractionPostsData, formatSingleInteractionPostData }
