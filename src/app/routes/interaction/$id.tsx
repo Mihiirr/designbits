@@ -93,10 +93,31 @@ const Interaction = () => {
                 </div>
               </div>
               <div className="flex space-x-4">
-                <button className="flex space-x-2 rounded-lg border border-gray-200 py-2 px-4 text-gray-800">
-                  <LikeIcon height="24" width="24" />
-                  <span>{256}</span>
-                </button>
+                <PostActionButton
+                  btnProps={{
+                    className:
+                      "flex py-2 px-4 space-x-2 text-gray-800 rounded-lg border border-gray-200",
+                  }}
+                  formPayload={{
+                    postId: postData.id,
+                  }}
+                  actionName={
+                    postData?.reactedByLoggedInUser
+                      ? CARD_ACTIONS.UNDO_LIKE
+                      : CARD_ACTIONS.LIKE
+                  }
+                >
+                  <LikeIcon
+                    height="24"
+                    width="24"
+                    variant={
+                      postData?.reactedByLoggedInUser ? "filled" : "outline"
+                    }
+                  />
+                  {postData?.reactionCount !== 0 && (
+                    <span>{postData?.reactionCount}</span>
+                  )}
+                </PostActionButton>
                 <button className="flex space-x-2 rounded-lg border border-gray-200 p-2 text-gray-800">
                   <CollectionIcon height="24" width="24" />
                 </button>
@@ -105,38 +126,20 @@ const Interaction = () => {
                 </button>
               </div>
             </div>
-            <div className="flex space-x-4">
-              <PostActionButton
-                btnProps={{
-                  className:
-                    "flex py-2 px-4 space-x-2 text-gray-800 rounded-lg border border-gray-200",
-                }}
-                formPayload={{
-                  postId: postData.id,
-                }}
-                actionName={
-                  postData?.reactedByLoggedInUser
-                    ? CARD_ACTIONS.UNDO_LIKE
-                    : CARD_ACTIONS.LIKE
-                }
+            <div>
+              <video
+                className="aspect-video w-full rounded-lg bg-gray-800"
+                controls
+                autoPlay
               >
-                <LikeIcon
-                  height="24"
-                  width="24"
-                  variant={
-                    postData?.reactedByLoggedInUser ? "filled" : "outline"
-                  }
-                />
-                {postData?.reactionCount !== 0 && (
-                  <span>{postData?.reactionCount}</span>
-                )}
-              </PostActionButton>
-              <button className="flex space-x-2 rounded-lg border border-gray-200 p-2 text-gray-800">
-                <CollectionIcon height="24" width="24" />
-              </button>
-              <button className="flex space-x-2 rounded-lg border border-gray-200 p-2 text-gray-800">
-                <ShareIcon height="24" width="24" />
-              </button>
+                {/* {postData.VideoSources.map(source => (
+                  <source
+                    key={source.id}
+                    src={ASSETS_CDN_LINK + source.url}
+                    type={source.type}
+                  ></source>
+                ))} */}
+              </video>
             </div>
           </div>
           <div className="col-span-3 xl:col-span-2">

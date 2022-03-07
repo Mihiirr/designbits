@@ -16,7 +16,6 @@ import MentionsDropdown from "./MentionsDropdown"
 import { MarksFormat, toggleMark, Toolbar } from "./Toolbar"
 import useMentionPlugin from "./useMentionPlugin"
 import { useLocalStorage } from "usehooks-ts"
-import { Form } from "remix"
 import { PostActionButton } from "../ActionButton"
 import { COMMENT_ACTIONS } from "~/utils/constants"
 import { isMentionElement } from "~/utils/editor"
@@ -103,7 +102,7 @@ const CommentInput: React.FC<{
   }, [saveCommentToLS])
 
   return (
-    <Form method="post" onReset={onReset} ref={ref}>
+    <div ref={ref}>
       <Slate editor={editor} value={value} onChange={onChange}>
         <div className="block w-full rounded-md border border-gray-300 py-2 px-3 text-sm text-gray-700 shadow-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500">
           <Toolbar />
@@ -150,7 +149,7 @@ const CommentInput: React.FC<{
           Cancel
         </button>
       </div>
-    </Form>
+    </div>
   )
 }
 
