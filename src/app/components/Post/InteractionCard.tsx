@@ -88,6 +88,10 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
       </div>
       <div className="mt-2 flex space-x-4 text-xs text-gray-500">
         <PostActionButton
+          btnProps={{
+            className:
+              "flex items-center py-0.5 px-1 space-x-1 hover:text-indigo-500 focus:text-indigo-500 hover:bg-indigo-50 focus:bg-indigo-50 rounded-sm",
+          }}
           formPayload={{
             postId: post.id,
           }}
@@ -102,9 +106,13 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
             width={16}
             variant={post.reactedByLoggedInUser ? "filled" : "outline"}
           />
-          <span>{post.reactionsCount}</span>
+          {post.reactionsCount > 0 && <span>{post.reactionsCount}</span>}
         </PostActionButton>
         <PostActionButton
+          btnProps={{
+            className:
+              "flex items-center py-0.5 px-1 space-x-1 hover:text-indigo-500 focus:text-indigo-500 hover:bg-indigo-50 focus:bg-indigo-50 rounded-sm",
+          }}
           formPayload={{
             postId: post.id,
           }}

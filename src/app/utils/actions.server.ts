@@ -1,20 +1,21 @@
-import { json } from "remix"
 import { z, ZodObject, ZodRawShape } from "zod"
 import { ParsedFormData } from "~/types/utilities"
-import { getErrorMessage } from "./misc"
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from "./response-helpers.server"
 
 type ErrorMessage = string
 type NoError = null
-type FormValue = string | null
 
-async function handleFormSubmission<
-  ActionData extends {
-    status: "success" | "error"
-    fields: { [field: string]: FormValue }
-    errors: { [field: string]: ErrorMessage | NoError }
-  },
-  T extends ZodObject<ZodRawShape>,
->({
+export interface TypedResponse<T extends ZodObject<ZodRawShape>>
+  extends Response {
+  ok: boolean
+  data: unknown
+  errors: { [field in keyof z.infer<T>]: ErrorMessage | NoError } | null
+}
+
+async function handleFormSubmission<T extends ZodObject<ZodRawShape>>({
   form,
   validationSchema,
   // @ts-expect-error ts(2322) 🤷‍♂️
@@ -22,19 +23,29 @@ async function handleFormSubmission<
   handleFormValues,
 }: {
   validationSchema: T
-  actionData?: ActionData
-  handleFormValues: (formValues: z.infer<T>) => Response | Promise<Response>
+  actionData?: {
+    ok: boolean
+    data: unknown
+    errors: { [field in keyof z.infer<T>]: ErrorMessage | NoError } | null
+  }
+  handleFormValues: (formValues: z.infer<T>) => Promise<TypedResponse<T>>
 } & {
   form: ParsedFormData
-}): Promise<Response> {
+}): Promise<TypedResponse<T>> {
   try {
     const parsedInputs = await validationSchema.parseAsync(form)
     const response = await handleFormValues(parsedInputs)
     return response
   } catch (error: unknown) {
     console.error(error)
-    actionData.errors.generalError = getErrorMessage(error)
-    return json(actionData, 500)
+    if (error instanceof z.ZodError) {
+      console.log(error.issues)
+      return BadRequestException({
+        data: actionData,
+        errors: null,
+      })
+    }
+    return InternalServerErrorException(actionData)
   }
 }
 

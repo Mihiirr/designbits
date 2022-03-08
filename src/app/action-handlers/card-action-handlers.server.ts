@@ -4,11 +4,15 @@ import { LikeActionSchema } from "~/services/validations/action-schemas.server"
 import { CardActionFormData } from "~/types/utilities"
 import { handleFormSubmission } from "~/utils/actions.server"
 import { ProtectedActionFunction } from "~/utils/api-handler"
-import { CARD_ACTIONS } from "~/utils/constants"
+import { CARD_ACTIONS, COMMENT_ACTIONS } from "~/utils/constants"
 import {
-  badRequestResponse,
-  successResponse,
+  BadRequestException,
+  OkResponse,
 } from "~/utils/response-helpers.server"
+import {
+  handleCreateComment,
+  HandleFormSubmissionFn,
+} from "./comment-action-handlers.server"
 
 export const handlePostRelatedActions: ProtectedActionFunction = async ({
   request,
@@ -18,8 +22,6 @@ export const handlePostRelatedActions: ProtectedActionFunction = async ({
   const { _action, ...formValues } = Object.fromEntries(
     formData,
   ) as CardActionFormData
-
-  console.log({ _action, formValues })
 
   switch (_action) {
     case CARD_ACTIONS.LIKE:
@@ -34,20 +36,14 @@ export const handlePostRelatedActions: ProtectedActionFunction = async ({
         request,
       })
 
+    case COMMENT_ACTIONS.CREATE_COMMENT:
+      return handleCreateComment({
+        form: { ...formValues, userId: user.id },
+        request,
+      })
+
     default:
       break
-  }
-}
-
-type ErrorMessage = string
-type NoError = null
-export type LikeActionData = {
-  status: "success" | "error"
-  errors: {
-    postId: ErrorMessage | NoError
-  }
-  fields: {
-    postId: string
   }
 }
 
@@ -58,8 +54,10 @@ type Props = {
   request: Request
 }
 
-export async function handleLikeAction({ form }: Props): Promise<Response> {
-  return handleFormSubmission<LikeActionData, typeof LikeActionSchema>({
+export const handleLikeAction: HandleFormSubmissionFn<
+  typeof LikeActionSchema
+> = ({ form }: Props) => {
+  return handleFormSubmission({
     form,
     validationSchema: LikeActionSchema,
     handleFormValues: async formData => {
@@ -80,13 +78,18 @@ export async function handleLikeAction({ form }: Props): Promise<Response> {
           reaction: PostReactionTypes.LIKE,
         },
       })
-      return successResponse(data)
+      return OkResponse({
+        data,
+        errors: null,
+      })
     },
   })
 }
 
-export async function handleUndoLikeAction({ form }: Props): Promise<Response> {
-  return handleFormSubmission<LikeActionData, typeof LikeActionSchema>({
+export const handleUndoLikeAction: HandleFormSubmissionFn<
+  typeof LikeActionSchema
+> = ({ form }: Props) => {
+  return handleFormSubmission({
     form,
     validationSchema: LikeActionSchema,
     handleFormValues: async formData => {
@@ -102,7 +105,12 @@ export async function handleUndoLikeAction({ form }: Props): Promise<Response> {
       })
 
       if (!reaction) {
-        return badRequestResponse({ error: "No reaction found" })
+        return BadRequestException({
+          data: null,
+          errors: {
+            postId: "reaction not found",
+          },
+        })
       }
 
       const unlikedPost = await db.postReaction.delete({
@@ -110,7 +118,10 @@ export async function handleUndoLikeAction({ form }: Props): Promise<Response> {
           id: reaction.id,
         },
       })
-      return successResponse(unlikedPost)
+      return OkResponse({
+        data: unlikedPost,
+        errors: null,
+      })
     },
   })
 }
