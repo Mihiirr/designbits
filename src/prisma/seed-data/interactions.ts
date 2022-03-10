@@ -63,47 +63,47 @@ export default function getPosts() {
       description:
         "Most unique way of expanding and collapsing panes. That transition of title is really brave. Love when tools still try to break the ideal design.",
     },
-    // {
-    //   title: "Reminders - more options within a dropdown menu",
-    //   slug: "reminders-more-options-within-a-dropdown-menu",
-    //   CreatedBy: usersData.Shreyas,
-    //   Source: {
-    //     name: "Reminders",
-    //   },
-    //   media: {
-    //     videoMp4: "codepen-pane-expand-collapse.mp4",
-    //     videoWebM: "codepen-pane-expand-collapse.webm",
-    //     preview: "codepen-pane-expand-collapse.webm",
-    //   },
-    //   description: "To be added",
-    // },
-    // {
-    //   title: "Spotify - Profile filter",
-    //   slug: "spotify-profile-filter",
-    //   CreatedBy: usersData.Shreyas,
-    //   Source: {
-    //     name: "Spotify",
-    //   },
-    //   media: {
-    //     videoMp4: "codepen-pane-expand-collapse.mp4",
-    //     videoWebM: "codepen-pane-expand-collapse.webm",
-    //     preview: "codepen-pane-expand-collapse.webm",
-    //   },
-    //   description: "To be added",
-    // },
-    // {
-    //   title: "Instagram - Search and suggestions",
-    //   slug: "instagram-search-and-suggestions",
-    //   CreatedBy: usersData.Shreyas,
-    //   Source: {
-    //     name: "instagram",
-    //   },
-    //   media: {
-    //     videoMp4: "codepen-pane-expand-collapse.mp4",
-    //     videoWebM: "codepen-pane-expand-collapse.webm",
-    //     preview: "codepen-pane-expand-collapse.webm",
-    //   },
-    //   description: "To be added",
-    // },
+    {
+      title: "Reminders - more options within a dropdown menu",
+      slug: "reminders-more-options-within-a-dropdown-menu",
+      CreatedBy: usersData.Shreyas,
+      Source: {
+        name: "Reminders",
+      },
+      media: {
+        videoMp4: "codepen-pane-expand-collapse.mp4",
+        videoWebM: "codepen-pane-expand-collapse.webm",
+        preview: "codepen-pane-expand-collapse.webm",
+      },
+      description: "To be added",
+    },
+    {
+      title: "Spotify - Profile filter",
+      slug: "spotify-profile-filter",
+      CreatedBy: usersData.Shreyas,
+      Source: {
+        name: "Spotify",
+      },
+      media: {
+        videoMp4: "codepen-pane-expand-collapse.mp4",
+        videoWebM: "codepen-pane-expand-collapse.webm",
+        preview: "codepen-pane-expand-collapse.webm",
+      },
+      description: "To be added",
+    },
+    {
+      title: "Instagram - Search and suggestions",
+      slug: "instagram-search-and-suggestions",
+      CreatedBy: usersData.Shreyas,
+      Source: {
+        name: "Instagram",
+      },
+      media: {
+        videoMp4: "codepen-pane-expand-collapse.mp4",
+        videoWebM: "codepen-pane-expand-collapse.webm",
+        preview: "codepen-pane-expand-collapse.webm",
+      },
+      description: "To be added",
+    },
   ]
 }

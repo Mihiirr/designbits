@@ -79,7 +79,7 @@ type SourcesParsedData = {
   imageSrc: string | undefined
 }[]
 
-async function fetchSources() {
+export async function seedSourcesData() {
   try {
     const response: QueryDatabaseResponse = await notion.databases.query({
       database_id: SourcesDatabaseID,
@@ -240,5 +240,3 @@ async function fetchPostsData() {
     console.error(error)
   }
 }
-
-fetchSources()

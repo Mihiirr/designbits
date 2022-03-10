@@ -1,5 +1,6 @@
 import { PrismaClient, WatchReason } from "@prisma/client"
 import getPosts from "./seed-data/interactions"
+import { seedSourcesData } from "./seed-data/notion-client"
 import { uploadToS3 } from "./seed-data/upload"
 
 const db = new PrismaClient()
@@ -7,6 +8,8 @@ const db = new PrismaClient()
 async function seed() {
   const postsData = getPosts()
   const { default: pProps } = await import("p-props")
+
+  await seedSourcesData()
 
   await Promise.all(
     postsData.map(async post => {
