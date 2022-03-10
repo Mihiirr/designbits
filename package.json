@@ -26,7 +26,8 @@
     "prisma:reset-db": "npx prisma migrate reset",
     "prisma:generate": "npx prisma generate && npx prettier --write **/prisma/zod",
     "prisma:reset-db:skip-upload": "SKIP_UPLOAD=true yarn prisma:reset-db",
-    "vercel:env:push": "bash scripts/env.sh"
+    "vercel:env:push": "bash scripts/env.sh",
+    "ts": "node -r esbuild-register"
   },
   "prisma": {
     "schema": "src/prisma/schema.prisma",
@@ -64,11 +65,13 @@
     "remix": "^1.2.3",
     "remix-auth": "^3.2.1",
     "remix-auth-google": "^1.1.0",
+    "sharp": "^0.30.2",
     "slate": "^0.73.1",
     "slate-history": "^0.66.0",
     "slate-react": "^0.72.9",
     "spin-delay": "^1.1.0",
     "tiny-invariant": "^1.2.0",
+    "ts-node": "^10.7.0",
     "usehooks-ts": "^2.4.2",
     "zod": "^3.13.4"
   },
