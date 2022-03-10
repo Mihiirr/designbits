@@ -1,7 +1,10 @@
 import { ZodObject, ZodRawShape } from "zod"
 import { db } from "~/services/db/client.server"
 import { AddCommentActionSchema } from "~/services/validations/action-schemas.server"
-import { handleFormSubmission, TypedResponse } from "~/utils/actions.server"
+import {
+  handleFormSubmission,
+  TypedResponse,
+} from "~/utils/handle-forms.server"
 import { OkResponse } from "~/utils/response-helpers.server"
 type Props = {
   form: {

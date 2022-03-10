@@ -9,7 +9,7 @@ import {
 } from "remix"
 import type { ActionFunction, LoaderFunction } from "remix"
 import { getErrorStack } from "~/utils/misc"
-import { handleFormSubmission } from "~/utils/actions.server"
+import { handleFormSubmission } from "~/utils/handle-forms.server"
 import { getLoginInfoSession } from "~/services/auth/login.server"
 import { getSession, getUser } from "~/services/auth/session.server"
 import { validateMagicLink } from "~/services/db/magic-link.server"

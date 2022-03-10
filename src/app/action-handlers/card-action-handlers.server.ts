@@ -2,7 +2,7 @@ import { PostReactionTypes } from "@prisma/client"
 import { db } from "~/services/db/client.server"
 import { LikeActionSchema } from "~/services/validations/action-schemas.server"
 import { CardActionFormData } from "~/types/utilities"
-import { handleFormSubmission } from "~/utils/actions.server"
+import { handleFormSubmission } from "~/utils/handle-forms.server"
 import { ProtectedActionFunction } from "~/utils/api-handler"
 import { CARD_ACTIONS, COMMENT_ACTIONS } from "~/utils/constants"
 import {

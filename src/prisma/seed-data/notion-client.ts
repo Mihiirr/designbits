@@ -65,11 +65,11 @@ const download = async ({ url, filePath, fileName }: DownloadFnProps) => {
 }
 
 const notion = new Client({
-  auth: "secret_B9bzRvxpsPDPFwGRbUwU4uBLvU7tR4iU1HjSEpF9OCq",
+  auth: process.env.NOTION_API_SECRET,
 })
 
-const PostsDatabaseID = "04ef0cc924ef49f3bd76e641a2e6a349"
-const SourcesDatabaseID = "b34d024d6adf418088089e3979b14783"
+const PostsDatabaseID = process.env.NOTION_POSTS_DATABASE_ID || ""
+const SourcesDatabaseID = process.env.NOTION_SOURCES_DATABASE_ID || ""
 
 type SourcesParsedData = {
   createdAt: string

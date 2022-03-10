@@ -1,6 +1,6 @@
 import { json, redirect } from "remix"
 import { ZodObject, ZodRawShape } from "zod"
-import { TypedResponse } from "./actions.server"
+import { TypedResponse } from "./handle-forms.server"
 export enum HttpStatus {
   CONTINUE = 100,
   SWITCHING_PROTOCOLS = 101,

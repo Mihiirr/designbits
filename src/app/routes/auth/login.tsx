@@ -24,7 +24,11 @@ import Button from "~/components/Button"
 import { Input, InputError, Label } from "~/components/form-elements"
 import type { LoginFields } from "~/types/auth"
 import GoogleIcon from "~/components/icons/Google"
-import { LoginSchema } from "~/services/validations/action-schemas.server"
+
+const LoginSchema = z.object({
+  email: z.string().email().max(256),
+  redirectTo: z.string().nullable(),
+})
 
 export type LoginActionData = {
   error: RequireAtLeastOne<
@@ -71,8 +75,6 @@ export const action: ActionFunction = async ({ request }) => {
     email: emailAddress,
   })
 
-  console.log({ emailValidation })
-
   if (!emailValidation.success) {
     loginSession.flashError("A valid email is required")
     return redirect(`/auth/login`, {
@@ -114,7 +116,6 @@ const Login = () => {
   })
 
   const { success: formIsValid } = LoginSchema.safeParse(formValues)
-  console.log({ formIsValid, formValues })
 
   const [searchParams] = useSearchParams()
 
