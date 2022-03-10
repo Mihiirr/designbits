@@ -79,8 +79,19 @@ const Interaction = () => {
           <div className="col-span-5 space-y-7 px-8 xl:col-span-5">
             <div className="flex items-start justify-between">
               <div>
-                <div className="text-2xl font-bold text-gray-800">
-                  {postData.title}
+                <div className="flex items-center space-x-2">
+                  <Picture
+                    sources={postData.Source.formattedLogos}
+                    imgProps={{
+                      src: postData.Source.fallBackImage.url,
+                      alt: postData.Source.name,
+                      className:
+                        "h-8 w-8 rounded-full bg-gray-800 shadow-lg border border-gray-500 shadow-gray-200",
+                    }}
+                  />
+                  <div className="text-2xl font-bold text-gray-800">
+                    {postData.title}
+                  </div>
                 </div>
                 <div className="mt-1 flex space-x-1 text-sm text-gray-500">
                   <span>6 hrs ago</span>
