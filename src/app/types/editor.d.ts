@@ -1,6 +1,8 @@
 import { Descendant, BaseEditor } from "slate"
 import { ReactEditor, RenderElementProps } from "slate-react"
 import { HistoryEditor } from "slate-history"
+import { Get } from "type-fest"
+import { User } from "@prisma/client"
 
 export type BlockQuoteElement = { type: "block-quote"; children: Descendant[] }
 
@@ -43,7 +45,8 @@ export type ListItemElement = { type: "list-item"; children: Descendant[] }
 
 export type MentionElement = {
   type: "mention"
-  character: string
+  name: string
+  userId: Get<User, "id">
   children: CustomText[]
 }
 

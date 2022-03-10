@@ -11,7 +11,6 @@ import {
   ActionFunction,
   redirect,
 } from "remix"
-import { handlePostRelatedActions } from "~/action-handlers/card-action-handlers.server"
 import Avatar from "~/components/Avatar"
 import Button from "~/components/Button"
 import CommentsSection from "~/components/Comments/CommentsSection"
@@ -31,6 +30,7 @@ import { NotFoundException } from "~/utils/response-helpers.server"
 import { findPostPageData } from "~/services/db/queries/post.server"
 import { PostActionButton } from "~/components/ActionButton"
 import Picture from "~/components/common/Picture"
+import { handlePostRelatedActions } from "~/action-handlers/card-actions.server"
 
 export let loader: LoaderFunction = async ({ params, request }) => {
   const postSlug = params.id
@@ -72,7 +72,6 @@ type PostData = FormattedSingleInteractionsPostData
 
 const Interaction = () => {
   const postData = useLoaderData<PostData>()
-
   return (
     <Layout>
       <PostContextProvider initState={postData}>
@@ -129,13 +128,13 @@ const Interaction = () => {
                 controls
                 autoPlay
               >
-                {postData.VideoSources.map(source => (
+                {/* {postData.VideoSources.map(source => (
                   <source
                     key={source.id}
                     src={ASSETS_CDN_LINK + source.url}
                     type={source.type}
                   ></source>
-                ))}
+                ))} */}
               </video>
             </div>
           </div>

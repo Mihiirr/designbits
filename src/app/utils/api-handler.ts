@@ -1,5 +1,5 @@
 import errorHandler from "./error-handler.server"
-import { ERROR_CODES } from "./constants"
+import { ERROR_CODES, ERROR_MESSAGES } from "./constants"
 import {
   ActionFunction,
   AppData,
@@ -10,6 +10,10 @@ import {
 import { Params } from "react-router"
 import { User, UserRole } from "@prisma/client"
 import { getLoggedInUser } from "~/services/auth/session.server"
+import {
+  NotAllowedException,
+  NotAuthenticatedException,
+} from "./response-helpers.server"
 
 enum HTTP_METHODS {
   GET = "GET",
@@ -122,21 +126,23 @@ export function protectAPIRoute(
   return async ({ request, params, context }: DataFunctionArgs) => {
     const user = await getLoggedInUser(request)
     if (!user) {
-      return json(
-        { error: "Not logged in" },
-        {
-          status: 401,
+      return NotAuthenticatedException({
+        data: null,
+        errors: {
+          type: ERROR_CODES.NOT_AUTHENTICATED,
+          message: ERROR_MESSAGES.NOT_AUTHENTICATED,
         },
-      )
+      })
     }
 
     if (!isUserAllowed(user, allowedRoles)) {
-      return json(
-        { error: "Not allowed" },
-        {
-          status: 403,
+      return NotAllowedException({
+        data: null,
+        errors: {
+          type: ERROR_CODES.ACTION_NOT_ALLOWED,
+          message: ERROR_MESSAGES.ACTION_NOT_ALLOWED,
         },
-      )
+      })
     }
     return callback({ request, params, context, user })
   }

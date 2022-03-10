@@ -5,6 +5,7 @@ import { useRootContext } from "~/context/root-context"
 import { CARD_ACTIONS, COMMENT_ACTIONS } from "~/utils/constants"
 
 type BtnProps = Except<ButtonHTMLAttributes<HTMLButtonElement>, "type">
+
 type Props = {
   formPayload: {
     [name: string]: string | number | readonly string[] | undefined
@@ -38,12 +39,13 @@ interface PostActionButtonProps extends Props {
     [name: string]: string | number | readonly string[] | undefined
   }
   requiresLogin?: boolean
+  btnProps: BtnProps
 }
 
 export const PostActionButton: React.FC<PostActionButtonProps> = ({
   children,
-  btnProps,
   requiresLogin = true,
+  btnProps,
   ...rest
 }) => {
   const {
@@ -65,10 +67,7 @@ export const PostActionButton: React.FC<PostActionButtonProps> = ({
       {children}
     </ActionButton>
   ) : (
-    <button
-      onClick={onClickHandler}
-      className="flex items-center space-x-1 rounded-sm py-0.5 px-1 hover:bg-indigo-50 hover:text-indigo-500 focus:bg-indigo-50 focus:text-indigo-500"
-    >
+    <button onClick={onClickHandler} {...btnProps}>
       {children}
     </button>
   )

@@ -25,9 +25,9 @@ export const AddCommentActionSchema = z.object({
       },
     })
     if (!post) {
-      return true
+      return false
     }
-    return false
+    return true
   }),
   userId: z.string(),
   comment: z.string(),

@@ -6,7 +6,7 @@ import {
   MetaFunction,
   useLoaderData,
 } from "remix"
-import { handlePostRelatedActions } from "~/action-handlers/card-action-handlers.server"
+import { handlePostRelatedActions } from "~/action-handlers/card-actions.server"
 import { navItems } from "~/components/CategoriesNav"
 import InteractionCard from "~/components/Post"
 import { getLoggedInUser } from "~/services/auth/session.server"

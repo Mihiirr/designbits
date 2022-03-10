@@ -6,7 +6,6 @@ import { useSpinDelay } from "spin-delay"
 import tailwindStyles from "~/styles/tailwind.css"
 import videoStyles from "~/styles/video.css"
 
-import Layout from "~/components/Layout"
 import Document from "~/components/common/Document"
 import { useTransition } from "remix"
 import { NotificationMessage } from "./components/NotificationMessage"

@@ -1,7 +1,6 @@
 import { UserRole } from "@prisma/client"
 import Layout from "~/components/Layout"
 import { LoaderFunction, ActionFunction, useLoaderData } from "remix"
-import { handlePostRelatedActions } from "~/action-handlers/card-action-handlers.server"
 import InteractionCard from "~/components/Post"
 import { getLoggedInUser } from "~/services/auth/session.server"
 import {
@@ -12,6 +11,7 @@ import { findPostReactedByUser } from "~/services/db/queries/post.server"
 
 import { apiHandler } from "~/utils/api-handler"
 import EmptyState from "~/components/Liked/EmptyState"
+import { handlePostRelatedActions } from "~/action-handlers/card-actions.server"
 
 interface Props {}
 

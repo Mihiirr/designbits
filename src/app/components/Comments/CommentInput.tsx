@@ -5,7 +5,6 @@ import { useOnClickOutside } from "usehooks-ts"
 import {
   createEditor,
   Descendant,
-  BaseElement,
   Editor,
   Element as SlateElement,
 } from "slate"
@@ -17,9 +16,9 @@ import MentionsDropdown from "./MentionsDropdown"
 import { MarksFormat, toggleMark, Toolbar } from "./Toolbar"
 import useMentionPlugin from "./useMentionPlugin"
 import { useLocalStorage } from "usehooks-ts"
-import { Form } from "remix"
 import { PostActionButton } from "../ActionButton"
 import { COMMENT_ACTIONS } from "~/utils/constants"
+import { isMentionElement } from "~/utils/editor"
 
 const HOTKEYS = {
   "mod+b": "bold",
@@ -103,7 +102,7 @@ const CommentInput: React.FC<{
   }, [saveCommentToLS])
 
   return (
-    <Form method="post" onReset={onReset} ref={ref}>
+    <div ref={ref}>
       <Slate editor={editor} value={value} onChange={onChange}>
         <div className="block w-full rounded-md border border-gray-300 py-2 px-3 text-sm text-gray-700 shadow-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500">
           <Toolbar />
@@ -129,18 +128,12 @@ const CommentInput: React.FC<{
           )}
         </AnimatePresence>
       </Slate>
-      <input
-        className="sr-only hidden"
-        name="comment"
-        aria-hidden
-        readOnly
-        value={JSON.stringify(value)}
-      />
       <div className="my-4 flex space-x-3">
         <PostActionButton
           actionName={COMMENT_ACTIONS.CREATE_COMMENT}
           formPayload={{
             postId: postId,
+            comment: JSON.stringify(value),
           }}
           btnProps={{
             className:
@@ -156,14 +149,8 @@ const CommentInput: React.FC<{
           Cancel
         </button>
       </div>
-    </Form>
+    </div>
   )
-}
-
-function isMentionElement(
-  element: MentionElement | BaseElement,
-): element is MentionElement {
-  return (element as MentionElement).type === "mention"
 }
 
 const withMentions = (editor: Editor) => {

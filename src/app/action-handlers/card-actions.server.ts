@@ -1,6 +1,6 @@
 import { PostReactionTypes } from "@prisma/client"
 import { db } from "~/services/db/client.server"
-import { LikeActionSchema } from "~/services/validations/client-action-schemas"
+import { LikeActionSchema } from "~/services/validations/form-schemas"
 import { CardActionFormData } from "~/types/utilities"
 import { handleFormSubmission } from "~/utils/handle-forms.server"
 import { ProtectedActionFunction } from "~/utils/api-handler"
@@ -12,7 +12,7 @@ import {
 import {
   handleCreateComment,
   HandleFormSubmissionFn,
-} from "./comment-action-handlers.server"
+} from "./comment-actions.server"
 
 export const handlePostRelatedActions: ProtectedActionFunction = async ({
   request,

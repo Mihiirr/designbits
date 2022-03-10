@@ -2330,6 +2330,11 @@ end-of-stream@^1.1.0, end-of-stream@^1.4.1:
   dependencies:
     once "^1.4.0"
 
+enum-values@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/enum-values/-/enum-values-1.2.1.tgz#c74c7f076fe63c15dee2e4af0f51fd6cd0ce2f62"
+  integrity sha512-Qxe+bcN4g9tnmUitlkQnCpMXTUliW7WntCZ0giei/J4SbSeCiLJzhnFOUZKwnIOT4LiNo2iVfrrjDTZW+JAJhA==
+
 env-cmd@^10.1.0:
   version "10.1.0"
   resolved "https://registry.yarnpkg.com/env-cmd/-/env-cmd-10.1.0.tgz#c7f5d3b550c9519f137fdac4dd8fb6866a8c8c4b"
