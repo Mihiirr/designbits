@@ -1,11 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-generator zod {
-  provider = "zod-prisma"
-  output   = "./zod"
-}
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
@@ -32,22 +27,26 @@ enum UserRole {
 }
 
 model User {
-  id             String         @id @default(cuid())
+  id               String            @id @default(cuid())
   /// @zod.email({ message: "Invalid email address" })
-  email          String         @unique
-  name           String?
-  profilePicture String?        @db.VarChar(1024)
-  profileSlug    String
-  UserStatus     UserStatus     @default(ACTIVE)
-  role           UserRole       @default(USER)
-  createdAt      DateTime       @default(now())
-  modifiedAt     DateTime       @default(now())
-  Post           Post[]
-  PostViews      PostView[]
-  ReactedOnPosts PostReaction[]
-  Session        Session[]
-  Following      Follower[]     @relation("following")
-  FollowedBy     Follower[]     @relation("followedBy")
+  email            String            @unique
+  name             String?
+  profilePicture   String?           @db.VarChar(1024)
+  profileSlug      String
+  UserStatus       UserStatus        @default(ACTIVE)
+  role             UserRole          @default(USER)
+  createdAt        DateTime          @default(now())
+  modifiedAt       DateTime          @default(now())
+  Post             Post[]
+  PostViews        PostView[]
+  ReactedOnPosts   PostReaction[]
+  Session          Session[]
+  Following        Follower[]        @relation("following")
+  FollowedBy       Follower[]        @relation("followedBy")
+  Comments         Comment[]
+  Mentions         Mention[]
+  CommentReactions CommentReaction[]
+  Watchlist        Watchlist[]
 }
 
 model Follower {
@@ -73,7 +72,9 @@ model Post {
   previewUrl    String
   description   String         @db.MediumText
   PostReactions PostReaction[]
+  PostComments  Comment[]
   VideoSources  VideoSource[]
+  Watchlist     Watchlist[]
 }
 
 model VideoSource {
@@ -85,11 +86,20 @@ model VideoSource {
 }
 
 model Source {
-  id       String @id @default(cuid())
-  name     String @unique
+  id          String       @id @default(cuid())
+  name        String       @unique
+  url         String
+  Post        Post[]
+  SourceLogos SourceLogo[]
+}
+
+model SourceLogo {
+  id       String  @id @default(uuid())
+  sourceId String
+  type     String
   url      String
-  imageSrc String
-  Post     Post[]
+  size     String?
+  Source   Source  @relation(fields: [sourceId], references: [id], onDelete: Cascade)
 }
 
 model PostView {
@@ -116,10 +126,88 @@ model PostReaction {
   @@unique([postId, reactedBy])
 }
 
+enum WatchReason {
+  MANUAL
+  COMMENTED
+  MENTIONED
+  CREATED
+}
+
+model Watchlist {
+  id          Int         @id @default(autoincrement())
+  userId      String
+  postId      String?
+  commentId   String?
+  watchReason WatchReason
+  User        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Post        Post?       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  Comment     Comment?    @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+}
+
 model Session {
   id             String   @id @default(uuid())
   createdAt      DateTime @default(now())
   User           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         String
   expirationDate DateTime
+}
+
+model Comment {
+  id               String            @id @default(cuid())
+  parentCommentId  String?
+  ParentComment    Comment?          @relation("ParentComment", fields: [parentCommentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ReplyComments    Comment[]         @relation("ParentComment")
+  postId           String
+  isEdited         Boolean           @default(false)
+  comment          Json
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  createdById      String
+  CreatedBy        User              @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  Post             Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+  Mentions         Mention[]
+  Watchlist        Watchlist[]
+  CommentReactions CommentReaction[]
+}
+
+model Mention {
+  id        String  @id @default(uuid())
+  commentId String
+  userId    String
+  User      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+}
+
+enum CommentReactionTypes {
+  LIKE
+  DISLIKE
+  LAUGH
+  HURRAY
+  CONFUSED
+  LOVE
+  ROCKET
+  EYES
+}
+
+model CommentReaction {
+  id        String               @id @default(cuid())
+  commentId String
+  Comment   Comment              @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  reaction  CommentReactionTypes @default(LIKE)
+  reactedBy String               @map("userId")
+  viewedAt  DateTime             @default(now())
+  ReactedBy User                 @relation(fields: [reactedBy], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, reactedBy])
+}
+
+model NotionSourceSeedLog {
+  id           Int      @id @default(autoincrement())
+  notionPageId String
+  itemId       String
+  itemType     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
 }

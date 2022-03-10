@@ -14,13 +14,13 @@ import {
 import { handlePostRelatedActions } from "~/action-handlers/card-action-handlers.server"
 import Avatar from "~/components/Avatar"
 import Button from "~/components/Button"
+import CommentsSection from "~/components/Comments/CommentsSection"
 import AndroidIcon from "~/components/icons/Android"
 import LikeIcon from "~/components/icons/Like"
 import InteractionFeedback from "~/components/InteractionFeedback"
-import PostButton from "~/components/Post/PostButton"
 import Layout from "~/components/Layout"
-import { db } from "~/services/db/client.server"
-import { ASSETS_CDN_LINK, ERROR_CODES } from "~/utils/constants"
+import { PostContextProvider } from "~/context/postContext"
+import { ASSETS_CDN_LINK, CARD_ACTIONS, ERROR_CODES } from "~/utils/constants"
 import {
   formatSingleInteractionPostData,
   FormattedSingleInteractionsPostData,
@@ -29,6 +29,8 @@ import { getLoggedInUser } from "~/services/auth/session.server"
 import { apiHandler } from "~/utils/api-handler"
 import { NotFoundException } from "~/utils/response-helpers.server"
 import { findPostPageData } from "~/services/db/queries/post.server"
+import { PostActionButton } from "~/components/ActionButton"
+import Picture from "~/components/common/Picture"
 
 export let loader: LoaderFunction = async ({ params, request }) => {
   const postSlug = params.id
@@ -48,7 +50,8 @@ export let loader: LoaderFunction = async ({ params, request }) => {
 
   if (data === null) {
     return NotFoundException({
-      error: {
+      data,
+      errors: {
         type: ERROR_CODES.POST_NOT_FOUND,
       },
     })
@@ -67,135 +70,138 @@ export const action: ActionFunction = apiHandler({
 
 type PostData = FormattedSingleInteractionsPostData
 
-export enum CARD_ACTIONS {
-  LIKE = "like",
-  UNDO_LIKE = "undo_like",
-  COMMENT = "comment",
-}
-
 const Interaction = () => {
   const postData = useLoaderData<PostData>()
+
   return (
     <Layout>
-      <div className="grid grid-cols-7 w-full">
-        <div className="col-span-5 px-8 space-y-7">
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="text-2xl font-bold text-gray-800">
-                {postData.title}
+      <PostContextProvider initState={postData}>
+        <div className="grid w-full grid-cols-8 xl:grid-cols-7">
+          <div className="col-span-5 space-y-7 px-8 xl:col-span-5">
+            <div className="flex items-start justify-between">
+              <div>
+                <div className="text-2xl font-bold text-gray-800">
+                  {postData.title}
+                </div>
+                <div className="mt-1 flex space-x-1 text-sm text-gray-500">
+                  <span>6 hrs ago</span>
+                  <span>&middot;</span>
+                  <span>1.2k views</span>
+                </div>
               </div>
-              <div className="flex mt-1 space-x-1 text-sm text-gray-500">
-                <span>6 hrs ago</span>
-                <span>&middot;</span>
-                <span>1.2k views</span>
-              </div>
-            </div>
-            <div className="flex space-x-4">
-              <PostButton
-                btnProps={{
-                  className:
-                    "flex py-2 px-4 space-x-2 text-gray-800 rounded-lg border border-gray-200",
-                }}
-                postId={postData.id}
-                value={
-                  postData?.reactedByLoggedInUser
-                    ? CARD_ACTIONS.UNDO_LIKE
-                    : CARD_ACTIONS.LIKE
-                }
-              >
-                <LikeIcon
-                  height="24"
-                  width="24"
-                  variant={
-                    postData?.reactedByLoggedInUser ? "filled" : "outline"
+              <div className="flex space-x-4">
+                <PostActionButton
+                  btnProps={{
+                    className:
+                      "flex py-2 px-4 space-x-2 text-gray-800 rounded-lg border border-gray-200",
+                  }}
+                  formPayload={{
+                    postId: postData.id,
+                  }}
+                  actionName={
+                    postData?.reactedByLoggedInUser
+                      ? CARD_ACTIONS.UNDO_LIKE
+                      : CARD_ACTIONS.LIKE
                   }
-                />
-                {postData?.reactionCount !== 0 && (
-                  <span>{postData?.reactionCount}</span>
-                )}
-              </PostButton>
-              <button className="flex p-2 space-x-2 text-gray-800 rounded-lg border border-gray-200">
-                <CollectionIcon height="24" width="24" />
-              </button>
-              <button className="flex p-2 space-x-2 text-gray-800 rounded-lg border border-gray-200">
-                <ShareIcon height="24" width="24" />
-              </button>
-            </div>
-          </div>
-          <div>
-            <video
-              className="aspect-video w-full bg-gray-800 rounded-lg"
-              controls
-              autoPlay
-            >
-              {postData.VideoSources.map(source => (
-                <source
-                  key={source.id}
-                  src={ASSETS_CDN_LINK + source.url}
-                  type={source.type}
-                ></source>
-              ))}
-            </video>
-          </div>
-        </div>
-        <div className="col-span-2 ">
-          <div className="px-8 space-y-7 w-full">
-            <div className="flex justify-between items-center">
-              <Avatar
-                slug={postData.CreatedBy.profileSlug}
-                imgSrc={ASSETS_CDN_LINK! + postData.CreatedBy.profilePicture}
-                name={postData.CreatedBy.name}
-              />
-              <div className="flex items-center space-x-4">
-                <Button>Follow</Button>
-                <button>
-                  <DotsVerticalIcon className="w-5 h-5" />
+                >
+                  <LikeIcon
+                    height="24"
+                    width="24"
+                    variant={
+                      postData?.reactedByLoggedInUser ? "filled" : "outline"
+                    }
+                  />
+                  {postData?.reactionCount !== 0 && (
+                    <span>{postData?.reactionCount}</span>
+                  )}
+                </PostActionButton>
+                <button className="flex space-x-2 rounded-lg border border-gray-200 p-2 text-gray-800">
+                  <CollectionIcon height="24" width="24" />
+                </button>
+                <button className="flex space-x-2 rounded-lg border border-gray-200 p-2 text-gray-800">
+                  <ShareIcon height="24" width="24" />
                 </button>
               </div>
             </div>
-            <p className="text-sm text-gray-800">{postData.description}</p>
-            <div className="space-y-2 text-sm text-gray-500">
-              <div className="flex space-x-4 w-full">
-                <div className="w-2/12">Source</div>
-                <div>
-                  <a
-                    href={postData.Source.url}
-                    className="flex items-center space-x-2 text-sm font-semibold text-gray-800"
-                  >
-                    <img
-                      src={postData.Source.imageSrc}
-                      alt={postData.Source.name}
-                      className="w-5 h-5 bg-gray-800 rounded-full"
-                    />
-                    <span>{postData.Source.name}</span>
-                  </a>
-                </div>
-              </div>
-              <div className="flex space-x-4 w-full">
-                <div className="w-2/12">Platform</div>
-                <div className="flex space-x-2 text-gray-800">
-                  <AndroidIcon />
-                  <span>Android</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex space-x-2 text-sm">
-              <div className="py-1 px-2 text-indigo-700 bg-indigo-50 rounded">
-                Navigation
-              </div>
-              <div className="py-1 px-2 text-indigo-700 bg-indigo-50 rounded">
-                Useful
-              </div>
-              <div className="py-1 px-2 text-indigo-700 bg-indigo-50 rounded">
-                Accessibility
-              </div>
+            <div>
+              <video
+                className="aspect-video w-full rounded-lg bg-gray-800"
+                controls
+                autoPlay
+              >
+                {postData.VideoSources.map(source => (
+                  <source
+                    key={source.id}
+                    src={ASSETS_CDN_LINK + source.url}
+                    type={source.type}
+                  ></source>
+                ))}
+              </video>
             </div>
           </div>
-          <div className="mx-8 mt-12 border-b border-gray-300"></div>
-
-          <InteractionFeedback />
+          <div className="col-span-3 xl:col-span-2">
+            <div className="w-full space-y-7 px-8">
+              <div className="flex items-center justify-between">
+                <Avatar
+                  slug={postData.CreatedBy.profileSlug}
+                  imgSrc={ASSETS_CDN_LINK! + postData.CreatedBy.profilePicture}
+                  name={postData.CreatedBy.name}
+                />
+                <div className="flex items-center space-x-4">
+                  <Button>Follow</Button>
+                  <button>
+                    <DotsVerticalIcon className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+              <p className="text-sm text-gray-800">{postData.description}</p>
+              <div className="space-y-2 text-sm text-gray-500">
+                <div className="flex w-full space-x-4">
+                  <div className="w-2/12">Source</div>
+                  <div>
+                    <a
+                      href={postData.Source.url}
+                      className="flex items-center space-x-2 text-sm font-semibold text-gray-800"
+                    >
+                      <Picture
+                        sources={postData.Source.formattedLogos}
+                        imgProps={{
+                          src: postData.Source.fallBackImage.url,
+                          alt: postData.Source.name,
+                          className: "h-5 w-5 rounded-full bg-gray-800",
+                        }}
+                      />
+                      <span>{postData.Source.name}</span>
+                    </a>
+                  </div>
+                </div>
+                <div className="flex w-full space-x-4">
+                  <div className="w-2/12">Platform</div>
+                  <div className="flex space-x-2 text-gray-800">
+                    <AndroidIcon />
+                    <span>Android</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex space-x-2 text-sm">
+                <div className="rounded bg-indigo-50 py-1 px-2 text-indigo-700">
+                  Navigation
+                </div>
+                <div className="rounded bg-indigo-50 py-1 px-2 text-indigo-700">
+                  Useful
+                </div>
+                <div className="rounded bg-indigo-50 py-1 px-2 text-indigo-700">
+                  Accessibility
+                </div>
+              </div>
+            </div>
+            <div className="mx-8 mt-12 border-b border-gray-300">
+              <CommentsSection />
+            </div>
+            <InteractionFeedback />
+          </div>
         </div>
-      </div>
+      </PostContextProvider>
     </Layout>
   )
 }

@@ -12,7 +12,7 @@ export default function Avatar({ slug, imgSrc, name }: Props) {
       <div className="flex items-center">
         <div>
           <img
-            className="inline-block w-10 h-10 rounded-full"
+            className="inline-block h-10 w-10 rounded-full"
             src={imgSrc ?? ""}
             alt="profile"
           />

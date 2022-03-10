@@ -5,8 +5,8 @@ import { useSpinDelay } from "spin-delay"
 
 import tailwindStyles from "~/styles/tailwind.css"
 import videoStyles from "~/styles/video.css"
+
 import Layout from "~/components/Layout"
-import Link from "~/components/Link"
 import Document from "~/components/common/Document"
 import { useTransition } from "remix"
 import { NotificationMessage } from "./components/NotificationMessage"
@@ -76,16 +76,16 @@ function PageLoadingMessage() {
 
   return (
     <NotificationMessage position="bottom-right" visible={showLoader}>
-      <div className="flex items-center w-64">
+      <div className="flex w-64 items-center">
         <motion.div
           transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
           animate={{ rotate: 360 }}
         >
           <Spinner height={48} width={48} />
         </motion.div>
-        <div className="inline-grid ml-4">
+        <div className="ml-4 inline-grid">
           <AnimatePresence>
-            <div className="flex overflow-hidden col-start-1 row-start-1">
+            <div className="col-start-1 row-start-1 flex overflow-hidden">
               <motion.span
                 key={action}
                 initial={{ y: 15, opacity: 0 }}
@@ -139,21 +139,25 @@ export const links: LinksFunction = () => {
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await getLoggedInUser(request)
-  return OkResponse({ user })
+  return OkResponse({
+    data: user,
+    errors: null,
+  })
 }
 
-interface SuccessResponse {
-  ok: boolean
+type SuccessResponse<T, R> = {
+  ok: true
+  data: T
+  errors: R
 }
-interface LoaderData extends SuccessResponse {
-  user: User | null
-}
+
+type LoaderData = SuccessResponse<User | null, null>
 
 // https://remix.run/api/conventions#default-export
 // https://remix.run/api/conventions#route-filenames
 export default function App() {
   const loaderData = useLoaderData<LoaderData>()
-  const rootContextData = { user: loaderData.user }
+  const rootContextData = { user: loaderData.data }
   return (
     <RootContextProvider initState={rootContextData}>
       <Document>
@@ -210,9 +214,7 @@ export function CatchBoundary() {
 
   return (
     <Document title={`${caught.status} ${caught.statusText}`}>
-      <Layout>
-        <CaughtError caught={caught} message={message} />
-      </Layout>
+      <CaughtError caught={caught} message={message} />
     </Document>
   )
 }

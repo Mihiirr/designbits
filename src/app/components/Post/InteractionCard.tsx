@@ -3,24 +3,19 @@ import classNames from "../../utils/classnames"
 import CommentIcon from "../icons/Comment"
 import { Link } from "remix"
 import { motion } from "framer-motion"
-import { ASSETS_CDN_LINK } from "~/utils/constants"
+import { ASSETS_CDN_LINK, CARD_ACTIONS } from "~/utils/constants"
 import { formatDistanceToNow } from "date-fns"
 import { enUS } from "date-fns/locale"
-import PostButton from "./PostButton"
+import { PostActionButton } from "../ActionButton"
 import { FormattedInteractionsPostData } from "~/services/db/formatters.server"
 import VideoPlayer from "./VideoPlayer"
+import Picture from "../common/Picture"
 
 type Props = {
   post: FormattedInteractionsPostData & {
     backgroundColorClass?: string
   }
   index: number
-}
-
-export enum CARD_ACTIONS {
-  LIKE = "like",
-  UNDO_LIKE = "undo_like",
-  COMMENT = "comment",
 }
 
 const InteractionCard: React.FC<Props> = ({ post, index }) => {
@@ -36,13 +31,13 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
       }}
     >
       <motion.div
-        className="overflow-hidden relative w-full bg-gray-200 rounded-lg"
+        className="relative w-full overflow-hidden rounded-lg bg-gray-200"
         whileHover={{ scale: 1.05 }}
       >
         <Link
           className={classNames(
             post.backgroundColorClass || "bg-gray-800",
-            "aspect-w-1 aspect-h-1 xl:aspect-w-7 xl:aspect-h-8 h-60 w-full block relative group",
+            "aspect-w-1 aspect-h-1 xl:aspect-w-7 xl:aspect-h-8 group relative block h-60 w-full",
           )}
           to={`/interaction/${post.slug}`}
           prefetch="intent"
@@ -51,16 +46,24 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
             src={ASSETS_CDN_LINK + post.previewUrl}
             backgroundColorClass={post.backgroundColorClass}
           />
-          <div className="absolute top-0 p-3 w-full h-full bg-gradient-to-b group-hover:bg-none from-gray-800 via-transparent transition-transform group-hover:-translate-y-full">
+          <div className="absolute top-0 h-full w-full bg-gradient-to-b from-gray-800 via-transparent p-3 transition-transform group-hover:-translate-y-full group-hover:bg-none">
             <Link
               to="/test"
               className="flex items-center space-x-2 text-xs font-semibold text-gray-200"
             >
-              <img
-                src={post.Source.imageSrc}
-                alt={post.Source.name}
-                className="w-5 h-5 rounded-full"
+              <Picture
+                sources={post.Source.formattedLogos}
+                imgProps={{
+                  src: post.Source.fallBackImage.url,
+                  alt: post.Source.name,
+                  className: "h-5 w-5 rounded-full",
+                }}
               />
+              {/* <img
+                src={post.Source.SourceLogos[0].url}
+                alt={post.Source.name}
+                className="h-5 w-5 rounded-full"
+              /> */}
               <span>{post.Source.name}</span>
             </Link>
           </div>
@@ -69,13 +72,13 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
       <h3 className="mt-3 text-sm font-semibold text-gray-700">
         <a href={post.slug}>{post.title}</a>
       </h3>
-      <div className="flex mt-1 space-x-1 text-xs text-gray-400">
+      <div className="mt-1 flex space-x-1 text-xs text-gray-400">
         <a
           href={post.CreatedBy.id}
           className="flex items-center space-x-1 text-indigo-700"
         >
           <img
-            className="inline-block w-4 h-4 rounded-full"
+            className="inline-block h-4 w-4 rounded-full"
             src={ASSETS_CDN_LINK + post.CreatedBy.profilePicture || ""}
             alt="profile"
           />
@@ -92,14 +95,16 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
         <span>&middot;</span>
         <span>{"6k"}</span>
       </div>
-      <div className="flex mt-2 space-x-4 text-xs text-gray-500">
-        <PostButton
+      <div className="mt-2 flex space-x-4 text-xs text-gray-500">
+        <PostActionButton
           btnProps={{
             className:
               "flex items-center py-0.5 px-1 space-x-1 hover:text-indigo-500 focus:text-indigo-500 hover:bg-indigo-50 focus:bg-indigo-50 rounded-sm",
           }}
-          postId={post.id}
-          value={
+          formPayload={{
+            postId: post.id,
+          }}
+          actionName={
             post.reactedByLoggedInUser
               ? CARD_ACTIONS.UNDO_LIKE
               : CARD_ACTIONS.LIKE
@@ -111,18 +116,20 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
             variant={post.reactedByLoggedInUser ? "filled" : "outline"}
           />
           {post.reactionsCount > 0 && <span>{post.reactionsCount}</span>}
-        </PostButton>
-        <PostButton
+        </PostActionButton>
+        <PostActionButton
           btnProps={{
             className:
               "flex items-center py-0.5 px-1 space-x-1 hover:text-indigo-500 focus:text-indigo-500 hover:bg-indigo-50 focus:bg-indigo-50 rounded-sm",
           }}
-          postId={post.id}
-          value={CARD_ACTIONS.COMMENT}
+          formPayload={{
+            postId: post.id,
+          }}
+          actionName={CARD_ACTIONS.COMMENT}
         >
           <CommentIcon height={16} width={16} />
           <span>{"5"}</span>
-        </PostButton>
+        </PostActionButton>
       </div>
     </motion.div>
   )

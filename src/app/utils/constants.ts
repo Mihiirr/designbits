@@ -36,4 +36,16 @@ export const ERROR_MESSAGES: Record<`${ERROR_CODES}`, string> = {
   POST_NOT_FOUND: "The post you are looking for is no longer available!",
 }
 
+export enum CARD_ACTIONS {
+  LIKE = "like",
+  UNDO_LIKE = "undo_like",
+  COMMENT = "comment",
+}
+
+export enum COMMENT_ACTIONS {
+  CREATE_COMMENT = "CREATE_COMMENT",
+  DELETE_COMMENT = "DELETE_COMMENT",
+  UPDATE_COMMENT = "UPDATE_COMMENT",
+}
+
 export const IS_PRODUCTION = process.env.NODE_ENV === "production"

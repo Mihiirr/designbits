@@ -1,5 +1,6 @@
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient, WatchReason } from "@prisma/client"
 import getPosts from "./seed-data/interactions"
+import { seedSourcesData } from "./seed-data/notion-client"
 import { uploadToS3 } from "./seed-data/upload"
 
 const db = new PrismaClient()
@@ -7,6 +8,8 @@ const db = new PrismaClient()
 async function seed() {
   const postsData = getPosts()
   const { default: pProps } = await import("p-props")
+
+  await seedSourcesData()
 
   await Promise.all(
     postsData.map(async post => {
@@ -21,11 +24,15 @@ async function seed() {
           "profile-pictures",
         ),
       })
-      return db.post.create({
+      const createdPost = await db.post.create({
         data: {
           title,
           slug,
-          Source,
+          Source: {
+            connect: {
+              name: Source.name,
+            },
+          },
           CreatedBy: {
             connectOrCreate: {
               create: {
@@ -53,6 +60,15 @@ async function seed() {
           previewUrl: uploadedMedia.preview.Key,
         },
       })
+
+      const watchList = await db.watchlist.create({
+        data: {
+          userId: createdPost.createdById,
+          postId: createdPost.id,
+          watchReason: WatchReason.CREATED,
+        },
+      })
+      return { createdPost, watchList }
     }),
   )
 }
