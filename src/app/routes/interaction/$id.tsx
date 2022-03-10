@@ -30,6 +30,7 @@ import { apiHandler } from "~/utils/api-handler"
 import { NotFoundException } from "~/utils/response-helpers.server"
 import { findPostPageData } from "~/services/db/queries/post.server"
 import { PostActionButton } from "~/components/ActionButton"
+import Picture from "~/components/common/Picture"
 
 export let loader: LoaderFunction = async ({ params, request }) => {
   const postSlug = params.id
@@ -162,10 +163,13 @@ const Interaction = () => {
                       href={postData.Source.url}
                       className="flex items-center space-x-2 text-sm font-semibold text-gray-800"
                     >
-                      <img
-                        src={postData.Source.imageSrc}
-                        alt={postData.Source.name}
-                        className="h-5 w-5 rounded-full bg-gray-800"
+                      <Picture
+                        sources={postData.Source.formattedLogos}
+                        imgProps={{
+                          src: postData.Source.fallBackImage.url,
+                          alt: postData.Source.name,
+                          className: "h-5 w-5 rounded-full bg-gray-800",
+                        }}
                       />
                       <span>{postData.Source.name}</span>
                     </a>

@@ -22,7 +22,7 @@ const s3bucket = new AWS.S3({
 export async function uploadToS3(
   fileName: string,
   filePath: string = "",
-): Promise<any> {
+): Promise<S3.ManagedUpload.SendData | { Key: string }> {
   const skipUpload = process.env.SKIP_UPLOAD
   if (skipUpload) {
     console.log("SKIPPING UPLOAD... ", fileName)

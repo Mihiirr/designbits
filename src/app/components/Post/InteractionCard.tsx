@@ -9,6 +9,7 @@ import { enUS } from "date-fns/locale"
 import { PostActionButton } from "../ActionButton"
 import { FormattedInteractionsPostData } from "~/services/db/formatters.server"
 import VideoPlayer from "./VideoPlayer"
+import Picture from "../common/Picture"
 
 type Props = {
   post: FormattedInteractionsPostData & {
@@ -50,11 +51,19 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
               to="/test"
               className="flex items-center space-x-2 text-xs font-semibold text-gray-200"
             >
-              <img
-                src={post.Source.imageSrc}
+              <Picture
+                sources={post.Source.formattedLogos}
+                imgProps={{
+                  src: post.Source.fallBackImage.url,
+                  alt: post.Source.name,
+                  className: "h-5 w-5 rounded-full",
+                }}
+              />
+              {/* <img
+                src={post.Source.SourceLogos[0].url}
                 alt={post.Source.name}
                 className="h-5 w-5 rounded-full"
-              />
+              /> */}
               <span>{post.Source.name}</span>
             </Link>
           </div>

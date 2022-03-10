@@ -86,11 +86,20 @@ model VideoSource {
 }
 
 model Source {
-  id       String @id @default(cuid())
-  name     String @unique
+  id          String       @id @default(cuid())
+  name        String       @unique
+  url         String
+  Post        Post[]
+  SourceLogos SourceLogo[]
+}
+
+model SourceLogo {
+  id       String  @id @default(uuid())
+  sourceId String
+  type     String
   url      String
-  imageSrc String
-  Post     Post[]
+  size     String?
+  Source   Source  @relation(fields: [sourceId], references: [id], onDelete: Cascade)
 }
 
 model PostView {
@@ -192,4 +201,13 @@ model CommentReaction {
   ReactedBy User                 @relation(fields: [reactedBy], references: [id], onDelete: Cascade)
 
   @@unique([commentId, reactedBy])
+}
+
+model NotionSourceSeedLog {
+  id           Int      @id @default(autoincrement())
+  notionPageId String
+  itemId       String
+  itemType     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
 }

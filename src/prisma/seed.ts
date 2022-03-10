@@ -25,7 +25,11 @@ async function seed() {
         data: {
           title,
           slug,
-          Source,
+          Source: {
+            connect: {
+              name: Source.name,
+            },
+          },
           CreatedBy: {
             connectOrCreate: {
               create: {
