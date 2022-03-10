@@ -21,28 +21,36 @@ It is generally recommended to use a Git repository, because future commits will
 then automatically be deployed by Vercel, through its
 [Git Integration](https://vercel.com/docs/concepts/git).
 
-## Development
-
-To run your Remix app locally, make sure your project's local dependencies are
-installed:
-
-```sh
-npm install
-```
-
-Afterwards, start the Remix development server like so:
-
-```sh
-npm run dev
-```
-
-Open up [http://localhost:3000](http://localhost:3000) and you should be ready
-to go!
-
-If you're used to using the `vercel dev` command provided by
-[Vercel CLI](https://vercel.com/cli) instead, you can also use that, but it's
-not needed.
-
 # Install PlanetScale CLI
 
-https://planetscale.com/cli
+`Step:3`
+
+```sh
+https://docs.planetscale.com/concepts/planetscale-environment-setup
+```
+
+# Connect database
+
+`Step:4` Generate prisma client:
+
+```sh
+yarn prisma:generate
+```
+
+If this throws error run:
+
+```sh
+npx prisma generate
+```
+
+`Step:5` Connect database using:
+
+```sh
+yarn connect:database:develop
+```
+
+# Run locally
+
+```sh
+yarn dev
+```

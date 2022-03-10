@@ -6,16 +6,17 @@ import { useSpinDelay } from "spin-delay"
 import tailwindStyles from "~/styles/tailwind.css"
 import videoStyles from "~/styles/video.css"
 
-import Link from "~/components/Link"
+import Layout from "~/components/Layout"
 import Document from "~/components/common/Document"
 import { useTransition } from "remix"
 import { NotificationMessage } from "./components/NotificationMessage"
 import { AnimatePresence, motion } from "framer-motion"
 import Spinner from "./components/Spinner"
 import { getLoggedInUser } from "./services/auth/session.server"
-import { successResponse } from "./utils/response-helpers.server"
+import { OkResponse } from "./utils/response-helpers.server"
 import { User } from "@prisma/client"
 import { RootContextProvider } from "./context/root-context"
+import CaughtError from "./components/common/CaughtError"
 
 const LOADER_WORDS = [
   "loading",
@@ -138,21 +139,25 @@ export const links: LinksFunction = () => {
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await getLoggedInUser(request)
-  return successResponse({ user })
+  return OkResponse({
+    data: user,
+    errors: null,
+  })
 }
 
-interface SuccessResponse {
-  ok: boolean
+type SuccessResponse<T, R> = {
+  ok: true
+  data: T
+  errors: R
 }
-interface LoaderData extends SuccessResponse {
-  user: User | null
-}
+
+type LoaderData = SuccessResponse<User | null, null>
 
 // https://remix.run/api/conventions#default-export
 // https://remix.run/api/conventions#route-filenames
 export default function App() {
   const loaderData = useLoaderData<LoaderData>()
-  const rootContextData = { user: loaderData.user, isAuthModalOpen: false }
+  const rootContextData = { user: loaderData.data, isAuthModalOpen: false }
   return (
     <RootContextProvider initState={rootContextData}>
       <Document>
@@ -207,38 +212,7 @@ export function CatchBoundary() {
 
   return (
     <Document title={`${caught.status} ${caught.statusText}`}>
-      <div className="m-auto min-h-full bg-white py-16 px-4 sm:py-24 sm:px-6 md:grid md:place-items-center lg:px-8">
-        <div className="mx-auto max-w-max">
-          <main className="sm:flex">
-            <p className="text-4xl font-extrabold text-indigo-600 sm:text-5xl">
-              {caught.status}
-            </p>
-            <div className="sm:ml-6">
-              <div className="sm:border-l sm:border-gray-200 sm:pl-6">
-                <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
-                  {caught.statusText}
-                </h1>
-                <p className="mt-1 text-base text-gray-500">{message}</p>
-              </div>
-              <div className="mt-10 flex space-x-3 sm:border-l sm:border-transparent sm:pl-6">
-                <Link
-                  prefetch="intent"
-                  to="/explore"
-                  className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                  Explore
-                </Link>
-                <a
-                  href="/"
-                  className="inline-flex items-center rounded-md border border-transparent bg-indigo-100 py-2 px-4 text-sm font-medium text-indigo-700 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                  Go back home
-                </a>
-              </div>
-            </div>
-          </main>
-        </div>
-      </div>
+      <CaughtError caught={caught} message={message} />
     </Document>
   )
 }

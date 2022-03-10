@@ -16,3 +16,6 @@ bin/dotenv-linter
 
 # Docker
 .docker
+
+# Seed
+src/prisma/seed-data/source-images/

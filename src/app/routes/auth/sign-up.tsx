@@ -9,7 +9,7 @@ import {
 } from "remix"
 import type { ActionFunction, LoaderFunction } from "remix"
 import { getErrorStack } from "~/utils/misc"
-import { handleFormSubmission } from "~/utils/actions.server"
+import { handleFormSubmission } from "~/utils/handle-forms.server"
 import { getLoginInfoSession } from "~/services/auth/login.server"
 import { getSession, getUser } from "~/services/auth/session.server"
 import { validateMagicLink } from "~/services/db/magic-link.server"
@@ -18,6 +18,7 @@ import SignUpForm from "~/components/auth/SignUpForm"
 import { z } from "zod"
 import { SignUpSchema } from "~/services/validations/action-schemas.server"
 import { CardActionFormData } from "~/types/utilities"
+import { RedirectResponse } from "~/utils/response-helpers.server"
 
 type SignUpFormFields = z.infer<typeof SignUpSchema>
 
@@ -63,7 +64,7 @@ export const action: ActionFunction = async ({ request }) => {
     })
   }
 
-  return handleFormSubmission<SignUpActionData, typeof SignUpSchema>({
+  return handleFormSubmission<typeof SignUpSchema>({
     form,
     validationSchema: SignUpSchema,
     handleFormValues: async formData => {
@@ -78,14 +79,18 @@ export const action: ActionFunction = async ({ request }) => {
         // IDEA: try using destroy... Didn't seem to work last time I tried though.
         loginInfoSession.clean()
         await loginInfoSession.getHeaders(headers)
-        return redirect("/me", { headers })
+        return RedirectResponse({
+          url: "explore/all",
+          headers,
+        })
       } catch (error: unknown) {
         console.error(getErrorStack(error))
 
         loginInfoSession.flashError(
           "There was a problem creating your account. Please try again.",
         )
-        return redirect("/auth/login", {
+        return RedirectResponse({
+          url: "/auth/login",
           headers: await loginInfoSession.getHeaders(),
         })
       }
@@ -95,7 +100,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await getUser(request)
-  if (user) return redirect("/me")
+  if (user) return redirect("/explore/all")
 
   const loginInfoSession = await getLoginInfoSession(request)
   const magicLink = loginInfoSession.getMagicLink()
@@ -155,6 +160,7 @@ const SignUp = (props: Props) => {
     />
   )
 }
+
 export const meta: MetaFunction = () => {
   return {
     title: "Signup | DesignBits",
