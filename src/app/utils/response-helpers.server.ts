@@ -1,4 +1,6 @@
-import { json } from "remix"
+import { json, redirect } from "remix"
+import { ZodObject, ZodRawShape } from "zod"
+import { TypedResponse } from "./handle-forms.server"
 export enum HttpStatus {
   CONTINUE = 100,
   SWITCHING_PROTOCOLS = 101,
@@ -46,110 +48,164 @@ export enum HttpStatus {
   HTTP_VERSION_NOT_SUPPORTED = 505,
 }
 
-export function CreatedResponse(data: any) {
+type ResponseFnProps = {
+  data: any
+  errors: any
+}
+type RedirectFnProps = {
+  url: string
+  headers: HeadersInit | undefined
+}
+
+export function CreatedResponse<T extends ZodObject<ZodRawShape>>({
+  data,
+  errors,
+}: ResponseFnProps) {
   return json(
     {
       ok: true,
-      ...data,
+      data,
+      errors,
     },
     {
       status: HttpStatus.CREATED,
     },
-  )
+  ) as TypedResponse<T>
 }
 
-export function OkResponse(data: any) {
+export function OkResponse<T extends ZodObject<ZodRawShape>>({
+  data,
+  errors,
+}: ResponseFnProps) {
   return json(
     {
       ok: true,
-      ...data,
+      data: data,
+      errors: errors,
     },
     {
       status: HttpStatus.OK,
     },
-  )
+  ) as TypedResponse<T>
 }
 
-export function BadRequestException(data: any) {
+export function BadRequestException<T extends ZodObject<ZodRawShape>>({
+  data,
+  errors,
+}: ResponseFnProps) {
   return json(
     {
       ok: false,
-      ...data,
+      data,
+      errors,
     },
     {
       status: HttpStatus.BAD_REQUEST,
     },
-  )
+  ) as TypedResponse<T>
 }
 
-export function NotFoundException(data: any) {
+export function NotFoundException<T extends ZodObject<ZodRawShape>>({
+  data,
+  errors,
+}: ResponseFnProps) {
   return json(
     {
       ok: false,
-      ...data,
+      data,
+      errors,
     },
     {
       status: HttpStatus.NOT_FOUND,
     },
-  )
+  ) as TypedResponse<T>
 }
 
-export function ConflictException(data: any) {
+export function ConflictException<T extends ZodObject<ZodRawShape>>({
+  data,
+  errors,
+}: ResponseFnProps) {
   return json(
     {
       ok: false,
-      ...data,
+      data,
+      errors,
     },
     {
       status: HttpStatus.CONFLICT,
     },
-  )
+  ) as TypedResponse<T>
 }
 
-export function InternalServerErrorException(data: any) {
+export function InternalServerErrorException<T extends ZodObject<ZodRawShape>>({
+  data,
+  errors,
+}: ResponseFnProps) {
   return json(
     {
       ok: false,
-      ...data,
+      data,
+      errors,
     },
     {
       status: HttpStatus.INTERNAL_SERVER_ERROR,
     },
-  )
+  ) as TypedResponse<T>
 }
 
-export function GoneException(data: any) {
+export function GoneException<T extends ZodObject<ZodRawShape>>({
+  data,
+  errors,
+}: ResponseFnProps) {
   return json(
     {
       ok: false,
-      ...data,
+      data,
+      errors,
     },
     {
       status: HttpStatus.GONE,
     },
-  )
+  ) as TypedResponse<T>
 }
 
-export function NotAuthenticatedException(data: any) {
+export function NotAuthenticatedException<T extends ZodObject<ZodRawShape>>({
+  data,
+  errors,
+}: ResponseFnProps) {
   return json(
     {
       ok: false,
-      ...data,
+      data,
+      errors,
     },
     {
       status: HttpStatus.UNAUTHORIZED,
     },
-  )
+  ) as TypedResponse<T>
 }
 
-export function NotAllowedException(data: any) {
+export function NotAllowedException<T extends ZodObject<ZodRawShape>>({
+  data,
+  errors,
+}: ResponseFnProps) {
   return json(
     {
       ok: false,
-      ...data,
+      data,
+      errors,
     },
     {
       status: HttpStatus.FORBIDDEN,
     },
-  )
+  ) as TypedResponse<T>
+}
+
+export function RedirectResponse<T extends ZodObject<ZodRawShape>>({
+  url,
+  headers,
+}: RedirectFnProps) {
+  return redirect(url, {
+    headers,
+  }) as TypedResponse<T>
 }

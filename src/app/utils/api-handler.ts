@@ -1,5 +1,5 @@
 import errorHandler from "./error-handler.server"
-import { ERROR_CODES } from "./constants"
+import { ERROR_CODES, ERROR_MESSAGES } from "./constants"
 import {
   ActionFunction,
   AppData,
@@ -126,11 +126,23 @@ export function protectAPIRoute(
   return async ({ request, params, context }: DataFunctionArgs) => {
     const user = await getLoggedInUser(request)
     if (!user) {
-      return NotAuthenticatedException({})
+      return NotAuthenticatedException({
+        data: null,
+        errors: {
+          type: ERROR_CODES.NOT_AUTHENTICATED,
+          message: ERROR_MESSAGES.NOT_AUTHENTICATED,
+        },
+      })
     }
 
     if (!isUserAllowed(user, allowedRoles)) {
-      return NotAllowedException({})
+      return NotAllowedException({
+        data: null,
+        errors: {
+          type: ERROR_CODES.ACTION_NOT_ALLOWED,
+          message: ERROR_MESSAGES.ACTION_NOT_ALLOWED,
+        },
+      })
     }
     return callback({ request, params, context, user })
   }

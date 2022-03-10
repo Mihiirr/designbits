@@ -1,15 +1,35 @@
-import { Post, PostReaction, Prisma, Source, User } from "@prisma/client"
+import { Post, PostReaction, Prisma, SourceLogo, User } from "@prisma/client"
 import { SetOptional } from "type-fest"
 import { db } from "~/services/db/client.server"
+import { FormattedSourceElementProps } from "../formatters.server"
 
 type props = {
   userId?: User["id"]
 }
 
+export type SourceWithLogos = {
+  SourceLogos: SourceLogo[]
+  name: string
+  url: string
+}
+
+export type SourceWithFormattedLogos = {
+  formattedLogos: [string, FormattedSourceElementProps][]
+  fallBackImage: SourceLogo
+  name: string
+  url: string
+}
+
 async function findPostsIncludingUserReaction({ userId }: props) {
   return db.post.findMany({
     include: {
-      Source: true,
+      Source: {
+        select: {
+          SourceLogos: true,
+          name: true,
+          url: true,
+        },
+      },
       CreatedBy: true,
       PostReactions: userId
         ? {
@@ -38,7 +58,13 @@ async function findPostsReactedByUser({ userId }: props) {
       },
     },
     include: {
-      Source: true,
+      Source: {
+        select: {
+          SourceLogos: true,
+          name: true,
+          url: true,
+        },
+      },
       CreatedBy: true,
       PostReactions: true,
     },
@@ -64,7 +90,7 @@ type TotalReactionsOnPost = (Prisma.PickArray<
 })[]
 
 type PostWithCurrentUserReactionData = Post & {
-  Source: Source
+  Source: SourceWithLogos
   CreatedBy: User
   PostReactions: PostReaction[]
 }
@@ -99,7 +125,13 @@ function findPostPageData({ postSlug, userId }: FindPostPageDataProps) {
       slug: postSlug,
     },
     include: {
-      Source: true,
+      Source: {
+        select: {
+          SourceLogos: true,
+          name: true,
+          url: true,
+        },
+      },
       CreatedBy: true,
       VideoSources: true,
       PostReactions: userId

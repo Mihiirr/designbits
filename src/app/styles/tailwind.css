@@ -2742,6 +2742,11 @@ select {
   background-color: rgb(199 210 254 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-indigo-200:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(199 210 254 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-red-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(185 28 28 / var(--tw-bg-opacity));

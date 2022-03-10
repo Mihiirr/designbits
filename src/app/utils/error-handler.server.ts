@@ -25,7 +25,8 @@ const handlePrismaClientValidationError = (
   error: Prisma.PrismaClientValidationError,
 ) => {
   const exceptionArguments = {
-    error: {
+    data: null,
+    errors: {
       type: ERROR_CODES.DATABASE_ERROR,
       message: error.message,
     },
@@ -37,7 +38,8 @@ const handlePrismaKnownError = (
   error: Prisma.PrismaClientKnownRequestError,
 ) => {
   const exceptionArguments = {
-    error: {
+    data: null,
+    errors: {
       type: ERROR_CODES.DATABASE_ERROR,
       name: EnumValues.getNameFromValue(PrismaErrorCodesEnum, error.code),
       code: error.code,
@@ -86,7 +88,8 @@ export default function errorHandler(error: any) {
     return handlePrismaClientValidationError(error)
   } else if (isPrismaInternalError) {
     return InternalServerErrorException({
-      error: {
+      data: null,
+      errors: {
         type: ERROR_CODES.DATABASE_ERROR,
         message: error.message,
       },

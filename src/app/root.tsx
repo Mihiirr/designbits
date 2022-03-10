@@ -14,8 +14,8 @@ import Spinner from "./components/Spinner"
 import { getLoggedInUser } from "./services/auth/session.server"
 import { OkResponse } from "./utils/response-helpers.server"
 import { User } from "@prisma/client"
-import CaughtError from "./components/common/CaughtError"
 import { RootContextProvider } from "./context/root-context"
+import CaughtError from "./components/common/CaughtError"
 
 const LOADER_WORDS = [
   "loading",
@@ -138,22 +138,25 @@ export const links: LinksFunction = () => {
 
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await getLoggedInUser(request)
-  return OkResponse({ user })
+  return OkResponse({
+    data: user,
+    errors: null,
+  })
 }
 
-interface SuccessResponse {
-  ok: boolean
+type SuccessResponse<T, R> = {
+  ok: true
+  data: T
+  errors: R
 }
 
-interface LoaderData extends SuccessResponse {
-  user: User | null
-}
+type LoaderData = SuccessResponse<User | null, null>
 
 // https://remix.run/api/conventions#default-export
 // https://remix.run/api/conventions#route-filenames
 export default function App() {
   const loaderData = useLoaderData<LoaderData>()
-  const rootContextData = { user: loaderData.user, isAuthModalOpen: false }
+  const rootContextData = { user: loaderData.data, isAuthModalOpen: false }
   return (
     <RootContextProvider initState={rootContextData}>
       <Document>

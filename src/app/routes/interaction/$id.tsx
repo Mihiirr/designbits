@@ -19,7 +19,7 @@ import LikeIcon from "~/components/icons/Like"
 import InteractionFeedback from "~/components/InteractionFeedback"
 import Layout from "~/components/Layout"
 import { PostContextProvider } from "~/context/post-context"
-import { ASSETS_CDN_LINK, ERROR_CODES } from "~/utils/constants"
+import { ASSETS_CDN_LINK, CARD_ACTIONS, ERROR_CODES } from "~/utils/constants"
 import {
   formatSingleInteractionPostData,
   FormattedSingleInteractionsPostData,
@@ -28,8 +28,9 @@ import { getLoggedInUser } from "~/services/auth/session.server"
 import { apiHandler } from "~/utils/api-handler"
 import { NotFoundException } from "~/utils/response-helpers.server"
 import { findPostPageData } from "~/services/db/queries/post.server"
-import { handlePostRelatedActions } from "~/action-handlers/card-actions.server"
 import { PostActionButton } from "~/components/ActionButton"
+import Picture from "~/components/common/Picture"
+import { handlePostRelatedActions } from "~/action-handlers/card-actions.server"
 
 export let loader: LoaderFunction = async ({ params, request }) => {
   const postSlug = params.id
@@ -49,7 +50,8 @@ export let loader: LoaderFunction = async ({ params, request }) => {
 
   if (data === null) {
     return NotFoundException({
-      error: {
+      data,
+      errors: {
         type: ERROR_CODES.POST_NOT_FOUND,
       },
     })
@@ -67,12 +69,6 @@ export const action: ActionFunction = apiHandler({
 })
 
 type PostData = FormattedSingleInteractionsPostData
-
-export enum CARD_ACTIONS {
-  LIKE = "like",
-  UNDO_LIKE = "undo_like",
-  COMMENT = "comment",
-}
 
 const Interaction = () => {
   const postData = useLoaderData<PostData>()
@@ -166,10 +162,13 @@ const Interaction = () => {
                       href={postData.Source.url}
                       className="flex items-center space-x-2 text-sm font-semibold text-gray-800"
                     >
-                      <img
-                        src={postData.Source.imageSrc}
-                        alt={postData.Source.name}
-                        className="h-5 w-5 rounded-full bg-gray-800"
+                      <Picture
+                        sources={postData.Source.formattedLogos}
+                        imgProps={{
+                          src: postData.Source.fallBackImage.url,
+                          alt: postData.Source.name,
+                          className: "h-5 w-5 rounded-full bg-gray-800",
+                        }}
                       />
                       <span>{postData.Source.name}</span>
                     </a>
@@ -198,7 +197,6 @@ const Interaction = () => {
             <div className="mx-8 mt-12 border-b border-gray-300">
               <CommentsSection />
             </div>
-
             <InteractionFeedback />
           </div>
         </div>
