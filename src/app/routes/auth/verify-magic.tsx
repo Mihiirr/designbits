@@ -14,7 +14,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       loginInfoSession.clean()
       await loginInfoSession.getHeaders(headers)
       await session.getHeaders(headers)
-      return redirect("/me", { headers })
+      return redirect(`${loginInfoSession.getRedirectTo()}`, { headers })
     } else {
       loginInfoSession.setMagicLink(request.url)
       return redirect("/auth/sign-up", {

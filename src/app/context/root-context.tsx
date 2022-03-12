@@ -14,7 +14,11 @@ type RootContextProviderProps = {
 }
 
 const RootContext = createContext<
-  | { rootState: State; openAuthModal: () => void; closeAuthModal: () => void }
+  | {
+      rootState: State
+      openAuthModal: () => void
+      closeAuthModal: () => void
+    }
   | undefined
 >(undefined)
 
@@ -30,7 +34,10 @@ type Action = {
 function rootStateReducer(state: State, action: Action) {
   switch (action.type) {
     case AuthModalActions.OPEN_AUTH_MODAL: {
-      return { ...state, isAuthModalOpen: true }
+      return {
+        ...state,
+        isAuthModalOpen: true,
+      }
     }
     case AuthModalActions.CLOSE_AUTH_MODAL: {
       return { ...state, isAuthModalOpen: false }
@@ -47,10 +54,9 @@ function RootContextProvider({
 }: RootContextProviderProps) {
   const [rootState, dispatch] = useReducer(rootStateReducer, initState)
 
-  const openAuthModal = useCallback(
-    () => dispatch({ type: AuthModalActions.OPEN_AUTH_MODAL }),
-    [],
-  )
+  const openAuthModal = useCallback(() => {
+    dispatch({ type: AuthModalActions.OPEN_AUTH_MODAL })
+  }, [])
   const closeAuthModal = useCallback(() => {
     dispatch({ type: AuthModalActions.CLOSE_AUTH_MODAL })
   }, [])

@@ -1,25 +1,73 @@
 import { Dialog } from "@headlessui/react"
 import { motion, AnimatePresence } from "framer-motion"
-import { useRef, useState } from "react"
-import { Form, useSearchParams } from "remix"
+import { useState } from "react"
+import {
+  json,
+  LoaderFunction,
+  redirect,
+  useLoaderData,
+  useSearchParams,
+} from "remix"
 import { useRootContext } from "~/context/root-context"
-import Button from "../Button"
-import { Label, Input, InputError } from "../form-elements"
-import GoogleIcon from "../icons/Google"
 import { H3, H4 } from "../Typography"
+import { z, ZodError } from "zod"
+import AuthForm from "../auth/AuthForm"
+import { getLoginInfoSession } from "~/services/auth/login.server"
+import { getUser } from "~/services/auth/session.server"
+import { RequireAtLeastOne } from "type-fest"
+import { LoginFields } from "~/types/auth"
 
 type ModalProps = {
   isOpen?: boolean
   setIsOpen: (isAuthModalOpen: boolean) => void
 }
 
+const LoginSchema = z.object({
+  email: z.string().email().max(256),
+  redirectTo: z.string().nullable(),
+})
+
+export type LoginActionData = {
+  error: RequireAtLeastOne<
+    ZodError<LoginFields>["formErrors"],
+    "fieldErrors" | "formErrors"
+  >
+  fields: Partial<LoginFields>
+}
+
+type LoaderData = {
+  email?: string
+  error?: string
+}
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const user = await getUser(request)
+  if (user) return redirect("/explore/all")
+
+  const loginSession = await getLoginInfoSession(request)
+  console.log(loginSession, loginSession.getEmail())
+
+  const data: LoaderData = {
+    email: loginSession.getEmail(),
+    error: loginSession.getError(),
+  }
+
+  const headers = new Headers({
+    "Cache-Control": "private, max-age=3600",
+    Vary: "Cookie",
+  })
+  await loginSession.getHeaders(headers)
+
+  return json(data, { headers })
+}
+
 export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [submitted, setSubmitted] = useState(false)
+  const data = useLoaderData<LoaderData>()
   const [formValues, setFormValues] = useState({
     email: "",
     redirectTo: "",
   })
+  const { success: formIsValid } = LoginSchema.safeParse(formValues)
   const { closeAuthModal } = useRootContext()
   const [searchParams] = useSearchParams()
   const childVariants = {
@@ -100,58 +148,13 @@ export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
                       </H4>
                     </motion.div>
                   </div>
-                  <Form
-                    onChange={event => {
-                      const form = event.currentTarget
-                      setFormValues({
-                        email: form.email.value,
-                        redirectTo: form.redirectTo.value,
-                      })
-                    }}
-                    onSubmit={() => setSubmitted(true)}
-                    action="/auth/login"
-                    method="post"
-                    className="mb-10 lg:mb-12"
-                  >
-                    <div className="hidden">
-                      <Label htmlFor="redirect-to">redirect to</Label>
-                      <Input
-                        id="redirect-to"
-                        name="redirectTo"
-                        type="text"
-                        readOnly
-                        defaultValue={searchParams.get("redirectTo") || ""}
-                      />
-                    </div>
-                    <div className="mb-6">
-                      <div className="mb-4 flex flex-wrap items-baseline justify-between">
-                        <Label htmlFor="email-address">Email address</Label>
-                      </div>
-                      <Input
-                        ref={inputRef}
-                        autoFocus
-                        id="email-address"
-                        name="email"
-                        type="email"
-                        autoComplete="email"
-                        defaultValue={formValues.email}
-                        required
-                        placeholder="Email address"
-                      />
-                    </div>
-
-                    <div className="flex flex-wrap gap-4">
-                      <Button type="submit" disabled={submitted}>
-                        Email a login link
-                      </Button>
-                    </div>
-                  </Form>
-                  <Form action="/auth/google" method="post">
-                    <Button variant="secondary" type="submit">
-                      <GoogleIcon />
-                      <span className="pl-2">Login with Google</span>
-                    </Button>
-                  </Form>
+                  <AuthForm
+                    setFormValues={setFormValues}
+                    data={data}
+                    formIsValid={formIsValid}
+                    formValues={formValues}
+                    searchParams={searchParams.get("redirectTo")}
+                  />
                 </div>
               </div>
             </motion.div>

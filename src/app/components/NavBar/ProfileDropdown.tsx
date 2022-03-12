@@ -4,6 +4,7 @@ import { RemixLinkProps } from "@remix-run/react/components"
 import { Fragment } from "react"
 import { Link } from "remix"
 import classNames from "~/utils/classnames"
+import UserAvatar from "./UserAvatar"
 
 type Props = {
   user: User
@@ -28,9 +29,7 @@ const ProfileDropdown = ({ user, navigationMenu }: Props) => {
               referrerPolicy="no-referrer"
             />
           ) : (
-            <div className="flex h-8 w-8 items-center justify-center rounded-3xl bg-blue-500 font-semibold text-white">
-              {user.name?.charAt(0)}
-            </div>
+            <>{user.name && <UserAvatar userName={user?.name} />}</>
           )}
         </Menu.Button>
       </div>
