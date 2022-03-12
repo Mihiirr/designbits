@@ -58,8 +58,9 @@ export async function fetchSourcesData() {
         createdAt: page.created_time,
         updatedAt: page.last_edited_time,
         name:
-          page.properties?.Name?.type === "title"
-            ? page.properties.Name?.title?.[0].plain_text
+          page.properties?.Name?.type === "title" &&
+          page.properties.Name?.title?.[0]
+            ? page.properties.Name?.title?.[0]?.plain_text
             : null,
         url:
           page.properties?.url?.type === "url"
@@ -104,7 +105,7 @@ export async function fetchPostsData() {
         updatedAt: page.last_edited_time,
         title:
           page.properties.Title.type === "title"
-            ? page.properties.Title?.title?.[0].plain_text
+            ? page.properties.Title?.title?.[0]?.plain_text
             : null,
         source:
           page.properties.Source?.type === "relation"

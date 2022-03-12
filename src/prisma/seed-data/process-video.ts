@@ -37,7 +37,7 @@ export const getVideoInfo = async (
   })
 }
 
-type OutPutConfigOp = {
+export type OutPutConfigOp = {
   ext: string
   size: string
   sizeName: VideoSize
@@ -138,11 +138,7 @@ export const outputConfigs: OutPutConfigOp[] = [
 
 export const processVideo = async (
   inputPath: string,
-  outputFormats: {
-    ext: string
-    size: string
-    sizeName: string
-  }[] = outputConfigs,
+  outputFormats: OutPutConfigOp[] = outputConfigs,
 ): Promise<
   {
     fileName: string
@@ -165,6 +161,20 @@ export const processVideo = async (
 
     if (!fs.existsSync(outputFolder)) {
       fs.mkdirSync(outputFolder)
+    }
+
+    if (process.env.SKIP_PROCESSING) {
+      resolve(
+        outputFormats.map(({ size, ext, sizeName }) => {
+          const outFileName = `${fileName}-${size}.${ext}`
+          console.log("created: " + outFileName)
+          return {
+            fileName: outFileName,
+            sizeName,
+            format: ext,
+          }
+        }),
+      )
     }
 
     const outputCommands = (

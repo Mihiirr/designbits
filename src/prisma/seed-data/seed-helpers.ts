@@ -15,13 +15,14 @@ import isEqual from "lodash.isequal"
 import pick from "lodash.pick"
 import { isBefore } from "date-fns"
 import { S3 } from "aws-sdk"
-import { processVideo } from "./process-video"
+import { OutPutConfigOp, outputConfigs, processVideo } from "./process-video"
 
 type DownloadFnProps = {
   fileName: string
   url: string
   filePath: string
   uploadMetaData?: S3.Metadata
+  formatsToGenerate?: OutPutConfigOp[]
 }
 
 export const downloadFileFromURL = async ({
@@ -29,6 +30,12 @@ export const downloadFileFromURL = async ({
   filePath,
   fileName,
 }: DownloadFnProps) => {
+  const outputFilePath = path.join(__dirname, filePath, fileName)
+
+  if (process.env.SKIP_DONWLOAD) {
+    return outputFilePath
+  }
+
   const streamPipeline = promisify(pipeline)
 
   const response = await fetch(url)
@@ -36,8 +43,6 @@ export const downloadFileFromURL = async ({
   if (!response.ok) {
     throw new Error(`unexpected response ${response.statusText}`)
   }
-
-  const outputFilePath = path.join(__dirname, filePath, fileName)
 
   if (!fs.existsSync(path.dirname(outputFilePath))) {
     fs.mkdirSync(path.dirname(outputFilePath))
@@ -75,6 +80,7 @@ export const downloadVideosAndUploadToS3 = async ({
   filePath,
   fileName,
   uploadMetaData = {},
+  formatsToGenerate = outputConfigs,
 }: DownloadFnProps) => {
   const outputFilePath = await downloadFileFromURL({ url, filePath, fileName })
   // const processedImages = await processImage(outputFilePath)
@@ -82,7 +88,7 @@ export const downloadVideosAndUploadToS3 = async ({
 
   console.log("Downloaded video at: ", outputFilePath)
   console.log("processing video at: ", outputFilePath)
-  const processedVideos = await processVideo(outputFilePath)
+  const processedVideos = await processVideo(outputFilePath, formatsToGenerate)
   console.log("process-complete video at: ", outputFilePath)
 
   return pMap(processedVideos, async ({ fileName, sizeName, format }) => {

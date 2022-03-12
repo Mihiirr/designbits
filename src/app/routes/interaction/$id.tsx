@@ -166,7 +166,7 @@ const Interaction = () => {
                         imgProps={{
                           src: postData.Source.fallBackImage.url,
                           alt: postData.Source.name,
-                          className: "h-5 w-5 rounded-full bg-gray-800",
+                          className: "h-5 w-5 rounded-md bg-gray-800",
                         }}
                       />
                       <span>{postData.Source.name}</span>

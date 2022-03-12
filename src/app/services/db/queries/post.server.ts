@@ -33,7 +33,7 @@ async function findPostsIncludingUserReaction({ userId }: props) {
         },
         where: {
           size: {
-            in: [VideoSize.THUMBNAIL_240P, VideoSize.ORIGINAL],
+            in: [VideoSize.MEDIUM_480P, VideoSize.ORIGINAL],
           },
         },
       },

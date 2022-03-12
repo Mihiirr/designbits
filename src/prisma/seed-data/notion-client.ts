@@ -253,11 +253,36 @@ export async function seedPostsData() {
     processedData.forEach(post => {
       const postItem = postsByNotionPageId[post.notionSourceId]
       const videoSources = postItem.VideoSources
+
+      const map = {} as any
+
+      videoSources.forEach(videoSource => {
+        const key = [videoSource.type, videoSource.size].join("-")
+        map[key] = true
+      })
+
+      const formatsToGenerate = outputConfigs.filter(outputConfig => {
+        const key = [`video/${outputConfig.ext}`, outputConfig.sizeName].join(
+          "-",
+        )
+        console.log(key, "======")
+        return map[key] !== true
+      })
+
       console.log(
-        "======= ",
-        post.media?.file?.url && videoSources.length < outputConfigs.length,
+        "generating formats:" +
+          JSON.stringify(
+            formatsToGenerate.map(format => `${format.ext}-${format.size}`),
+          ),
       )
-      if (post.media?.file?.url && videoSources.length < outputConfigs.length) {
+      console.log({
+        videoSource: videoSources.length,
+        map,
+        postItem: postItem.title,
+        formatsToGenerate: formatsToGenerate.length,
+      })
+
+      if (post.media?.file?.url && formatsToGenerate.length > 0) {
         mediaFilesToDownload[post.notionSourceId] = downloadVideosAndUploadToS3(
           {
             url: post.media?.file?.url,
@@ -279,29 +304,34 @@ export async function seedPostsData() {
       Object.entries(downloadedMediaFiles).map(
         async ([notionSourceId, files]) => {
           const postItem = postsByNotionPageId[notionSourceId]
-          return pMap(files, async file => {
-            return db.videoSource.upsert({
-              create: {
-                postId: postItem.id,
-                type: `video/${file.format}`,
-                url: file.uploadedData.Key,
-                size: file.sizeName,
-              },
-              update: {
-                url: file.uploadedData.Key,
-              },
-              where: {
-                postId_type_size: {
+          return pMap(
+            files,
+            async file => {
+              return db.videoSource.upsert({
+                create: {
                   postId: postItem.id,
                   type: `video/${file.format}`,
+                  url: file.uploadedData.Key,
                   size: file.sizeName,
                 },
-              },
-            })
-          })
+                update: {
+                  url: file.uploadedData.Key,
+                },
+                where: {
+                  postId_type_size: {
+                    postId: postItem.id,
+                    type: `video/${file.format}`,
+                    size: file.sizeName,
+                  },
+                },
+              })
+            },
+            { concurrency: 2 },
+          )
         },
       ),
       () => {},
+      { concurrency: 2 },
     )
 
     // console.log(processedData)
