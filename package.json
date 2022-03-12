@@ -24,7 +24,7 @@
     "install:dotenv-linter": "curl -sSfL https://raw.githubusercontent.com/dotenv-linter/dotenv-linter/master/install.sh | sh -s -- -b node_modules/.bin",
     "prisma:create-migration": "npx prisma migrate dev",
     "prisma:reset-db": "npx prisma migrate reset",
-    "prisma:generate": "npx prisma generate && npx prettier --write **/prisma/zod",
+    "prisma:generate": "npx prisma generate",
     "prisma:reset-db:skip-upload": "SKIP_UPLOAD=true yarn prisma:reset-db",
     "ts": "env-cmd node -r esbuild-register",
     "vercel:env:push": "bash scripts/env.sh"
