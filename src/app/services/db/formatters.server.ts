@@ -1,12 +1,30 @@
-import { Post, PostReaction, Prisma, User, VideoSource } from "@prisma/client"
+import {
+  Post,
+  PostReaction,
+  Prisma,
+  User,
+  VideoSize,
+  VideoSource,
+} from "@prisma/client"
 import groupBy from "lodash.groupby"
 import property from "lodash.property"
-import { ASSETS_CDN_LINK } from "~/utils/constants"
 import {
+  FormattedSingleInteractionsPostData,
+  FormattedSourceElementProps,
+  SingleInteractionPostData,
   SourceWithFormattedLogos,
   SourceWithLogos,
-} from "./queries/post.server"
+} from "~/types/formatters"
+import { ASSETS_CDN_LINK } from "~/utils/constants"
+
 const sourcePriority = ["video/webm", "video/mp4"]
+const qualityPriority: VideoSize[] = [
+  VideoSize.HIGH_RES_1080P,
+  VideoSize.LARGE_720P,
+  VideoSize.MEDIUM_480P,
+  VideoSize.SMALL_360P,
+  VideoSize.THUMBNAIL_240P,
+]
 
 function processGroupedByResult<T extends Record<string | number, unknown>>(
   xs: Array<T>,
@@ -33,6 +51,7 @@ type RawInteractionsPostData = {
     Source: SourceWithLogos
     CreatedBy: User
     PostReactions?: PostReaction[]
+    VideoSources: VideoSource[]
   })[]
   totalReactionsOnPost: RawTotalReactionsOnPost[]
 }
@@ -64,6 +83,7 @@ export type FormattedInteractionsPostData = {
   previewUrl: string
   description: string
   Source: SourceWithFormattedLogos
+  VideoSources: VideoSource[]
   CreatedBy: User
 }
 
@@ -74,9 +94,10 @@ function formatInteractionPostsData(
 
   const reactionsCountByPostId = formatTotalReactionsData(totalReactionsOnPost)
   return postsWithCurrentUserReactionData.map(interactionPost => {
-    const { PostReactions, Source, ...rest } = interactionPost
+    const { PostReactions, Source, VideoSources, ...rest } = interactionPost
     return {
       ...rest,
+      VideoSources: VideoSources.sort(videoSourcesSorter),
       Source: formatSourceLogos(Source),
       reactionsCount: reactionsCountByPostId?.[interactionPost.id],
       reactedByLoggedInUser: PostReactions?.length ? true : false,
@@ -84,35 +105,10 @@ function formatInteractionPostsData(
   })
 }
 
-type SingleInteractionPostData =
-  | Post & {
-      PostReactions: PostReaction[]
-      Source: SourceWithLogos
-      CreatedBy: User
-      VideoSources: VideoSource[]
-      _count: {
-        PostReactions: number
-      }
-    }
-
-export type FormattedSingleInteractionsPostData = {
-  reactionCount: number
-  reactedByLoggedInUser: boolean
-  id: string
-  title: string
-  slug: string
-  createdById: string
-  createdAt: Date
-  modifiedAt: Date
-  sourceId: string
-  previewUrl: string
-  description: string
-  Source: SourceWithFormattedLogos
-  CreatedBy: User
-  VideoSources: VideoSource[]
-}
-
 function videoSourcesSorter(a: VideoSource, b: VideoSource) {
+  if (a.type === b.type) {
+    return qualityPriority.indexOf(a.size) - qualityPriority.indexOf(b.size)
+  }
   return sourcePriority.indexOf(a.type) - sourcePriority.indexOf(b.type)
 }
 
@@ -122,8 +118,6 @@ const imageSourcePriority = [
   "image/png",
   "image/jpg",
 ]
-
-export type FormattedSourceElementProps = { srcSet: string; type: string }
 
 function formatSourceLogos({ SourceLogos, ...rest }: SourceWithLogos) {
   const sourcesGroupedByType = groupBy(SourceLogos, "type")

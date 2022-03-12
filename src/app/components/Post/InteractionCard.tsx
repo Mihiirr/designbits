@@ -43,8 +43,8 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
           prefetch="intent"
         >
           <VideoPlayer
-            src={ASSETS_CDN_LINK + post.previewUrl}
             backgroundColorClass={post.backgroundColorClass}
+            videoSources={post.VideoSources}
           />
           <div className="absolute top-0 h-full w-full bg-gradient-to-b from-gray-800 via-transparent p-3 transition-transform group-hover:-translate-y-full group-hover:bg-none">
             <Link

@@ -1,13 +1,15 @@
+import { VideoSource } from "@prisma/client"
 import debounce from "lodash.debounce"
 import React, { useCallback, useState } from "react"
 import classNames from "~/utils/classnames"
+import { ASSETS_CDN_LINK } from "~/utils/constants"
 
 type Props = {
-  src: string
+  videoSources: VideoSource[]
   backgroundColorClass?: string
 }
 
-const VideoPlayer = ({ src, backgroundColorClass }: Props) => {
+const VideoPlayer = ({ videoSources, backgroundColorClass }: Props) => {
   const [currentProgress, setProgress] = useState(0)
 
   const onTimeUpdate = useCallback(
@@ -31,19 +33,25 @@ const VideoPlayer = ({ src, backgroundColorClass }: Props) => {
         playsInline
         className={classNames(
           backgroundColorClass || "bg-gray-800",
-          "w-full h-full opacity-50 group-hover:opacity-100 object-cover object-center",
+          "h-full w-full object-cover object-center opacity-50 group-hover:opacity-100",
         )}
         onMouseOver={event => (event.target as HTMLVideoElement).play()}
         onMouseOut={event => (event.target as HTMLVideoElement).pause()}
         onTimeUpdate={onTimeUpdate}
       >
-        <source src={src} type="video/webm" />
+        {videoSources.map(source => (
+          <source
+            key={source.id}
+            src={ASSETS_CDN_LINK + source.url}
+            type={source.type}
+          />
+        ))}
       </video>
       <progress
         id="progress"
         max="100"
         value={currentProgress}
-        className="absolute bottom-0 z-10 w-full h-1 bg-gray-200"
+        className="absolute bottom-0 z-10 h-1 w-full bg-gray-200"
       >
         Progress
       </progress>

@@ -1,203 +1,149 @@
-import { Client } from "@notionhq/client"
-import { QueryDatabaseResponse } from "@notionhq/client/build/src/api-endpoints"
-import invariant from "tiny-invariant"
-import { createWriteStream } from "fs"
-import { pipeline } from "stream"
-import { promisify } from "util"
-import fetch from "node-fetch"
 import pProps from "p-props"
-import { uploadToS3 } from "./upload"
-import * as path from "path"
-import * as fs from "fs"
 import { db } from "../../app/services/db/client.server"
 import pMap from "p-map"
-import processImage, { AllowedFormat, SizeName } from "./optimize-images"
+import { AllowedFormat, SizeName } from "./optimize-images"
 import { S3 } from "aws-sdk"
+import slug from "slug"
+import {
+  downloadImagesAndUploadToS3,
+  downloadVideosAndUploadToS3,
+  findPostsToCreateAndUpdate,
+  findSourcesToCreateAndUpdate,
+  removeNullAndUndefined,
+} from "./seed-helpers"
+import { fetchPostsData, fetchSourcesData } from "./fetch-notion-data"
+import { usersData } from "./interactions"
+import * as path from "path"
+import { Post, VideoSize, VideoSource } from "@prisma/client"
+import { outputConfigs } from "./process-video"
 
-function removeNullAndUndefined(obj: { [s: string]: unknown }) {
-  return Object.entries(obj).reduce((previousValue, [key, value]) => {
-    if (value !== null && value !== undefined) {
-      previousValue[key] = value
-    }
-    return previousValue
-  }, {} as { [s: string]: unknown })
+export type DownloadImagesFnResponse = {
+  uploadedData:
+    | S3.ManagedUpload.SendData
+    | {
+        Key: string
+      }
+  format: AllowedFormat
+  sizeName: SizeName
 }
-
-type DownloadFnProps = {
+export type DownloadVideoFnResponse = {
+  uploadedData:
+    | S3.ManagedUpload.SendData
+    | {
+        Key: string
+      }
   fileName: string
-  url: string
-  filePath: string
+  format: string
+  sizeName: VideoSize
 }
-
-const download = async ({ url, filePath, fileName }: DownloadFnProps) => {
-  const streamPipeline = promisify(pipeline)
-
-  const response = await fetch(url)
-
-  if (!response.ok) {
-    throw new Error(`unexpected response ${response.statusText}`)
-  }
-
-  const dir = path.join(__dirname, filePath)
-
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir)
-  }
-
-  await streamPipeline(
-    response.body,
-    createWriteStream(path.join(dir, fileName)),
-  )
-
-  const processedImages = await processImage(path.join(dir, fileName))
-
-  return pMap(processedImages, async ({ fullFileName, format, sizeName }) => {
-    return pProps({
-      uploadedData: uploadToS3(fullFileName, "source-images/processed"),
-      format,
-      sizeName,
-    })
-  })
-
-  // const data = await uploadToS3(fileName, processedImage)
-
-  // return data
-}
-
-const notion = new Client({
-  auth: process.env.NOTION_API_SECRET,
-})
-
-const PostsDatabaseID = process.env.NOTION_POSTS_DATABASE_ID || ""
-const SourcesDatabaseID = process.env.NOTION_SOURCES_DATABASE_ID || ""
-
-type SourcesParsedData = {
-  createdAt: string
-  updatedAt: string
-  title: string | null
-  url: string | null
-  imageSrc: string | undefined
-}[]
 
 export async function seedSourcesData() {
   try {
-    const response: QueryDatabaseResponse = await notion.databases.query({
-      database_id: SourcesDatabaseID,
+    let processedData = await fetchSourcesData()
+
+    const { sourcesToCreate, sourcesToUpdate } =
+      await findSourcesToCreateAndUpdate(processedData)
+
+    if (sourcesToCreate.length === 0 && sourcesToUpdate.length === 0) {
+      console.log(" ======= No sources to create or update ======== ")
+      return
+    }
+
+    const createdSources = await pMap(sourcesToCreate, async source => {
+      return db.source.create({
+        data: {
+          name: source.name,
+          url: source.url,
+          updatedAt: source.updatedAt,
+          notionSourceId: source.notionSourceId,
+        },
+      })
     })
 
-    const imagesToDownload: { [x: string]: string } = {}
-
-    let processedData: SourcesParsedData = response.results.map(page => {
-      invariant("properties" in page, "notion-page-type-assertion-failed")
-
-      const imageObj =
-        page.properties?.imageSrc?.type === "files" &&
-        page.properties.imageSrc?.files?.[0]?.type === "file"
-          ? page.properties.imageSrc?.files?.[0]
-          : null
-
-      if (imageObj !== null) {
-        imagesToDownload[imageObj.name] = imageObj.file.url
-      }
-
-      return {
-        createdAt: page.created_time,
-        updatedAt: page.last_edited_time,
-        title:
-          page.properties?.Name?.type === "title"
-            ? page.properties.Name?.title?.[0].plain_text
-            : null,
-        url:
-          page.properties?.url?.type === "url"
-            ? page.properties.url?.url
-            : null,
-        imageSrc: imageObj?.name,
-      }
-    })
-
-    const downloader: {
-      [x: string]: Promise<
-        {
-          uploadedData: S3.ManagedUpload.SendData | { Key: string }
-          format: AllowedFormat
-          sizeName: SizeName
-        }[]
-      >
-    } = {}
-    Object.entries(imagesToDownload).reduce(
-      (previousValue, [name, imageUrl]) => {
-        previousValue[name] = download({
-          url: imageUrl,
-          filePath: "source-images",
-          fileName: name,
-        }) as Promise<
-          {
-            uploadedData: S3.ManagedUpload.SendData | { Key: string }
-            format: AllowedFormat
-            sizeName: SizeName
-          }[]
-        >
-        return previousValue
-      },
-      downloader,
-    )
-
-    const downloadedImages = await pProps(downloader)
-    console.log(downloadedImages)
-
-    const sources = await pMap(processedData, async source => {
-      return db.source.upsert({
+    const updatedSources = await pMap(sourcesToUpdate, async source => {
+      return db.source.update({
         select: {
           id: true,
           name: true,
+          notionSourceId: true,
+          url: true,
+          updatedAt: true,
         },
-        create: {
-          name: source.title!,
-          url: source.url!,
-        },
-        update: removeNullAndUndefined({
-          name: source.title,
+        data: removeNullAndUndefined({
+          name: source.name,
           url: source.url,
+          updatedAt: source.updatedAt,
+          notionSourceId: source.notionSourceId,
         }),
         where: {
-          name: source.title!,
+          id: source.id,
         },
       })
     })
 
-    const sourcesGroupedByName = sources.reduce((previousValue, source) => {
-      previousValue[source.name] = source
-      return previousValue
-    }, {} as any)
-    console.log({ sources })
-
-    const sourceLogos: {
-      [x: string]: {
-        uploadedData:
-          | S3.ManagedUpload.SendData
-          | {
-              Key: string
-            }
-        format: AllowedFormat
-        sizeName: SizeName
-      }[]
+    const imagesToDownload: {
+      [x: string]: Promise<DownloadImagesFnResponse[]>
     } = {}
 
-    processedData.reduce((previousValue, source) => {
-      if (source.title && source.imageSrc) {
-        previousValue[source.title] = downloadedImages[source.imageSrc]
-      }
-      return previousValue
-    }, sourceLogos)
+    const sources = sourcesToCreate.concat(sourcesToUpdate)
 
-    return pMap(Object.entries(sourceLogos), async ([sourceName, images]) => {
-      return db.sourceLogo.createMany({
-        data: images.map(image => ({
-          sourceId: sourcesGroupedByName[sourceName].id,
-          type: `image/${image.format}`,
-          url: image.uploadedData.Key,
-          size: image.sizeName !== "default" ? image.sizeName : null,
-        })),
+    const sourcesGroupedByNotionSourceID = sources.reduce(
+      (previousValue, source) => {
+        previousValue[source.notionSourceId] = source
+        return previousValue
+      },
+      {} as any,
+    )
+
+    const createdAndUpdatedSources = createdSources.concat(updatedSources)
+
+    createdAndUpdatedSources.forEach(source => {
+      const notionPageItem =
+        sourcesGroupedByNotionSourceID[source.notionSourceId!]
+      if (notionPageItem.imageSrc?.file?.url) {
+        imagesToDownload[notionPageItem.notionSourceId] =
+          downloadImagesAndUploadToS3({
+            url: notionPageItem.imageSrc?.file?.url,
+            filePath: "source-images",
+            fileName: source.id,
+            uploadMetaData: {
+              sourceId: source.id,
+              sourecName: source.name,
+              notionSourceId: notionPageItem.notionSourceId,
+            },
+          }) as Promise<DownloadImagesFnResponse[]>
+      }
+    })
+
+    const downloadedImages = await pProps(imagesToDownload)
+
+    const sourceLogosToCreate = createdAndUpdatedSources.map(source => {
+      return {
+        images: downloadedImages[source.notionSourceId!],
+        id: source.id,
+      }
+    })
+
+    return pMap(sourceLogosToCreate, async ({ images, id }) => {
+      return pMap(images, async image => {
+        return db.sourceLogo.upsert({
+          create: {
+            sourceId: id,
+            type: `image/${image.format}`,
+            url: image.uploadedData.Key,
+            size: image.sizeName,
+          },
+          update: {
+            url: image.uploadedData.Key,
+          },
+          where: {
+            sourceId_type_size: {
+              sourceId: id,
+              type: `image/${image.format}`,
+              size: image.sizeName,
+            },
+          },
+        })
       })
     })
   } catch (error) {
@@ -205,38 +151,270 @@ export async function seedSourcesData() {
   }
 }
 
-async function fetchPostsData() {
+export async function seedPostsData() {
   try {
-    const response: QueryDatabaseResponse = await notion.databases.query({
-      database_id: PostsDatabaseID,
+    let processedData = await fetchPostsData()
+
+    // const alreadyExistingPosts = await db.post.findMany({
+    //   where: {
+    //     notionSourceId: {
+    //       in: processedData.map(post => post.notionSourceId),
+    //     },
+    //   },
+    // })
+
+    // const existingPostsById = alreadyExistingPosts.reduce(
+    //   (previousValue, post) => {
+    //     if (post.notionSourceId) {
+    //       previousValue[post.notionSourceId] = post
+    //     }
+    //     return previousValue
+    //   },
+    //   {} as any,
+    // )
+
+    // const postsToCreate = processedData.filter(post => {
+    //   return existingPostsById[post.notionSourceId] === undefined
+    // })
+
+    const { postsToCreate, postsToUpdate } = await findPostsToCreateAndUpdate(
+      processedData,
+    )
+
+    const insertedPosts = await pMap(postsToCreate, async post => {
+      return db.post.create({
+        data: {
+          description: post.description,
+          previewUrl: "",
+          slug: slug(post.title),
+          title: post.title,
+          Source: {
+            connect: {
+              name: post.sourceName,
+            },
+          },
+          CreatedBy: usersData.Shreyas,
+          notionSourceId: post.notionSourceId,
+        },
+      })
     })
 
-    const processedData = response.results.map(page => {
-      invariant("properties" in page, "notion-page-type-assertion-failed")
+    const updatedPosts = await pMap(postsToUpdate, async post => {
+      return db.post.update({
+        data: {
+          description: post.description,
+          // CreatedBy: {
+          //   connectOrCreate: {
+          //     where: {
+          //       id: post.createdBy.id,
+          //     },
+          //   },
+          // },
+          notionSourceId: post.notionSourceId,
+          updatedAt: post.updatedAt,
+          slug: slug(post.title),
+          title: post.title,
+        },
+        where: {
+          id: post.id,
+        },
+      })
+    })
 
-      return {
-        createdAt: page.created_time,
-        updatedAt: page.last_edited_time,
-        title:
-          page.properties.Title.type === "title"
-            ? page.properties.Title?.title?.[0].plain_text
-            : null,
-        source:
-          page.properties.Source?.type === "relation"
-            ? page.properties.Source?.relation?.[0]?.id
-            : null,
-        description:
-          page.properties.Description?.type === "rich_text" &&
-          page.properties.Description?.rich_text?.[0]?.type === "text"
-            ? page.properties.Description?.rich_text?.[0]?.text
-            : null,
-        createdBy: page.created_by.id,
+    const allPostsAfterUpsert = await db.post.findMany({
+      where: {
+        notionSourceId: {
+          in: processedData.map(post => post.notionSourceId),
+        },
+      },
+      include: {
+        VideoSources: true,
+      },
+    })
+
+    const postsByNotionPageId = allPostsAfterUpsert.reduce(
+      (previousValue, post) => {
+        if (post.notionSourceId !== null) {
+          previousValue[post.notionSourceId] = post
+        }
+        return previousValue
+      },
+      {} as {
+        [x: string]: Post & {
+          VideoSources: VideoSource[]
+        }
+      },
+    )
+
+    const mediaFilesToDownload: {
+      [x: string]: Promise<DownloadVideoFnResponse[]>
+    } = {}
+
+    processedData.forEach(post => {
+      const postItem = postsByNotionPageId[post.notionSourceId]
+      const videoSources = postItem.VideoSources
+      console.log(
+        "======= ",
+        post.media?.file?.url && videoSources.length < outputConfigs.length,
+      )
+      if (post.media?.file?.url && videoSources.length < outputConfigs.length) {
+        mediaFilesToDownload[post.notionSourceId] = downloadVideosAndUploadToS3(
+          {
+            url: post.media?.file?.url,
+            filePath: "interactions",
+            fileName: postItem.id + path.extname(post.media?.name),
+            uploadMetaData: {
+              postId: postItem.id,
+              postTitle: postItem.title,
+              notionPageId: postItem.notionSourceId || "",
+            },
+          },
+        ) as Promise<DownloadVideoFnResponse[]>
       }
     })
-    console.log(JSON.stringify(processedData, null, 2))
-    console.log(JSON.stringify(response, null, 2))
-    return processedData
+
+    const downloadedMediaFiles = await pProps(mediaFilesToDownload)
+
+    await pMap(
+      Object.entries(downloadedMediaFiles).map(
+        async ([notionSourceId, files]) => {
+          const postItem = postsByNotionPageId[notionSourceId]
+          return pMap(files, async file => {
+            return db.videoSource.upsert({
+              create: {
+                postId: postItem.id,
+                type: `video/${file.format}`,
+                url: file.uploadedData.Key,
+                size: file.sizeName,
+              },
+              update: {
+                url: file.uploadedData.Key,
+              },
+              where: {
+                postId_type_size: {
+                  postId: postItem.id,
+                  type: `video/${file.format}`,
+                  size: file.sizeName,
+                },
+              },
+            })
+          })
+        },
+      ),
+      () => {},
+    )
+
+    // console.log(processedData)
+
+    // const { sourcesToCreate, sourcesToUpdate } =
+    //   await findSourcesToCreateAndUpdate(processedData)
+
+    // if (sourcesToCreate.length === 0 && sourcesToUpdate.length === 0) {
+    //   console.log(" ======= No sources to create or update ======== ")
+    //   return
+    // }
+
+    // const createdSources = await pMap(sourcesToCreate, async source => {
+    //   return db.source.create({
+    //     data: {
+    //       name: source.name,
+    //       url: source.url,
+    //       updatedAt: source.updatedAt,
+    //       notionSourceId: source.notionSourceId,
+    //     },
+    //   })
+    // })
+
+    // const updatedSources = await pMap(sourcesToUpdate, async source => {
+    //   return db.source.update({
+    //     select: {
+    //       id: true,
+    //       name: true,
+    //       notionSourceId: true,
+    //       url: true,
+    //       updatedAt: true,
+    //     },
+    //     data: removeNullAndUndefined({
+    //       name: source.name,
+    //       url: source.url,
+    //       updatedAt: source.updatedAt,
+    //       notionSourceId: source.notionSourceId,
+    //     }),
+    //     where: {
+    //       id: source.id,
+    //     },
+    //   })
+    // })
+
+    // const imagesToDownload: {
+    //   [x: string]: Promise<DownloadFnResponse[]>
+    // } = {}
+
+    // const sources = sourcesToCreate.concat(sourcesToUpdate)
+
+    // const sourcesGroupedByNotionSourceID = sources.reduce(
+    //   (previousValue, source) => {
+    //     previousValue[source.notionSourceId] = source
+    //     return previousValue
+    //   },
+    //   {} as any,
+    // )
+
+    // const createdAndUpdatedSources = createdSources.concat(updatedSources)
+
+    // createdAndUpdatedSources.forEach(source => {
+    //   const notionPageItem =
+    //     sourcesGroupedByNotionSourceID[source.notionSourceId!]
+    //   if (notionPageItem.imageSrc?.file?.url) {
+    //     imagesToDownload[notionPageItem.notionSourceId] =
+    //       downloadFromURLAndUploadToS3({
+    //         url: notionPageItem.imageSrc?.file?.url,
+    //         filePath: "source-images",
+    //         fileName: source.id,
+    //         uploadMetaData: {
+    //           sourceId: source.id,
+    //           sourecName: source.name,
+    //           notionSourceId: notionPageItem.notionSourceId,
+    //         },
+    //       }) as Promise<DownloadFnResponse[]>
+    //   }
+    // })
+
+    // const downloadedImages = await pProps(imagesToDownload)
+
+    // const sourceLogosToCreate = createdAndUpdatedSources.map(source => {
+    //   return {
+    //     images: downloadedImages[source.notionSourceId!],
+    //     id: source.id,
+    //   }
+    // })
+
+    // return pMap(sourceLogosToCreate, async ({ images, id }) => {
+    //   return pMap(images, async image => {
+    //     return db.sourceLogo.upsert({
+    //       create: {
+    //         sourceId: id,
+    //         type: `image/${image.format}`,
+    //         url: image.uploadedData.Key,
+    //         size: image.sizeName,
+    //       },
+    //       update: {
+    //         url: image.uploadedData.Key,
+    //       },
+    //       where: {
+    //         sourceId_type_size: {
+    //           sourceId: id,
+    //           type: `image/${image.format}`,
+    //           size: image.sizeName,
+    //         },
+    //       },
+    //     })
+    //   })
+    // })
   } catch (error) {
     console.error(error)
   }
 }
+
+// seedSourcesData()
+seedPostsData()

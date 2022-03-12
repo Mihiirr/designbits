@@ -60,37 +60,53 @@ model Follower {
 }
 
 model Post {
-  id            String         @id @default(cuid())
-  title         String
-  slug          String         @unique
-  createdById   String
-  createdAt     DateTime       @default(now())
-  modifiedAt    DateTime       @default(now())
-  CreatedBy     User           @relation(fields: [createdById], references: [id])
-  Source        Source         @relation(fields: [sourceId], references: [id])
-  sourceId      String
-  previewUrl    String
-  description   String         @db.MediumText
-  PostReactions PostReaction[]
-  PostComments  Comment[]
-  VideoSources  VideoSource[]
-  Watchlist     Watchlist[]
+  id             String         @id @default(cuid())
+  title          String
+  slug           String         @unique
+  createdById    String
+  createdAt      DateTime       @default(now())
+  modifiedAt     DateTime       @default(now())
+  CreatedBy      User           @relation(fields: [createdById], references: [id])
+  Source         Source         @relation(fields: [sourceId], references: [id])
+  sourceId       String
+  previewUrl     String
+  description    String         @db.MediumText
+  updatedAt      DateTime?      @default(now())
+  notionSourceId String?
+  PostReactions  PostReaction[]
+  PostComments   Comment[]
+  VideoSources   VideoSource[]
+  Watchlist      Watchlist[]
+}
+
+enum VideoSize {
+  ORIGINAL
+  THUMBNAIL_240P
+  SMALL_360P
+  MEDIUM_480P
+  LARGE_720P
+  HIGH_RES_1080P
 }
 
 model VideoSource {
-  id     String @id @default(uuid())
+  id     String    @id @default(uuid())
   postId String
   type   String
   url    String
-  Post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  size   VideoSize @default(MEDIUM_480P)
+  Post   Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, type, size])
 }
 
 model Source {
-  id          String       @id @default(cuid())
-  name        String       @unique
-  url         String
-  Post        Post[]
-  SourceLogos SourceLogo[]
+  id             String       @id @default(cuid())
+  name           String       @unique
+  url            String
+  Post           Post[]
+  SourceLogos    SourceLogo[]
+  notionSourceId String?
+  updatedAt      DateTime?    @default(now())
 }
 
 model SourceLogo {
@@ -100,6 +116,17 @@ model SourceLogo {
   url      String
   size     String?
   Source   Source  @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceId, type, size])
+}
+
+model NotionSourceSeedLog {
+  id           Int      @id @default(autoincrement())
+  notionPageId String
+  itemId       String
+  itemType     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
 }
 
 model PostView {
@@ -201,13 +228,4 @@ model CommentReaction {
   ReactedBy User                 @relation(fields: [reactedBy], references: [id], onDelete: Cascade)
 
   @@unique([commentId, reactedBy])
-}
-
-model NotionSourceSeedLog {
-  id           Int      @id @default(autoincrement())
-  notionPageId String
-  itemId       String
-  itemType     String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now())
 }

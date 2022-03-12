@@ -1,5 +1,6 @@
 # Videos
 *.mp4
+*.mov
 *.gif
 *.webm
 *.jpg

@@ -1,23 +1,17 @@
-import { Post, PostReaction, Prisma, SourceLogo, User } from "@prisma/client"
+import {
+  Post,
+  PostReaction,
+  Prisma,
+  User,
+  VideoSize,
+  VideoSource,
+} from "@prisma/client"
 import { SetOptional } from "type-fest"
 import { db } from "~/services/db/client.server"
-import { FormattedSourceElementProps } from "../formatters.server"
+import { SingleInteractionPostData, SourceWithLogos } from "~/types/formatters"
 
 type props = {
   userId?: User["id"]
-}
-
-export type SourceWithLogos = {
-  SourceLogos: SourceLogo[]
-  name: string
-  url: string
-}
-
-export type SourceWithFormattedLogos = {
-  formattedLogos: [string, FormattedSourceElementProps][]
-  fallBackImage: SourceLogo
-  name: string
-  url: string
 }
 
 async function findPostsIncludingUserReaction({ userId }: props) {
@@ -28,6 +22,19 @@ async function findPostsIncludingUserReaction({ userId }: props) {
           SourceLogos: true,
           name: true,
           url: true,
+        },
+      },
+      VideoSources: {
+        select: {
+          url: true,
+          id: true,
+          size: true,
+          type: true,
+        },
+        where: {
+          size: {
+            in: [VideoSize.THUMBNAIL_240P, VideoSize.ORIGINAL],
+          },
         },
       },
       CreatedBy: true,
@@ -93,6 +100,7 @@ type PostWithCurrentUserReactionData = Post & {
   Source: SourceWithLogos
   CreatedBy: User
   PostReactions: PostReaction[]
+  VideoSources: VideoSource[]
 }
 
 type PostIncludingCurrentUserReactionData = SetOptional<
@@ -119,12 +127,21 @@ type FindPostPageDataProps = {
   userId?: User["id"]
 }
 
-function findPostPageData({ postSlug, userId }: FindPostPageDataProps) {
+async function findPostPageData({
+  postSlug,
+  userId,
+}: FindPostPageDataProps): Promise<SingleInteractionPostData | null> {
   return db.post.findUnique({
     where: {
       slug: postSlug,
     },
-    include: {
+    select: {
+      id: true,
+      slug: true,
+      description: true,
+      title: true,
+      createdById: true,
+      createdAt: true,
       Source: {
         select: {
           SourceLogos: true,

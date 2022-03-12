@@ -22,6 +22,7 @@ const s3bucket = new AWS.S3({
 export async function uploadToS3(
   fileName: string,
   filePath: string = "",
+  metadata: S3.Metadata = {},
 ): Promise<S3.ManagedUpload.SendData | { Key: string }> {
   const skipUpload = process.env.SKIP_UPLOAD
   if (skipUpload) {
@@ -41,6 +42,7 @@ export async function uploadToS3(
     Body: readStream,
     ACL: "public-read",
     CacheControl: "max-age=3600",
+    Metadata: metadata,
   }
   try {
     const data = await s3bucket.upload(params).promise()

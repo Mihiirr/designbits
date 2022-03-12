@@ -21,16 +21,14 @@ import InteractionFeedback from "~/components/InteractionFeedback"
 import Layout from "~/components/Layout"
 import { PostContextProvider } from "~/context/postContext"
 import { ASSETS_CDN_LINK, CARD_ACTIONS, ERROR_CODES } from "~/utils/constants"
-import {
-  formatSingleInteractionPostData,
-  FormattedSingleInteractionsPostData,
-} from "~/services/db/formatters.server"
+import { formatSingleInteractionPostData } from "~/services/db/formatters.server"
 import { getLoggedInUser } from "~/services/auth/session.server"
 import { apiHandler } from "~/utils/api-handler"
 import { NotFoundException } from "~/utils/response-helpers.server"
 import { findPostPageData } from "~/services/db/queries/post.server"
 import { PostActionButton } from "~/components/ActionButton"
 import Picture from "~/components/common/Picture"
+import { FormattedSingleInteractionsPostData } from "~/types/formatters"
 
 export let loader: LoaderFunction = async ({ params, request }) => {
   const postSlug = params.id

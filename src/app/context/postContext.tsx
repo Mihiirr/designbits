@@ -1,11 +1,11 @@
-import { Post } from "@prisma/client"
 import * as React from "react"
+import { FormattedSingleInteractionsPostData } from "~/types/formatters"
 
 type Dispatch = React.Dispatch<React.SetStateAction<State>>
-type State = Post | null
+type State = FormattedSingleInteractionsPostData | null
 type PostContextProviderProps = {
   children: React.ReactNode
-  initState: Post | null
+  initState: State
 }
 
 const PostContext = React.createContext<

@@ -1,6 +1,6 @@
 import { UserRole } from "@prisma/client"
 
-const usersData = {
+export const usersData = {
   Tirth: {
     connectOrCreate: {
       create: {
