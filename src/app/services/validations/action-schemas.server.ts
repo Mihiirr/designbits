@@ -34,7 +34,7 @@ export const AddCommentActionSchema = z.object({
         id: postId,
       },
     })
-    if (!post) {
+    if (post) {
       return true
     }
     return false

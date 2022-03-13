@@ -14,10 +14,9 @@ import { Slate, Editable, withReact, RenderElementProps } from "slate-react"
 import { MentionElement } from "~/types/editor"
 import { Element, Leaf } from "./Elements"
 import MentionsDropdown from "./MentionsDropdown"
-import { MarksFormat, toggleMark, Toolbar } from "./Toolbar"
+import { MarksFormat, toggleMark } from "./Toolbar"
 import useMentionPlugin from "./useMentionPlugin"
 import { useLocalStorage } from "usehooks-ts"
-import { Form } from "remix"
 import { PostActionButton } from "../ActionButton"
 import { COMMENT_ACTIONS } from "~/utils/constants"
 
@@ -103,10 +102,10 @@ const MentionExample: React.FC<{
   }, [saveCommentToLS])
 
   return (
-    <Form method="post" onReset={onReset} ref={ref}>
+    <div className="w-full" ref={ref}>
       <Slate editor={editor} value={value} onChange={onChange}>
-        <div className="block w-full rounded-md border border-gray-300 py-2 px-3 text-sm text-gray-700 shadow-sm focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500">
-          <Toolbar />
+        <div className="block w-full rounded-md border border-gray-300 py-2 px-3 text-sm text-gray-700 shadow-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500">
+          {/* <Toolbar /> */}
           <Editable
             renderElement={renderElement}
             renderLeaf={renderLeaf}
@@ -114,7 +113,7 @@ const MentionExample: React.FC<{
             placeholder="Add a comment..."
             spellCheck
             autoFocus={true}
-            className="prose prose-sm py-3 px-1 prose-p:my-1 prose-code:mx-1 prose-code:rounded-sm prose-code:bg-emerald-200/50 prose-code:px-1 prose-code:py-1.5 prose-code:before:content-none prose-code:after:content-none"
+            className="prose prose-sm prose-p:my-1 prose-code:mx-1 prose-code:rounded-sm prose-code:bg-indigo-200/50 prose-code:px-1 prose-code:py-1.5 prose-code:before:content-none prose-code:after:content-none"
             onFocus={() => setIsEditing(true)}
           />
         </div>
@@ -129,18 +128,12 @@ const MentionExample: React.FC<{
           )}
         </AnimatePresence>
       </Slate>
-      <input
-        className="sr-only hidden"
-        name="comment"
-        aria-hidden
-        readOnly
-        value={JSON.stringify(value)}
-      />
       <div className="my-4 flex space-x-3">
         <PostActionButton
           actionName={COMMENT_ACTIONS.CREATE_COMMENT}
           formPayload={{
             postId: postId,
+            comment: JSON.stringify(value),
           }}
           btnProps={{
             className:
@@ -156,7 +149,7 @@ const MentionExample: React.FC<{
           Cancel
         </button>
       </div>
-    </Form>
+    </div>
   )
 }
 

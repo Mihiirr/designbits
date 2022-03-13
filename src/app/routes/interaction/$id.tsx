@@ -31,6 +31,10 @@ import Picture from "~/components/common/Picture"
 import { FormattedSingleInteractionsPostData } from "~/types/formatters"
 import clsx from "clsx"
 
+import escapeHtml from "escape-html"
+import { Text } from "slate"
+import { CustomElement, CustomText } from "~/types/editor"
+
 export let loader: LoaderFunction = async ({ params, request }) => {
   const postSlug = params.id
 
@@ -66,6 +70,38 @@ export const action: ActionFunction = apiHandler({
     allowedRoles: [UserRole.USER],
   },
 })
+
+const serializeNode = (node: CustomElement | CustomText): JSX.Element => {
+  if (Text.isText(node)) {
+    let res: JSX.Element = <>{node.text}</>
+    if (node.bold) {
+      res = <strong>{res}</strong>
+    }
+    return res
+  }
+
+  const children = node.children?.map(n => serializeNode(n))
+
+  switch (node.type) {
+    case "block-quote":
+      return (
+        <blockquote>
+          <p>{children}</p>
+        </blockquote>
+      )
+    case "paragraph":
+      return <p>{children}</p>
+    case "link":
+      return <a href={escapeHtml(node.url)}>{children}</a>
+    default:
+      return <p>{children}</p>
+  }
+}
+
+const getHTML = (nodes: (CustomElement | CustomText)[]) => {
+  console.log(nodes)
+  return <>{nodes?.map(n => serializeNode(n))}</>
+}
 
 type PostData = FormattedSingleInteractionsPostData
 
@@ -145,6 +181,7 @@ const Interaction = () => {
                   slug={postData.CreatedBy.profileSlug}
                   imgSrc={ASSETS_CDN_LINK! + postData.CreatedBy.profilePicture}
                   name={postData.CreatedBy.name}
+                  showFollowers
                 />
                 <div className="flex items-center space-x-4">
                   <Button>Follow</Button>
@@ -204,6 +241,30 @@ const Interaction = () => {
             </div>
             <div className="mx-8 mt-12 border-b border-gray-300">
               <CommentsSection />
+              <div className="my-4 space-y-5">
+                {postData.PostComments.map(comment => (
+                  <div key={comment.id}>
+                    <div className="mb-1.5 flex items-center space-x-3">
+                      <img
+                        className="inline-block h-6 w-6 rounded-full"
+                        src={comment.CreatedBy.profilePicture || ""}
+                        alt="profile"
+                      />
+                      <p className="text-sm font-semibold text-gray-800 group-hover:text-gray-900">
+                        {comment.CreatedBy.name}
+                      </p>
+                    </div>
+                    <div className="ml-9 text-sm text-gray-600">
+                      {getHTML(
+                        JSON.parse(comment.comment as string) as unknown as (
+                          | CustomElement
+                          | CustomText
+                        )[],
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
             <InteractionFeedback />
           </div>

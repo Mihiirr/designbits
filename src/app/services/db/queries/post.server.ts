@@ -155,6 +155,28 @@ async function findPostPageData({ postSlug, userId }: FindPostPageDataProps) {
           name: true,
         },
       },
+      PostComments: {
+        select: {
+          id: true,
+          comment: true,
+          createdAt: true,
+          CreatedBy: {
+            select: {
+              id: true,
+              profilePicture: true,
+              name: true,
+            },
+          },
+          CommentReactions: {
+            select: {
+              reaction: true,
+            },
+          },
+        },
+        where: {
+          parentCommentId: null,
+        },
+      },
       PostReactions: userId
         ? {
             select: {

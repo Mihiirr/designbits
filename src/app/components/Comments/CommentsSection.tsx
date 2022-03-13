@@ -14,12 +14,12 @@ const CommentsSection = (props: Props) => {
   const [isEditing, setIsEditing] = useState(false)
   const commentKey = [postData?.id, user?.id].join("-")
   return (
-    <div className="mb-4 space-y-4">
+    <div className="mb-6 space-y-4">
       <div>Discussion</div>
       <div className="flex space-x-4">
         <img
           className={clsx("my-1 inline-block h-8 w-8 rounded-full", {
-            "border-emerald-500 outline outline-2 outline-offset-2 outline-emerald-500":
+            "border-indigo-500 outline outline-2 outline-offset-2 outline-indigo-500":
               isEditing,
           })}
           src={user?.profilePicture || ""}

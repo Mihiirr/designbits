@@ -23,6 +23,8 @@ export const handlePostRelatedActions: ProtectedActionFunction = async ({
     formData,
   ) as CardActionFormData
 
+  console.log(formValues)
+
   switch (_action) {
     case CARD_ACTIONS.LIKE:
       return handleLikeAction({

@@ -4,9 +4,15 @@ interface Props {
   slug: string
   imgSrc: string | null
   name: string | null
+  showFollowers?: boolean
 }
 
-export default function Avatar({ slug, imgSrc, name }: Props) {
+export default function Avatar({
+  slug,
+  imgSrc,
+  name,
+  showFollowers = false,
+}: Props) {
   return (
     <Link to={slug} className="group block shrink-0">
       <div className="flex items-center">
