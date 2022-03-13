@@ -2,15 +2,15 @@ progress[value] {
   appearance: none;
   border: none;
   border-radius: 3px;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25) inset;
+  box-shadow: 0 2px 3px rgba(255, 255, 255, 0.05) inset;
   color: dodgerblue;
-  order: 1;
+  /* order: 1; */
   width: 100%;
 }
 
 /* WebKit styles */
 progress[value]::-webkit-progress-bar {
-  background-color: whitesmoke;
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 progress[value]::-webkit-progress-value {

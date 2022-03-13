@@ -3048,6 +3048,14 @@ select {
   opacity: 0.5;
 }
 
+.group:hover .group-hover\:block {
+  display: block;
+}
+
+.group:hover .group-hover\:hidden {
+  display: none;
+}
+
 .group:hover .group-hover\:-translate-y-full {
   --tw-translate-y: -100%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
@@ -3290,6 +3298,10 @@ select {
   .md\:my-24 {
     margin-top: 6rem;
     margin-bottom: 6rem;
+  }
+
+  .md\:block {
+    display: block;
   }
 
   .md\:grid {

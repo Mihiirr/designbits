@@ -52,7 +52,7 @@ const VideoPlayer = ({ videoSources, backgroundColorClass }: Props) => {
         id="progress"
         max="100"
         value={currentProgress}
-        className="absolute bottom-0 z-10 h-1 w-full bg-gray-200"
+        className="absolute bottom-0 z-10 h-1 w-full"
       >
         Progress
       </progress>

@@ -5,12 +5,12 @@ interface Props {}
 
 const SearchBox = (props: Props) => {
   return (
-    <div>
+    <div className="hidden lg:block">
       <label htmlFor="search" className="sr-only">
         Quick search
       </label>
-      <div className="flex relative items-center text-gray-400">
-        <div className="flex absolute inset-y-0 left-0 items-center py-1.5 pl-2">
+      <div className="relative flex items-center text-gray-400">
+        <div className="absolute inset-y-0 left-0 flex items-center py-1.5 pl-2">
           <SearchIcon height="20" width="20" role="presentation" />
         </div>
         <input
@@ -19,10 +19,10 @@ const SearchBox = (props: Props) => {
           id="search"
           placeholder="Search"
           role="search"
-          className="block pr-12 pl-10 w-72 bg-gray-100 rounded-md border-transparent focus:border-indigo-500 focus:ring-indigo-500 shadow-sm sm:text-sm"
+          className="block w-72 rounded-md border-transparent bg-gray-100 pr-12 pl-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
         />
-        <div className="flex absolute inset-y-0 right-0 py-1.5 pr-2">
-          <kbd className="inline-flex items-center px-2 font-sans text-sm font-medium rounded border border-gray-300">
+        <div className="absolute inset-y-0 right-0 flex py-1.5 pr-2">
+          <kbd className="inline-flex items-center rounded border border-gray-300 px-2 font-sans text-sm font-medium">
             ⌘ K
           </kbd>
         </div>
