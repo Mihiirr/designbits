@@ -1663,6 +1663,14 @@ select {
   height: 0.25rem;
 }
 
+.h-48 {
+  height: 12rem;
+}
+
+.h-24 {
+  height: 6rem;
+}
+
 .max-h-56 {
   max-height: 14rem;
 }
@@ -1725,6 +1733,10 @@ select {
 
 .w-2\/12 {
   width: 16.666667%;
+}
+
+.w-80 {
+  width: 20rem;
 }
 
 .max-w-sm {
@@ -2218,6 +2230,10 @@ select {
   background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
 }
 
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
 .from-indigo-100 {
   --tw-gradient-from: #e0e7ff;
   --tw-gradient-stops: var(--tw-gradient-from),
@@ -2692,6 +2708,10 @@ select {
 
 .opacity-75 {
   opacity: 0.75;
+}
+
+.opacity-80 {
+  opacity: 0.8;
 }
 
 .shadow-sm {

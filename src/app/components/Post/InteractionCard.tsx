@@ -46,7 +46,7 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
             backgroundColorClass={post.backgroundColorClass}
             videoSources={post.VideoSources}
           />
-          <div className="absolute top-0 h-full w-full bg-gradient-to-b from-gray-800/60 via-transparent to-transparent p-3 transition-transform group-hover:-translate-y-full group-hover:bg-none">
+          <div className="absolute top-0 h-48 w-80 bg-gradient-to-br from-gray-800/80 via-transparent p-3 transition-transform group-hover:-translate-y-full group-hover:bg-none">
             <Link
               to="/test"
               className="flex items-center space-x-2 text-xs font-semibold text-gray-200"
