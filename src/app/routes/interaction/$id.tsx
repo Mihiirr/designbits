@@ -95,12 +95,14 @@ const serializeNode = (node: CustomElement | CustomText): JSX.Element => {
       return <a href={escapeHtml(node.url)}>{children}</a>
     case "mention":
       return (
-        <a
-          href={`/profile/${node.character}`}
-          className="rounded-sm border border-indigo-400 bg-indigo-50/50 py-0.5 px-1"
-        >
-          @{node.character}
-        </a>
+        <span>
+          <a
+            href={`/profile/${node.character}`}
+            className="rounded-sm py-0.5 text-indigo-500"
+          >
+            @{node.character}
+          </a>{" "}
+        </span>
       )
     default:
       return <p>{children}</p>
