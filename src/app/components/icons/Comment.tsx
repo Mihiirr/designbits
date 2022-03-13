@@ -1,23 +1,38 @@
 import React from "react"
 
-const CommentIcon = (props: React.SVGProps<SVGSVGElement>) => {
-  return (
+type Props = React.SVGProps<SVGSVGElement> & {
+  variant?: "filled" | "outline"
+}
+
+const CommentIcon = ({ variant = "outline", ...props }: Props) => {
+  return variant === "outline" ? (
     <svg
-      width="24"
-      height="24"
-      fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
+      className="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={2}
+      {...props}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+      />
+    </svg>
+  ) : (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 20 20"
+      className="h-4 w-4 text-indigo-600"
+      fill="currentColor"
       {...props}
     >
       <path
         fillRule="evenodd"
+        d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z"
         clipRule="evenodd"
-        d="M4.667 3.995a1.333 1.333 0 0 0-1.334 1.333v7.058l1.529-1.53a.667.667 0 0 1 .471-.194h6a1.333 1.333 0 0 0 1.334-1.334v-4a1.333 1.333 0 0 0-1.334-1.333H4.667ZM2.78 3.443c.5-.5 1.178-.781 1.886-.781h6.666A2.667 2.667 0 0 1 14 5.328v4a2.667 2.667 0 0 1-2.667 2.667H5.61l-2.47 2.471A.667.667 0 0 1 2 13.995V5.328c0-.707.28-1.385.781-1.885Z"
-      />
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M4.667 6c0-.368.298-.667.666-.667h5.334a.667.667 0 1 1 0 1.334H5.333A.667.667 0 0 1 4.667 6ZM4.667 8.672c0-.369.298-.667.666-.667h4a.667.667 0 0 1 0 1.333h-4a.667.667 0 0 1-.666-.666Z"
       />
     </svg>
   )

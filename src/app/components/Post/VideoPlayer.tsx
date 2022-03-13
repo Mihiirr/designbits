@@ -5,13 +5,14 @@ import classNames from "~/utils/classnames"
 import { ASSETS_CDN_LINK } from "~/utils/constants"
 
 type Props = {
-  videoSources: VideoSource[]
+  videoSources: Pick<VideoSource, "id" | "size" | "type" | "url">[]
   backgroundColorClass?: string
 }
 
 const VideoPlayer = ({ videoSources, backgroundColorClass }: Props) => {
   const [currentProgress, setProgress] = useState(0)
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onTimeUpdate = useCallback(
     debounce(event => {
       const videoElement = event.target as HTMLVideoElement

@@ -46,7 +46,7 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
             backgroundColorClass={post.backgroundColorClass}
             videoSources={post.VideoSources}
           />
-          <div className="absolute top-0 h-full w-full bg-gradient-to-b from-gray-800 via-transparent p-3 transition-transform group-hover:-translate-y-full group-hover:bg-none">
+          <div className="absolute top-0 h-full w-full bg-gradient-to-b from-gray-800/60 via-transparent to-transparent p-3 transition-transform group-hover:-translate-y-full group-hover:bg-none">
             <Link
               to="/test"
               className="flex items-center space-x-2 text-xs font-semibold text-gray-200"
@@ -95,7 +95,7 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
         <span>&middot;</span>
         <span>{"6k"}</span>
       </div>
-      <div className="mt-2 flex space-x-4 text-xs text-gray-500">
+      <div className="mt-2 flex space-x-1.5 text-xs text-gray-500">
         <PostActionButton
           btnProps={{
             className:
@@ -117,7 +117,7 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
           />
           {post.reactionsCount > 0 && <span>{post.reactionsCount}</span>}
         </PostActionButton>
-        <PostActionButton
+        {/* <PostActionButton
           btnProps={{
             className:
               "flex items-center py-0.5 px-1 space-x-1 hover:text-indigo-500 focus:text-indigo-500 hover:bg-indigo-50 focus:bg-indigo-50 rounded-sm",
@@ -126,10 +126,16 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
             postId: post.id,
           }}
           actionName={CARD_ACTIONS.COMMENT}
-        >
-          <CommentIcon height={16} width={16} />
-          <span>{"5"}</span>
-        </PostActionButton>
+        > */}
+        <div className="flex items-center space-x-1 rounded-sm py-0.5 px-1 hover:bg-indigo-50 hover:text-indigo-500 focus:bg-indigo-50 focus:text-indigo-500">
+          <CommentIcon
+            variant={post.commentedByLoggedInUser ? "filled" : "outline"}
+            height={16}
+            width={16}
+          />
+          <span>{post._count.PostComments}</span>
+        </div>
+        {/* </PostActionButton> */}
       </div>
     </motion.div>
   )

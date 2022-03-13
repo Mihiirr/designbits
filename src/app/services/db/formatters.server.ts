@@ -1,22 +1,17 @@
-import {
-  Post,
-  PostReaction,
-  Prisma,
-  TAG_COLORS,
-  User,
-  VideoSize,
-  VideoSource,
-} from "@prisma/client"
+import { TAG_COLORS, VideoSize, VideoSource } from "@prisma/client"
 import groupBy from "lodash.groupby"
 import property from "lodash.property"
+import { AsyncReturnType } from "type-fest"
 import {
-  FormattedSingleInteractionsPostData,
   FormattedSourceElementProps,
   SingleInteractionPostData,
-  SourceWithFormattedLogos,
   SourceWithLogos,
 } from "~/types/formatters"
 import { ASSETS_CDN_LINK } from "~/utils/constants"
+import {
+  findInteractionsForCategory,
+  findPostReactedByUser,
+} from "./queries/post.server"
 
 const sourcePriority = ["video/webm", "video/mp4"]
 const qualityPriority: VideoSize[] = [
@@ -38,25 +33,16 @@ function processGroupedByResult<T extends Record<string | number, unknown>>(
   }, {} as Record<string | number, unknown>)
 }
 
-type RawTotalReactionsOnPost = Prisma.PickArray<
-  Prisma.PostReactionGroupByOutputType,
-  "postId"[]
-> & {
-  _count: {
-    id: number
-  }
-}
+type RawInteractionsPostData = AsyncReturnType<
+  typeof findInteractionsForCategory
+>
 
-type RawInteractionsPostData = {
-  postsWithCurrentUserReactionData: (Post & {
-    Source: SourceWithLogos
-    CreatedBy: User
-    PostReactions?: PostReaction[]
-    VideoSources: VideoSource[]
-  })[]
-  totalReactionsOnPost: RawTotalReactionsOnPost[]
-}
+type RawInteractionsPostWithUserReactionsData = AsyncReturnType<
+  typeof findPostReactedByUser
+>
 
+type RawTotalReactionsOnPost =
+  RawInteractionsPostData["totalReactionsOnPost"][0]
 type Copy<T> = { [K in keyof T]: T[K] }
 
 function formatTotalReactionsData(
@@ -71,42 +57,34 @@ function formatTotalReactionsData(
   return reactionsCountByPostId
 }
 
-export type FormattedInteractionsPostData = {
-  reactionsCount: number
-  reactedByLoggedInUser: boolean
-  id: string
-  title: string
-  slug: string
-  createdById: string
-  createdAt: Date
-  modifiedAt: Date
-  sourceId: string
-  previewUrl: string
-  description: string
-  Source: SourceWithFormattedLogos
-  VideoSources: VideoSource[]
-  CreatedBy: User
-}
+export type FormattedInteractionsPostData = ReturnType<
+  typeof formatInteractionPostsData
+>[0]
 
 function formatInteractionPostsData(
-  data: RawInteractionsPostData,
-): FormattedInteractionsPostData[] {
+  data: RawInteractionsPostData | RawInteractionsPostWithUserReactionsData,
+) {
   const { postsWithCurrentUserReactionData, totalReactionsOnPost } = data
 
   const reactionsCountByPostId = formatTotalReactionsData(totalReactionsOnPost)
   return postsWithCurrentUserReactionData.map(interactionPost => {
-    const { PostReactions, Source, VideoSources, ...rest } = interactionPost
+    const { PostReactions, PostComments, Source, VideoSources, ...rest } =
+      interactionPost
     return {
       ...rest,
       VideoSources: VideoSources.sort(videoSourcesSorter),
       Source: formatSourceLogos(Source),
       reactionsCount: reactionsCountByPostId?.[interactionPost.id],
       reactedByLoggedInUser: PostReactions?.length ? true : false,
+      commentedByLoggedInUser: PostComments?.length ? true : false,
     }
   })
 }
 
-function videoSourcesSorter(a: VideoSource, b: VideoSource) {
+function videoSourcesSorter(
+  a: Pick<VideoSource, "size" | "type">,
+  b: Pick<VideoSource, "size" | "type">,
+) {
   if (a.type === b.type) {
     return qualityPriority.indexOf(a.size) - qualityPriority.indexOf(b.size)
   }

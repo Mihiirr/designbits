@@ -1,14 +1,6 @@
-import {
-  Post,
-  PostReaction,
-  Prisma,
-  User,
-  VideoSize,
-  VideoSource,
-} from "@prisma/client"
-import { SetOptional } from "type-fest"
+import { Post, User, VideoSize } from "@prisma/client"
+import { AsyncReturnType } from "type-fest"
 import { db } from "~/services/db/client.server"
-import { SingleInteractionPostData, SourceWithLogos } from "~/types/formatters"
 
 type props = {
   userId?: User["id"]
@@ -48,10 +40,22 @@ async function findPostsIncludingUserReaction({ userId }: props) {
             },
           }
         : false,
+      PostComments: userId
+        ? {
+            select: {
+              id: true,
+            },
+            where: {
+              createdById: userId,
+            },
+          }
+        : false,
+      _count: {
+        select: {
+          PostComments: true,
+        },
+      },
     },
-    // _count: {
-    //   select: { PostReactions: true },
-    // },
   })
 }
 
@@ -72,8 +76,45 @@ async function findPostsReactedByUser({ userId }: props) {
           url: true,
         },
       },
+      VideoSources: {
+        select: {
+          url: true,
+          id: true,
+          size: true,
+          type: true,
+        },
+        where: {
+          size: {
+            in: [VideoSize.MEDIUM_480P, VideoSize.ORIGINAL],
+          },
+        },
+      },
       CreatedBy: true,
-      PostReactions: true,
+      PostReactions: userId
+        ? {
+            select: {
+              reaction: true,
+            },
+            where: {
+              reactedBy: userId,
+            },
+          }
+        : false,
+      PostComments: userId
+        ? {
+            select: {
+              id: true,
+            },
+            where: {
+              createdById: userId,
+            },
+          }
+        : false,
+      _count: {
+        select: {
+          PostComments: true,
+        },
+      },
     },
   })
 }
@@ -87,25 +128,10 @@ async function findPostReactionsCount() {
   })
 }
 
-type TotalReactionsOnPost = (Prisma.PickArray<
-  Prisma.PostReactionGroupByOutputType,
-  "postId"[]
-> & {
-  _count: {
-    id: number
-  }
-})[]
+type TotalReactionsOnPost = AsyncReturnType<typeof findPostReactionsCount>
 
-type PostWithCurrentUserReactionData = Post & {
-  Source: SourceWithLogos
-  CreatedBy: User
-  PostReactions: PostReaction[]
-  VideoSources: VideoSource[]
-}
-
-type PostIncludingCurrentUserReactionData = SetOptional<
-  PostWithCurrentUserReactionData,
-  "PostReactions"
+type PostIncludingCurrentUserReactionData = AsyncReturnType<
+  typeof findPostsIncludingUserReaction
 >
 
 async function findInteractionsForCategory({ userId }: props) {
@@ -117,7 +143,7 @@ async function findInteractionsForCategory({ userId }: props) {
     }),
     totalReactionsOnPost: findPostReactionsCount(),
   }) as unknown as {
-    postsWithCurrentUserReactionData: PostIncludingCurrentUserReactionData[]
+    postsWithCurrentUserReactionData: PostIncludingCurrentUserReactionData
     totalReactionsOnPost: TotalReactionsOnPost
   }
 }
@@ -205,7 +231,9 @@ async function findPostReactedByUser({ userId }: props) {
     }),
     totalReactionsOnPost: findPostReactionsCount(),
   }) as unknown as {
-    postsWithCurrentUserReactionData: PostWithCurrentUserReactionData[]
+    postsWithCurrentUserReactionData: AsyncReturnType<
+      typeof findPostsReactedByUser
+    >
     totalReactionsOnPost: TotalReactionsOnPost
   }
 }
