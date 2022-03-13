@@ -2,6 +2,7 @@ import {
   Post,
   PostReaction,
   Prisma,
+  TAG_COLORS,
   User,
   VideoSize,
   VideoSource,
@@ -145,7 +146,7 @@ function formatSourceLogos({ SourceLogos, ...rest }: SourceWithLogos) {
       imageSourcePriority.indexOf(a) - imageSourcePriority.indexOf(b),
   ) as [string, FormattedSourceElementProps][]
 
-  const defaultSizePNGImage = sourcesGroupedByType["image/png"].find(
+  const defaultSizePNGImage = sourcesGroupedByType["image/png"]?.find(
     x => x.size === null,
   )
 
@@ -156,20 +157,40 @@ function formatSourceLogos({ SourceLogos, ...rest }: SourceWithLogos) {
   return { formattedLogos, fallBackImage, ...rest }
 }
 
+const tagsToClassnameMap: {
+  [key in TAG_COLORS]: string
+} = {
+  [TAG_COLORS.BLUE]: "bg-indigo-200 text-indigo-700",
+  [TAG_COLORS.BROWN]: "bg-green-200 text-green-700",
+  [TAG_COLORS.GREEN]: "bg-emerald-200 text-emerald-700",
+  [TAG_COLORS.ORANGE]: "bg-orange-200 text-orange-700",
+  [TAG_COLORS.PINK]: "bg-pink-200 text-pink-700",
+  [TAG_COLORS.PURPLE]: "bg-purple-200 text-purple-700",
+  [TAG_COLORS.RED]: "bg-red-200 text-red-700",
+  [TAG_COLORS.GRAY]: "bg-stone-200 text-stone-700",
+  [TAG_COLORS.YELLOW]: "bg-yellow-200 text-yellow-700",
+  [TAG_COLORS.LIGHT_GRAY]: "bg-slate-200 text-slate-700",
+}
+
 function formatSingleInteractionPostData(
-  data: SingleInteractionPostData,
-): FormattedSingleInteractionsPostData {
+  data: NonNullable<SingleInteractionPostData>,
+) {
   const {
     _count: { PostReactions: reactionCount },
     VideoSources,
     PostReactions,
     Source,
+    Tags,
     ...rest
   } = data
   return {
     ...rest,
     reactionCount,
     Source: formatSourceLogos(Source),
+    tags: Tags.map(tag => ({
+      ...tag,
+      classname: tagsToClassnameMap[tag.color],
+    })),
     VideoSources: VideoSources.sort(videoSourcesSorter),
     reactedByLoggedInUser: PostReactions?.length ? true : false,
   }

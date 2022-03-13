@@ -54,7 +54,7 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
               <Picture
                 sources={post.Source.formattedLogos}
                 imgProps={{
-                  src: post.Source.fallBackImage.url,
+                  src: post.Source.fallBackImage?.url,
                   alt: post.Source.name,
                   className: "h-5 w-5 rounded-md",
                 }}

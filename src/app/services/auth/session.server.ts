@@ -2,7 +2,7 @@ import { createCookieSessionStorage, redirect } from "remix"
 import type { User } from "@prisma/client"
 import { getUserByEmail } from "~/services/db/queries/query-db.server"
 import { getLoginInfoSession } from "~/services/auth/login.server"
-import { getRequiredServerEnvVar } from "~/utils/env"
+import { getRequiredServerEnvVar } from "~/utils/secrets-helper"
 import { sendMagicLinkEmail } from "~/services/email/email.server"
 import { db } from "~/services/db/client.server"
 import {

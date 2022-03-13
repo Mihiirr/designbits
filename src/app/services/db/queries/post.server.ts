@@ -127,10 +127,7 @@ type FindPostPageDataProps = {
   userId?: User["id"]
 }
 
-async function findPostPageData({
-  postSlug,
-  userId,
-}: FindPostPageDataProps): Promise<SingleInteractionPostData | null> {
+async function findPostPageData({ postSlug, userId }: FindPostPageDataProps) {
   return db.post.findUnique({
     where: {
       slug: postSlug,
@@ -151,6 +148,13 @@ async function findPostPageData({
       },
       CreatedBy: true,
       VideoSources: true,
+      Tags: {
+        select: {
+          id: true,
+          color: true,
+          name: true,
+        },
+      },
       PostReactions: userId
         ? {
             select: {

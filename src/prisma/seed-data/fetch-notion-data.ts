@@ -1,5 +1,17 @@
 import { Client } from "@notionhq/client"
-import { QueryDatabaseResponse } from "@notionhq/client/build/src/api-endpoints"
+import {
+  GetDatabaseResponse,
+  QueryDatabaseResponse,
+} from "@notionhq/client/build/src/api-endpoints"
+import { TAG_COLORS } from "@prisma/client"
+import {
+  AsyncReturnType,
+  ConditionalPick,
+  Get,
+  Simplify,
+  UnionToIntersection,
+  ValueOf,
+} from "type-fest"
 const SourcesDatabaseID = process.env.NOTION_SOURCES_DATABASE_ID || ""
 const PostsDatabaseID = process.env.NOTION_POSTS_DATABASE_ID || ""
 
@@ -20,24 +32,6 @@ export type ParsedSourceItem = {
     name: string
     type?: "file" | undefined
   }
-  notionSourceId: string
-}
-
-export type ParsedPostItem = {
-  createdAt: string
-  updatedAt: string
-  title: string
-  sourceName: string
-  description: string
-  media: {
-    file: {
-      url: string
-      expiry_time: string
-    }
-    name: string
-    type?: "file" | undefined
-  }
-  createdBy: string
   notionSourceId: string
 }
 
@@ -93,12 +87,17 @@ export async function fetchSourcesData() {
   return processedData
 }
 
+export type ParsedPostItem = AsyncReturnType<typeof fetchPostsData>[0]
+function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
+  return value !== null && value !== undefined
+}
+
 export async function fetchPostsData() {
   const response: QueryDatabaseResponse = await notion.databases.query({
     database_id: PostsDatabaseID,
   })
 
-  const processedData = response.results.reduce((acc, page) => {
+  const processedData = response.results.map(page => {
     if ("properties" in page) {
       const parsedData = {
         createdAt: page.created_time,
@@ -130,9 +129,11 @@ export async function fetchPostsData() {
                 ?.plain_text
             : null,
         notionSourceId: page.id,
+        tags:
+          page.properties?.Tags?.type === "multi_select"
+            ? page.properties?.Tags?.multi_select
+            : null,
       }
-
-      console.log(parsedData)
 
       if (
         parsedData.description &&
@@ -140,7 +141,7 @@ export async function fetchPostsData() {
         parsedData.sourceName &&
         parsedData.title
       ) {
-        acc.push({
+        return {
           createdAt: parsedData.createdAt,
           createdBy: parsedData.createdBy,
           description: parsedData.description,
@@ -149,11 +150,45 @@ export async function fetchPostsData() {
           title: parsedData.title,
           updatedAt: parsedData.updatedAt,
           notionSourceId: parsedData.notionSourceId,
-        })
+          tags: parsedData.tags,
+        }
       }
+      return null
     }
-    return acc
-  }, [] as ParsedPostItem[])
+    return null
+  })
 
+  return processedData.filter(notEmpty)
+}
+
+type SelectColor = NonNullable<ParsedPostItem["tags"]>[0]["color"]
+const colorsMap: {
+  [notionColorName in SelectColor]: TAG_COLORS
+} = {
+  default: TAG_COLORS.BLUE,
+  gray: TAG_COLORS.GRAY,
+  brown: TAG_COLORS.BROWN,
+  orange: TAG_COLORS.ORANGE,
+  yellow: TAG_COLORS.YELLOW,
+  green: TAG_COLORS.GREEN,
+  blue: TAG_COLORS.BLUE,
+  purple: TAG_COLORS.PURPLE,
+  pink: TAG_COLORS.PINK,
+  red: TAG_COLORS.RED,
+}
+
+export async function fetchDatabaseObject() {
+  const response: GetDatabaseResponse = await notion.databases.retrieve({
+    database_id: PostsDatabaseID,
+  })
+
+  const processedData =
+    response.properties.Tags.type === "multi_select"
+      ? response.properties.Tags.multi_select.options.map(option => ({
+          name: option.name,
+          color: colorsMap[option.color || "default"] || TAG_COLORS.BLUE,
+          notionTagId: option.id,
+        }))
+      : null
   return processedData
 }

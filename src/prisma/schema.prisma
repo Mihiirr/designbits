@@ -73,6 +73,7 @@ model Post {
   description    String         @db.MediumText
   updatedAt      DateTime?      @default(now())
   notionSourceId String?
+  Tags           Tag[]
   PostReactions  PostReaction[]
   PostComments   Comment[]
   VideoSources   VideoSource[]
@@ -120,13 +121,27 @@ model SourceLogo {
   @@unique([sourceId, type, size])
 }
 
-model NotionSourceSeedLog {
-  id           Int      @id @default(autoincrement())
-  notionPageId String
-  itemId       String
-  itemType     String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now())
+enum TAG_COLORS {
+  LIGHT_GRAY
+  GRAY
+  BROWN
+  ORANGE
+  YELLOW
+  GREEN
+  BLUE
+  PURPLE
+  PINK
+  RED
+}
+
+model Tag {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  color       TAG_COLORS @default(LIGHT_GRAY)
+  Posts       Post[]
+  updatedAt   DateTime?  @default(now())
+  notionTagId String?    @unique
+
 }
 
 model PostView {

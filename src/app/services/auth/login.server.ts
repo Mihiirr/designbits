@@ -1,6 +1,6 @@
 import { createCookieSessionStorage } from "remix"
 import { decrypt, encrypt } from "~/services/utils/encryption.server"
-import { getRequiredServerEnvVar } from "~/utils/env"
+import { getRequiredServerEnvVar } from "~/utils/secrets-helper"
 import { linkExpirationTime } from "../db/magic-link.server"
 
 const loginInfoStorage = createCookieSessionStorage({

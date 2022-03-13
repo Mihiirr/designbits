@@ -1,26 +1,11 @@
-import {
-  Post,
-  PostReaction,
-  SourceLogo,
-  User,
-  VideoSource,
-} from "@prisma/client"
+import { SourceLogo } from "@prisma/client"
+import { AsyncReturnType } from "type-fest"
+import { formatSingleInteractionPostData } from "~/services/db/formatters.server"
+import { findPostPageData } from "~/services/db/queries/post.server"
 
 export type FormattedSourceElementProps = { srcSet: string; type: string }
 
-export type SingleInteractionPostData =
-  | Pick<
-      Post,
-      "id" | "slug" | "title" | "description" | "createdById" | "createdAt"
-    > & {
-      PostReactions: PostReaction[]
-      Source: SourceWithLogos
-      CreatedBy: User
-      VideoSources: VideoSource[]
-      _count: {
-        PostReactions: number
-      }
-    }
+export type SingleInteractionPostData = AsyncReturnType<typeof findPostPageData>
 
 export type SourceWithLogos = {
   SourceLogos: SourceLogo[]
@@ -34,19 +19,6 @@ export type SourceWithFormattedLogos = {
   name: string
   url: string
 }
-export type FormattedSingleInteractionsPostData = {
-  reactionCount: number
-  reactedByLoggedInUser: boolean
-  id: string
-  title: string
-  slug: string
-  createdById: string
-  createdAt: Date
-  // modifiedAt: Date
-  // sourceId: string
-  // previewUrl: string
-  description: string
-  Source: SourceWithFormattedLogos
-  CreatedBy: User
-  VideoSources: VideoSource[]
-}
+export type FormattedSingleInteractionsPostData = ReturnType<
+  typeof formatSingleInteractionPostData
+>

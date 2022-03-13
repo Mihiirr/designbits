@@ -11,7 +11,11 @@ import {
   findSourcesToCreateAndUpdate,
   removeNullAndUndefined,
 } from "./seed-helpers"
-import { fetchPostsData, fetchSourcesData } from "./fetch-notion-data"
+import {
+  fetchDatabaseObject,
+  fetchPostsData,
+  fetchSourcesData,
+} from "./fetch-notion-data"
 import { usersData } from "./interactions"
 import * as path from "path"
 import { Post, VideoSize, VideoSource } from "@prisma/client"
@@ -181,23 +185,41 @@ export async function seedPostsData() {
       processedData,
     )
 
-    const insertedPosts = await pMap(postsToCreate, async post => {
-      return db.post.create({
-        data: {
-          description: post.description,
-          previewUrl: "",
-          slug: slug(post.title),
-          title: post.title,
-          Source: {
-            connect: {
-              name: post.sourceName,
+    const insertedPosts = await pMap(
+      postsToCreate,
+      async post => {
+        try {
+          const data = await db.post.create({
+            data: {
+              description: post.description,
+              previewUrl: "",
+              slug: slug(post.title),
+              title: post.title,
+              Source: {
+                connect: {
+                  name: post.sourceName,
+                },
+              },
+              Tags: {
+                connect: post.tags?.map(tag => {
+                  return {
+                    notionTagId: tag.id,
+                  }
+                }),
+              },
+              CreatedBy: usersData.Shreyas,
+              notionSourceId: post.notionSourceId,
             },
-          },
-          CreatedBy: usersData.Shreyas,
-          notionSourceId: post.notionSourceId,
-        },
-      })
-    })
+          })
+          console.log("inserted post", data.title)
+        } catch (error) {
+          console.log("error in inserting post ", post, error)
+        }
+      },
+      {
+        concurrency: 1,
+      },
+    )
 
     const updatedPosts = await pMap(postsToUpdate, async post => {
       return db.post.update({
@@ -210,6 +232,13 @@ export async function seedPostsData() {
           //     },
           //   },
           // },
+          Tags: {
+            connect: post.tags?.map(tag => {
+              return {
+                notionTagId: tag.id,
+              }
+            }),
+          },
           notionSourceId: post.notionSourceId,
           updatedAt: post.updatedAt,
           slug: slug(post.title),
@@ -446,5 +475,37 @@ export async function seedPostsData() {
   }
 }
 
+export async function seedTagsData() {
+  const processedData = await fetchDatabaseObject()
+  console.log(processedData)
+
+  try {
+    if (processedData !== null) {
+      return (
+        pMap(processedData, async tag => {
+          return db.tag.upsert({
+            create: {
+              name: tag.name,
+              color: tag.color,
+              notionTagId: tag.notionTagId,
+            },
+            update: {
+              name: tag.name,
+              color: tag.color,
+            },
+            where: {
+              notionTagId: tag.notionTagId,
+            },
+          })
+        }),
+        {
+          concurrency: 2,
+        }
+      )
+    }
+  } catch (error) {}
+}
+
 // seedSourcesData()
 seedPostsData()
+// seedTagsData()

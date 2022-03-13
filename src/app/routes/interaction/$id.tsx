@@ -29,6 +29,7 @@ import { findPostPageData } from "~/services/db/queries/post.server"
 import { PostActionButton } from "~/components/ActionButton"
 import Picture from "~/components/common/Picture"
 import { FormattedSingleInteractionsPostData } from "~/types/formatters"
+import clsx from "clsx"
 
 export let loader: LoaderFunction = async ({ params, request }) => {
   const postSlug = params.id
@@ -164,7 +165,7 @@ const Interaction = () => {
                       <Picture
                         sources={postData.Source.formattedLogos}
                         imgProps={{
-                          src: postData.Source.fallBackImage.url,
+                          src: postData.Source.fallBackImage?.url,
                           alt: postData.Source.name,
                           className: "h-5 w-5 rounded-md bg-gray-800",
                         }}
@@ -182,7 +183,15 @@ const Interaction = () => {
                 </div>
               </div>
               <div className="flex space-x-2 text-sm">
-                <div className="rounded bg-indigo-50 py-1 px-2 text-indigo-700">
+                {postData.tags.map(tag => (
+                  <div
+                    className={clsx("rounded py-1 px-2", tag.classname)}
+                    key={tag.id}
+                  >
+                    {tag.name}
+                  </div>
+                ))}
+                {/* <div className="rounded    py-1 px-2 text-indigo-700">
                   Navigation
                 </div>
                 <div className="rounded bg-indigo-50 py-1 px-2 text-indigo-700">
@@ -190,7 +199,7 @@ const Interaction = () => {
                 </div>
                 <div className="rounded bg-indigo-50 py-1 px-2 text-indigo-700">
                   Accessibility
-                </div>
+                </div> */}
               </div>
             </div>
             <div className="mx-8 mt-12 border-b border-gray-300">

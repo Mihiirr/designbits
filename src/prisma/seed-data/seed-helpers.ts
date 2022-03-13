@@ -212,7 +212,11 @@ export async function findPostsToCreateAndUpdate(
       postsToCreate.push(notionPageItem)
     } else {
       // TODO Update the source
-      const keysToCompare: (keyof ParsedPostItem)[] = ["title", "description"]
+      const keysToCompare: (keyof ParsedPostItem)[] = [
+        "title",
+        "description",
+        "tags",
+      ]
       if (
         !isEqual(
           pick(foundPost, keysToCompare),
