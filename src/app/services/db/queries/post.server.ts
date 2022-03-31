@@ -4,9 +4,13 @@ import { db } from "~/services/db/client.server"
 
 type props = {
   userId?: User["id"]
+  orderBy?: "recently-added" | "popular"
 }
 
-async function findPostsIncludingUserReaction({ userId }: props) {
+async function findPostsIncludingUserReaction({
+  userId,
+  orderBy = "recently-added",
+}: props) {
   return db.post.findMany({
     include: {
       Source: {
@@ -55,6 +59,15 @@ async function findPostsIncludingUserReaction({ userId }: props) {
           PostComments: true,
         },
       },
+    },
+    orderBy: {
+      ...(orderBy === "recently-added"
+        ? {
+            createdAt: "desc",
+          }
+        : {
+            createdAt: "asc",
+          }),
     },
   })
 }
@@ -134,12 +147,13 @@ type PostIncludingCurrentUserReactionData = AsyncReturnType<
   typeof findPostsIncludingUserReaction
 >
 
-async function findInteractionsForCategory({ userId }: props) {
+async function findInteractionsForCategory({ userId, orderBy }: props) {
   const { default: pProps } = await import("p-props")
 
   return pProps({
     postsWithCurrentUserReactionData: findPostsIncludingUserReaction({
       userId,
+      orderBy,
     }),
     totalReactionsOnPost: findPostReactionsCount(),
   }) as unknown as {

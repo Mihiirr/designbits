@@ -5,10 +5,13 @@ import {
   LoaderFunction,
   MetaFunction,
   useLoaderData,
+  useSearchParams,
 } from "remix"
 import { handlePostRelatedActions } from "~/action-handlers/card-action-handlers.server"
 import { navItems } from "~/components/CategoriesNav"
+import FilterIcon from "~/components/icons/Filter"
 import InteractionCard from "~/components/Post"
+import SortDropdown from "~/components/SortDropdown"
 import { getLoggedInUser } from "~/services/auth/session.server"
 import {
   formatInteractionPostsData,
@@ -28,13 +31,18 @@ const categoryMap = groupBy(navItems, "id")
 
 export const loader: LoaderFunction = async ({ params, request }) => {
   const categoryId = params.category
+  const url = new URL(request.url)
+  const sortBy = url.searchParams.get("sort")
+  const orderBy =
+    sortBy === "recently-added" || sortBy === "popular" ? sortBy : undefined
+
   if (!categoryId) {
     return
   }
   const user = await getLoggedInUser(request)
 
   const interactions = formatInteractionPostsData(
-    await findInteractionsForCategory({ userId: user?.id }),
+    await findInteractionsForCategory({ userId: user?.id, orderBy }),
   )
 
   return { category: categoryMap[categoryId][0].name, interactions }
@@ -54,9 +62,23 @@ const CategoryPage: React.FC<Props> = () => {
     <>
       <header>
         <div className="px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold leading-tight text-gray-900">
-            {category}
-          </h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold leading-tight text-gray-900">
+              {category}
+            </h1>
+            <div className="flex space-x-4 text-sm text-gray-600">
+              <button className="flex w-full items-center justify-center space-x-2 rounded-md px-4 py-1.5 hover:bg-indigo-200/20 focus-visible:ring-2 focus-visible:ring-white/75">
+                <FilterIcon
+                  height={20}
+                  width={20}
+                  role="presentation"
+                  aria-hidden
+                />
+                <span>Filter</span>
+              </button>
+              <SortDropdown />
+            </div>
+          </div>
         </div>
       </header>
       <main>

@@ -7,7 +7,7 @@
   "scripts": {
     "prepare": "husky install",
     "postinstall": "remix setup node && yarn run install:dotenv-linter",
-    "dev": "concurrently -n \"Database,TailwindCSS,Remix Dev\"  -c \"#cdfabc.italic,#bada55.bold,#10b981.bold\" \"yarn connect:database:develop\" \"yarn dev:css\" \"remix dev\"",
+    "dev": "concurrently -n \"Database,TailwindCSS,Remix Dev\"  -c \"#cdfabc.italic,#bada55.bold,#10b981.bold\" \"yarn connect:database:main\" \"yarn dev:css\" \"remix dev\"",
     "dev:css": "tailwindcss -o ./src/app/styles/tailwind.css --watch",
     "dev:remix": "remix dev",
     "build": "yarn prisma:generate && yarn run build:css && remix build",
