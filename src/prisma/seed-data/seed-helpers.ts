@@ -7,7 +7,7 @@ import { uploadToS3 } from "./upload"
 import * as path from "path"
 import * as fs from "fs"
 import pMap from "p-map"
-import processImage from "./optimize-images"
+import processImage, { imageFormats, imageSizeKeys } from "./optimize-images"
 import { ParsedPostItem, ParsedSourceItem } from "./fetch-notion-data"
 import { db } from "../../app/services/db/client.server"
 import { Post, Source } from "@prisma/client"
@@ -16,6 +16,8 @@ import pick from "lodash.pick"
 import { isBefore } from "date-fns"
 import { S3 } from "aws-sdk"
 import { OutPutConfigOp, outputConfigs, processVideo } from "./process-video"
+import xorWith from "lodash.xorwith"
+import isEmpty from "lodash.isempty"
 
 type DownloadFnProps = {
   fileName: string
@@ -23,6 +25,7 @@ type DownloadFnProps = {
   filePath: string
   uploadMetaData?: S3.Metadata
   formatsToGenerate?: OutPutConfigOp[]
+  postTitle: string
 }
 
 export const downloadFileFromURL = async ({
@@ -58,8 +61,14 @@ export const downloadImagesAndUploadToS3 = async ({
   filePath,
   fileName,
   uploadMetaData = {},
+  postTitle,
 }: DownloadFnProps) => {
-  const outputFilePath = await downloadFileFromURL({ url, filePath, fileName })
+  const outputFilePath = await downloadFileFromURL({
+    url,
+    filePath,
+    fileName,
+    postTitle,
+  })
   const processedImages = await processImage(outputFilePath)
 
   return pMap(processedImages, async ({ fullFileName, format, sizeName }) => {
@@ -81,15 +90,25 @@ export const downloadVideosAndUploadToS3 = async ({
   fileName,
   uploadMetaData = {},
   formatsToGenerate = outputConfigs,
+  postTitle,
 }: DownloadFnProps) => {
-  const outputFilePath = await downloadFileFromURL({ url, filePath, fileName })
+  const outputFilePath = await downloadFileFromURL({
+    url,
+    filePath,
+    fileName,
+    postTitle,
+  })
   // const processedImages = await processImage(outputFilePath)
   console.log(outputFilePath)
 
-  console.log("Downloaded video at: ", outputFilePath)
-  console.log("processing video at: ", outputFilePath)
-  const processedVideos = await processVideo(outputFilePath, formatsToGenerate)
-  console.log("process-complete video at: ", outputFilePath)
+  console.log(`Downloaded video at: ${postTitle} `, outputFilePath)
+  console.log(`processing video at: ${postTitle} `, outputFilePath)
+  const processedVideos = await processVideo(
+    outputFilePath,
+    formatsToGenerate,
+    postTitle,
+  )
+  console.log(`process-complete video at: ${postTitle} `, outputFilePath)
 
   return pMap(processedVideos, async ({ fileName, sizeName, format }) => {
     return pProps({
@@ -114,6 +133,22 @@ export const removeNullAndUndefined = (obj: { [s: string]: unknown }) => {
   }, {} as { [s: string]: unknown })
 }
 
+type Config = {
+  type: string
+  size: string
+}
+
+const config: Config[] = []
+
+imageFormats.forEach(format =>
+  imageSizeKeys.forEach(sizeKey =>
+    config.push({
+      type: `image/${format}`,
+      size: sizeKey,
+    }),
+  ),
+)
+
 export async function findSourcesToCreateAndUpdate(
   processedData: ParsedSourceItem[],
 ) {
@@ -125,6 +160,12 @@ export async function findSourcesToCreateAndUpdate(
       notionSourceId: true,
       url: true,
       updatedAt: true,
+      SourceLogos: {
+        select: {
+          type: true,
+          size: true,
+        },
+      },
     },
     where: {
       notionSourceId: {
@@ -149,23 +190,35 @@ export async function findSourcesToCreateAndUpdate(
   processedData.forEach(notionPageItem => {
     const foundSource = foundSourcesGroupedById[
       notionPageItem.notionSourceId
-    ] as Source
+    ] as Source & {
+      SourceLogos: {
+        type: string
+        size: string | null
+      }[]
+    }
     if (!foundSource) {
       // TODO Create the source
       sourcesToCreate.push(notionPageItem)
     } else {
       // TODO Update the source
       const keysToCompare = ["name", "url"]
+
       if (
         !isEqual(
           pick(foundSource, keysToCompare),
           pick(notionPageItem, keysToCompare),
         ) ||
+        !isEmpty(xorWith(foundSource.SourceLogos, config, isEqual)) ||
         isBefore(
           foundSource.updatedAt ? new Date(foundSource.updatedAt) : new Date(),
           new Date(notionPageItem.updatedAt),
         )
       ) {
+        console.log({
+          foundSource: xorWith(foundSource.SourceLogos, config, isEqual),
+          a: foundSource.SourceLogos,
+          config,
+        })
         sourcesToUpdate.push({
           ...notionPageItem,
           id: foundSource.id,
@@ -216,6 +269,8 @@ export async function findPostsToCreateAndUpdate(
         "title",
         "description",
         "tags",
+        "platform",
+        "device",
       ]
       if (
         !isEqual(
@@ -225,7 +280,8 @@ export async function findPostsToCreateAndUpdate(
         isBefore(
           foundPost.updatedAt ? new Date(foundPost.updatedAt) : new Date(),
           new Date(notionPageItem.updatedAt),
-        )
+        ) ||
+        process.env.FORCE_PROCESS_VIDEO_FORMATS
       ) {
         postsToUpdate.push({
           ...notionPageItem,

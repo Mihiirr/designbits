@@ -39,59 +39,89 @@ export const getVideoInfo = async (
 
 export type OutPutConfigOp = {
   ext: string
-  size: string
+  size: { height: number; width: number }
   sizeName: VideoSize
 }
 
 export const outputConfigs: OutPutConfigOp[] = [
   {
     ext: "webm",
-    size: "320x240",
+    size: {
+      height: 320,
+      width: 240,
+    },
     sizeName: VideoSize.THUMBNAIL_240P,
   },
   {
     ext: "webm",
-    size: "480x360",
+    size: {
+      height: 480,
+      width: 360,
+    },
     sizeName: VideoSize.SMALL_360P,
   },
   {
     ext: "webm",
-    size: "640x480",
+    size: {
+      height: 640,
+      width: 480,
+    },
     sizeName: VideoSize.MEDIUM_480P,
   },
   {
     ext: "webm",
-    size: "1280x720",
+    size: {
+      height: 1280,
+      width: 720,
+    },
     sizeName: VideoSize.LARGE_720P,
   },
   {
     ext: "webm",
-    size: "1920x1080",
+    size: {
+      height: 1920,
+      width: 1080,
+    },
     sizeName: VideoSize.HIGH_RES_1080P,
   },
   {
     ext: "mp4",
-    size: "320x240",
+    size: {
+      height: 320,
+      width: 240,
+    },
     sizeName: VideoSize.THUMBNAIL_240P,
   },
   {
     ext: "mp4",
-    size: "480x360",
+    size: {
+      height: 480,
+      width: 360,
+    },
     sizeName: VideoSize.SMALL_360P,
   },
   {
     ext: "mp4",
-    size: "640x480",
+    size: {
+      height: 640,
+      width: 480,
+    },
     sizeName: VideoSize.MEDIUM_480P,
   },
   {
     ext: "mp4",
-    size: "1280x720",
+    size: {
+      height: 1280,
+      width: 720,
+    },
     sizeName: VideoSize.LARGE_720P,
   },
   {
     ext: "mp4",
-    size: "1920x1080",
+    size: {
+      height: 1920,
+      width: 1080,
+    },
     sizeName: VideoSize.HIGH_RES_1080P,
   },
 ]
@@ -136,9 +166,30 @@ export const outputConfigs: OutPutConfigOp[] = [
 //   cliProgress.Presets.shades_grey,
 // )
 
+const getSize = (
+  outputHeight: number,
+  outputWidth: number,
+  inputHeight: number,
+  inputWidth: number,
+) => {
+  console.log({
+    outputHeight,
+    outputWidth,
+    inputHeight,
+    inputWidth,
+  })
+  if (inputHeight < outputHeight && inputWidth < outputWidth) {
+    return `${inputWidth}x${inputHeight}`
+  }
+  return `${inputHeight < outputWidth ? "?" : outputWidth}x${
+    inputHeight < outputHeight ? "?" : outputHeight
+  }`
+}
+
 export const processVideo = async (
   inputPath: string,
   outputFormats: OutPutConfigOp[] = outputConfigs,
+  postTitle?: string,
 ): Promise<
   {
     fileName: string
@@ -147,10 +198,11 @@ export const processVideo = async (
   }[]
 > => {
   return new Promise(async (resolve, reject) => {
-    const { durationInSeconds: videoDurationInSeconds, size: inputVideoSize } =
-      await getVideoInfo(inputPath)
-
-    console.log(inputVideoSize)
+    const {
+      durationInSeconds: videoDurationInSeconds,
+      height: inputHeight,
+      width: inputWidth,
+    } = await getVideoInfo(inputPath)
 
     if (videoDurationInSeconds === undefined) {
       return reject(new Error("Could not get video duration"))
@@ -166,8 +218,9 @@ export const processVideo = async (
     if (process.env.SKIP_PROCESSING) {
       resolve(
         outputFormats.map(({ size, ext, sizeName }) => {
-          const outFileName = `${fileName}-${size}.${ext}`
-          console.log("created: " + outFileName)
+          const outFileName = `${fileName}-${size.width}x${size.height}.${ext}`
+          console.log(`created: ${postTitle} ` + outFileName)
+          getSize(size.height, size.width, inputHeight, inputWidth)
           return {
             fileName: outFileName,
             sizeName,
@@ -188,12 +241,17 @@ export const processVideo = async (
           .output(
             path.join(
               outputFolder,
-              `${fileName}-${outputFormat.size}.${outputFormat.ext}`,
+              `${fileName}-${outputFormat.size.width}x${outputFormat.size.height}.${outputFormat.ext}`,
             ),
           )
-          .size(outputFormat.size)
-          .autopad()
-          .fps(120)
+          .size(
+            getSize(
+              outputFormat.size.height,
+              outputFormat.size.width,
+              inputHeight,
+              inputWidth,
+            ),
+          )
           .on("progress", progress => {
             // console.log("Processing: " + progress.percent + "% done")
             // b.update(progress.percent, {
@@ -213,7 +271,7 @@ export const processVideo = async (
       .on("end", () =>
         resolve(
           outputFormats.map(({ size, ext, sizeName }) => {
-            const outFileName = `${fileName}-${size}.${ext}`
+            const outFileName = `${fileName}-${size.width}x${size.height}.${ext}`
             console.log("created: " + outFileName)
             return {
               fileName: outFileName,

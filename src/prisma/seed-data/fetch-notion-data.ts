@@ -3,15 +3,8 @@ import {
   GetDatabaseResponse,
   QueryDatabaseResponse,
 } from "@notionhq/client/build/src/api-endpoints"
-import { TAG_COLORS } from "@prisma/client"
-import {
-  AsyncReturnType,
-  ConditionalPick,
-  Get,
-  Simplify,
-  UnionToIntersection,
-  ValueOf,
-} from "type-fest"
+import { Device, Platfrom, TAG_COLORS } from "@prisma/client"
+import { AsyncReturnType } from "type-fest"
 const SourcesDatabaseID = process.env.NOTION_SOURCES_DATABASE_ID || ""
 const PostsDatabaseID = process.env.NOTION_POSTS_DATABASE_ID || ""
 
@@ -133,13 +126,25 @@ export async function fetchPostsData() {
           page.properties?.Tags?.type === "multi_select"
             ? page.properties?.Tags?.multi_select
             : null,
+        platform:
+          page.properties?.Platform?.type === "select"
+            ? page.properties?.Platform?.select?.name
+            : null,
+        device:
+          page.properties?.Device?.type === "select"
+            ? page.properties?.Device?.select?.name
+            : null,
       }
+      const platformName = validPlatformName(parsedData.platform)
+      const deviceName = validDeviceName(parsedData.device)
 
       if (
         parsedData.description &&
         parsedData.media &&
         parsedData.sourceName &&
-        parsedData.title
+        parsedData.title &&
+        platformName !== undefined &&
+        deviceName !== undefined
       ) {
         return {
           createdAt: parsedData.createdAt,
@@ -151,6 +156,8 @@ export async function fetchPostsData() {
           updatedAt: parsedData.updatedAt,
           notionSourceId: parsedData.notionSourceId,
           tags: parsedData.tags,
+          platform: platformName,
+          device: deviceName,
         }
       }
       return null
@@ -175,6 +182,32 @@ const colorsMap: {
   purple: TAG_COLORS.PURPLE,
   pink: TAG_COLORS.PINK,
   red: TAG_COLORS.RED,
+}
+
+const validPlatformName = (
+  platform: string | null | undefined,
+): Platfrom | undefined => {
+  switch (platform?.toLowerCase()) {
+    case "web":
+      return Platfrom.WEB
+    case "ios":
+      return Platfrom.IOS
+    case "android":
+      return Platfrom.ANDROID
+  }
+}
+
+const validDeviceName = (
+  device: string | null | undefined,
+): Device | undefined => {
+  switch (device?.toLowerCase()) {
+    case "desktop":
+      return Device.DESKTOP
+    case "tablet":
+      return Device.TABLET
+    case "mobile":
+      return Device.MOBILE
+  }
 }
 
 export async function fetchDatabaseObject() {

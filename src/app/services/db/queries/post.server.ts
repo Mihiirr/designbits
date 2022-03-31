@@ -181,6 +181,7 @@ async function findPostPageData({ postSlug, userId }: FindPostPageDataProps) {
           name: true,
         },
       },
+      platform: true,
       PostComments: {
         select: {
           id: true,

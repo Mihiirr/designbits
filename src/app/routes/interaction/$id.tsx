@@ -34,6 +34,7 @@ import clsx from "clsx"
 import escapeHtml from "escape-html"
 import { Text } from "slate"
 import { CustomElement, CustomText } from "~/types/editor"
+import Platform from "~/components/Post/Platform"
 
 export let loader: LoaderFunction = async ({ params, request }) => {
   const postSlug = params.id
@@ -215,7 +216,7 @@ const Interaction = () => {
                         imgProps={{
                           src: postData.Source.fallBackImage?.url,
                           alt: postData.Source.name,
-                          className: "h-5 w-5 rounded-md bg-gray-800",
+                          className: "h-5 w-5 rounded-md bg-gray-800/10",
                         }}
                       />
                       <span>{postData.Source.name}</span>
@@ -224,10 +225,7 @@ const Interaction = () => {
                 </div>
                 <div className="flex w-full space-x-4">
                   <div className="w-2/12">Platform</div>
-                  <div className="flex space-x-2 text-gray-800">
-                    <AndroidIcon />
-                    <span>Android</span>
-                  </div>
+                  <Platform platform={postData.platform} />
                 </div>
               </div>
               <div className="flex space-x-2 text-sm">

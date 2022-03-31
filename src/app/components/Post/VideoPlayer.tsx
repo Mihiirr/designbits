@@ -33,8 +33,8 @@ const VideoPlayer = ({ videoSources, backgroundColorClass }: Props) => {
         muted
         playsInline
         className={classNames(
-          backgroundColorClass || "bg-gray-800",
-          "h-full w-full object-cover object-center opacity-80 group-hover:opacity-100",
+          backgroundColorClass || "bg-gray-800/20",
+          "h-full w-full object-center",
         )}
         onMouseOver={event => (event.target as HTMLVideoElement).play()}
         onMouseOut={event => (event.target as HTMLVideoElement).pause()}

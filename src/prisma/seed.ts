@@ -24,51 +24,51 @@ async function seed() {
           "profile-pictures",
         ),
       })
-      const createdPost = await db.post.create({
-        data: {
-          title,
-          slug,
-          Source: {
-            connect: {
-              name: Source.name,
-            },
-          },
-          CreatedBy: {
-            connectOrCreate: {
-              create: {
-                ...CreatedBy.connectOrCreate.create,
-                profilePicture: uploadedMedia.profile.Key,
-              },
-              where: CreatedBy.connectOrCreate.where,
-            },
-          },
-          description,
-          VideoSources: {
-            createMany: {
-              data: [
-                {
-                  type: "video/mp4",
-                  url: uploadedMedia.videoMp4.Key,
-                },
-                {
-                  type: "video/webm",
-                  url: uploadedMedia.videoWebM.Key,
-                },
-              ],
-            },
-          },
-          previewUrl: uploadedMedia.preview.Key,
-        },
-      })
+      // const createdPost = await db.post.create({
+      //   data: {
+      //     title,
+      //     slug,
+      //     Source: {
+      //       connect: {
+      //         name: Source.name,
+      //       },
+      //     },
+      //     CreatedBy: {
+      //       connectOrCreate: {
+      //         create: {
+      //           ...CreatedBy.connectOrCreate.create,
+      //           profilePicture: uploadedMedia.profile.Key,
+      //         },
+      //         where: CreatedBy.connectOrCreate.where,
+      //       },
+      //     },
+      //     description,
+      //     VideoSources: {
+      //       createMany: {
+      //         data: [
+      //           {
+      //             type: "video/mp4",
+      //             url: uploadedMedia.videoMp4.Key,
+      //           },
+      //           {
+      //             type: "video/webm",
+      //             url: uploadedMedia.videoWebM.Key,
+      //           },
+      //         ],
+      //       },
+      //     },
+      //     previewUrl: uploadedMedia.preview.Key,
+      //   },
+      // })
 
-      const watchList = await db.watchlist.create({
-        data: {
-          userId: createdPost.createdById,
-          postId: createdPost.id,
-          watchReason: WatchReason.CREATED,
-        },
-      })
-      return { createdPost, watchList }
+      // const watchList = await db.watchlist.create({
+      //   data: {
+      //     userId: createdPost.createdById,
+      //     postId: createdPost.id,
+      //     watchReason: WatchReason.CREATED,
+      //   },
+      // })
+      // return { createdPost, watchList }
     }),
   )
 }

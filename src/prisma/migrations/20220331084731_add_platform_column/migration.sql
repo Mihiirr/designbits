@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Post` ADD COLUMN `platform` ENUM('WEB', 'ANDROID', 'IOS') NOT NULL DEFAULT 'WEB';

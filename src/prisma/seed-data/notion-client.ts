@@ -115,6 +115,7 @@ export async function seedSourcesData() {
               sourecName: source.name,
               notionSourceId: notionPageItem.notionSourceId,
             },
+            postTitle: notionPageItem.title,
           }) as Promise<DownloadImagesFnResponse[]>
       }
     })
@@ -195,6 +196,8 @@ export async function seedPostsData() {
               previewUrl: "",
               slug: slug(post.title),
               title: post.title,
+              platform: post.platform,
+              device: post.device,
               Source: {
                 connect: {
                   name: post.sourceName,
@@ -243,6 +246,8 @@ export async function seedPostsData() {
           updatedAt: post.updatedAt,
           slug: slug(post.title),
           title: post.title,
+          platform: post.platform,
+          device: post.device,
         },
         where: {
           id: post.id,
@@ -281,7 +286,10 @@ export async function seedPostsData() {
 
     processedData.forEach(post => {
       const postItem = postsByNotionPageId[post.notionSourceId]
-      const videoSources = postItem.VideoSources
+      if (!postItem) {
+        return
+      }
+      const videoSources = postItem?.VideoSources || []
 
       const map = {} as any
 
@@ -290,13 +298,15 @@ export async function seedPostsData() {
         map[key] = true
       })
 
-      const formatsToGenerate = outputConfigs.filter(outputConfig => {
-        const key = [`video/${outputConfig.ext}`, outputConfig.sizeName].join(
-          "-",
-        )
-        console.log(key, "======")
-        return map[key] !== true
-      })
+      const formatsToGenerate = process.env.FORCE_PROCESS_VIDEO_FORMATS
+        ? outputConfigs
+        : outputConfigs.filter(outputConfig => {
+            const key = [
+              `video/${outputConfig.ext}`,
+              outputConfig.sizeName,
+            ].join("-")
+            return map[key] !== true
+          })
 
       console.log(
         "generating formats:" +
@@ -322,6 +332,7 @@ export async function seedPostsData() {
               postTitle: postItem.title,
               notionPageId: postItem.notionSourceId || "",
             },
+            postTitle: post.title,
           },
         ) as Promise<DownloadVideoFnResponse[]>
       }

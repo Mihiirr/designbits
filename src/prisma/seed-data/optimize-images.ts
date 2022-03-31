@@ -13,8 +13,8 @@ const defaultSize = {
   width: 24,
   height: 24,
 }
-const formats: AllowedFormat[] = ["png", "webp"]
-const sizes: {
+export const imageFormats: AllowedFormat[] = ["png", "webp"]
+const imageSizes: {
   [x in SizeName]: ImageSize
 } = {
   default: defaultSize,
@@ -47,7 +47,7 @@ async function generateImage({
   sizeName = "default",
   format,
 }: GenerateImageProps) {
-  const size = sizes[sizeName]
+  const size = imageSizes[sizeName]
 
   const { name: fileNameWithOutExt, dir: inputDir } = path.parse(input)
   const outputhPath = path.join(inputDir, outputFolder)
@@ -67,6 +67,23 @@ async function generateImage({
   return { outputFileNameFullPath, sizeName, format, fullFileName }
 }
 
+type Config = {
+  format: AllowedFormat
+  sizeKey: SizeName
+}
+
+export const configs: Config[] = []
+export const imageSizeKeys = Object.keys(imageSizes) as SizeName[]
+
+imageFormats.forEach(format =>
+  imageSizeKeys.forEach(sizeKey =>
+    configs.push({
+      format,
+      sizeKey,
+    }),
+  ),
+)
+
 async function processImage(input: string): Promise<
   {
     outputFileNameFullPath: string
@@ -75,23 +92,6 @@ async function processImage(input: string): Promise<
     format: keyof sharp.FormatEnum
   }[]
 > {
-  const sizeKeys = Object.keys(sizes) as SizeName[]
-
-  type Config = {
-    format: AllowedFormat
-    sizeKey: SizeName
-  }
-
-  const configs: Config[] = []
-  formats.forEach(format =>
-    sizeKeys.forEach(sizeKey =>
-      configs.push({
-        format,
-        sizeKey,
-      }),
-    ),
-  )
-
   return pMap(configs, async ({ format, sizeKey }) => {
     return generateImage({
       input,
