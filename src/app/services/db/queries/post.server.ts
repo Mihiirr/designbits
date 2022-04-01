@@ -208,9 +208,19 @@ async function findPostPageData({ postSlug, userId }: FindPostPageDataProps) {
               name: true,
             },
           },
-          CommentReactions: {
+          CommentReactions: userId
+            ? {
+                select: {
+                  reaction: true,
+                },
+                where: {
+                  reactedBy: userId,
+                },
+              }
+            : false,
+          _count: {
             select: {
-              reaction: true,
+              CommentReactions: true,
             },
           },
         },

@@ -15,18 +15,25 @@ import { handlePostRelatedActions } from "~/action-handlers/card-action-handlers
 import Avatar from "~/components/Avatar"
 import Button from "~/components/Button"
 import CommentsSection from "~/components/Comments/CommentsSection"
-import AndroidIcon from "~/components/icons/Android"
 import LikeIcon from "~/components/icons/Like"
 import InteractionFeedback from "~/components/InteractionFeedback"
 import Layout from "~/components/Layout"
 import { PostContextProvider } from "~/context/postContext"
-import { ASSETS_CDN_LINK, CARD_ACTIONS, ERROR_CODES } from "~/utils/constants"
+import {
+  ASSETS_CDN_LINK,
+  CARD_ACTIONS,
+  COMMENT_ACTIONS,
+  ERROR_CODES,
+} from "~/utils/constants"
 import { formatSingleInteractionPostData } from "~/services/db/formatters.server"
 import { getLoggedInUser } from "~/services/auth/session.server"
 import { apiHandler } from "~/utils/api-handler"
 import { NotFoundException } from "~/utils/response-helpers.server"
 import { findPostPageData } from "~/services/db/queries/post.server"
-import { PostActionButton } from "~/components/ActionButton"
+import {
+  CommentActionButton,
+  PostActionButton,
+} from "~/components/ActionButton"
 import Picture from "~/components/common/Picture"
 import { FormattedSingleInteractionsPostData } from "~/types/formatters"
 import clsx from "clsx"
@@ -35,6 +42,7 @@ import escapeHtml from "escape-html"
 import { Text } from "slate"
 import { CustomElement, CustomText } from "~/types/editor"
 import Platform from "~/components/Post/Platform"
+import ReplyIcon from "~/components/icons/Reply"
 
 export let loader: LoaderFunction = async ({ params, request }) => {
   const postSlug = params.id
@@ -111,7 +119,6 @@ const serializeNode = (node: CustomElement | CustomText): JSX.Element => {
 }
 
 const getHTML = (nodes: (CustomElement | CustomText)[]) => {
-  console.log(nodes)
   return <>{nodes?.map(n => serializeNode(n))}</>
 }
 
@@ -270,6 +277,38 @@ const Interaction = () => {
                           | CustomText
                         )[],
                       )}
+                      <div className="mt-2 flex space-x-2">
+                        <CommentActionButton
+                          btnProps={{
+                            className:
+                              "flex items-center rounded-sm p-1 hover:bg-gray-400/20",
+                          }}
+                          formPayload={{
+                            commentId: comment.id,
+                          }}
+                          actionName={
+                            comment?.reactedByLoggedInUser
+                              ? COMMENT_ACTIONS.UNDO_LIKE
+                              : COMMENT_ACTIONS.LIKE_COMMENT
+                          }
+                        >
+                          <LikeIcon
+                            height="16"
+                            width="16"
+                            variant={
+                              comment?.reactedByLoggedInUser
+                                ? "filled"
+                                : "outline"
+                            }
+                          />
+                          {postData?.reactionCount !== 0 && (
+                            <span>{postData?.reactionCount}</span>
+                          )}
+                        </CommentActionButton>
+                        <button className="flex items-center rounded-sm p-1 hover:bg-gray-400/20">
+                          <ReplyIcon height={16} width={16} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

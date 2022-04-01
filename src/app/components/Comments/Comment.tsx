@@ -35,6 +35,7 @@ const MentionExample: React.FC<{
   const [savedCommentFromLS, saveCommentToLS] = useLocalStorage<
     (Descendant | MentionElement)[]
   >(`comment-${uniqueKey}`, initialValue)
+
   const ref = useRef(null)
 
   const [value, setValue] = useState<(Descendant | MentionElement)[]>(

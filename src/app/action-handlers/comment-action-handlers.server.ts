@@ -1,11 +1,17 @@
 import { ZodObject, ZodRawShape } from "zod"
 import { db } from "~/services/db/client.server"
-import { AddCommentActionSchema } from "~/services/validations/action-schemas.server"
+import {
+  AddCommentActionSchema,
+  CommentLikeActionSchema,
+} from "~/services/validations/action-schemas.server"
 import {
   handleFormSubmission,
   TypedResponse,
 } from "~/utils/handle-forms.server"
-import { OkResponse } from "~/utils/response-helpers.server"
+import {
+  BadRequestException,
+  OkResponse,
+} from "~/utils/response-helpers.server"
 type Props = {
   form: {
     [k: string]: FormDataEntryValue
@@ -43,6 +49,78 @@ export const handleCreateComment: HandleFormSubmissionFn<
       })
       return OkResponse({
         data,
+        errors: null,
+      })
+    },
+  })
+}
+
+export const handleCommentLikeAction: HandleFormSubmissionFn<
+  typeof CommentLikeActionSchema
+> = ({ form }: Props) => {
+  return handleFormSubmission({
+    form,
+    validationSchema: CommentLikeActionSchema,
+    handleFormValues: async formData => {
+      const { commentId, userId } = formData
+
+      const data = await db.commentReaction.create({
+        data: {
+          Comment: {
+            connect: {
+              id: commentId,
+            },
+          },
+          ReactedBy: {
+            connect: {
+              id: userId,
+            },
+          },
+          reaction: "LIKE",
+        },
+      })
+      return OkResponse({
+        data,
+        errors: null,
+      })
+    },
+  })
+}
+
+export const handleCommentUndoLikeAction: HandleFormSubmissionFn<
+  typeof CommentLikeActionSchema
+> = ({ form }: Props) => {
+  return handleFormSubmission({
+    form,
+    validationSchema: CommentLikeActionSchema,
+    handleFormValues: async formData => {
+      const { commentId, userId } = formData
+
+      const reaction = await db.commentReaction.findUnique({
+        where: {
+          commentId_reactedBy: {
+            commentId,
+            reactedBy: userId,
+          },
+        },
+      })
+
+      if (!reaction) {
+        return BadRequestException({
+          data: null,
+          errors: {
+            postId: "reaction not found",
+          },
+        })
+      }
+
+      const unlikedComment = await db.commentReaction.delete({
+        where: {
+          id: reaction.id,
+        },
+      })
+      return OkResponse({
+        data: unlikedComment,
         errors: null,
       })
     },

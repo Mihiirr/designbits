@@ -1,4 +1,10 @@
-import { TAG_COLORS, VideoSize, VideoSource } from "@prisma/client"
+import {
+  CommentReaction,
+  Prisma,
+  TAG_COLORS,
+  VideoSize,
+  VideoSource,
+} from "@prisma/client"
 import groupBy from "lodash.groupby"
 import property from "lodash.property"
 import { AsyncReturnType } from "type-fest"
@@ -150,6 +156,31 @@ const tagsToClassnameMap: {
   [TAG_COLORS.LIGHT_GRAY]: "bg-slate-200 text-slate-700",
 }
 
+interface PostComment {
+  id: string
+  CreatedBy: {
+    id: string
+    name: string | null
+    profilePicture: string | null
+  }
+  createdAt: Date
+  _count: {
+    CommentReactions: number
+  }
+  comment: Prisma.JsonValue
+  CommentReactions: CommentReaction[]
+}
+
+function formatPostComments(comments: PostComment[]) {
+  return comments.map(({ CommentReactions, ...rest }) => {
+    return {
+      reactedByLoggedInUser: CommentReactions?.length ? true : false,
+      CommentReactions,
+      ...rest,
+    }
+  })
+}
+
 function formatSingleInteractionPostData(
   data: NonNullable<SingleInteractionPostData>,
 ) {
@@ -159,12 +190,14 @@ function formatSingleInteractionPostData(
     PostReactions,
     Source,
     Tags,
+    PostComments,
     ...rest
   } = data
   return {
     ...rest,
     reactionCount,
     Source: formatSourceLogos(Source),
+    PostComments: formatPostComments(PostComments),
     tags: Tags.map(tag => ({
       ...tag,
       classname: tagsToClassnameMap[tag.color],

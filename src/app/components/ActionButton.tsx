@@ -1,5 +1,5 @@
 import React, { ButtonHTMLAttributes } from "react"
-import { Form } from "remix"
+import { Form, FormProps } from "remix"
 import { Except } from "type-fest"
 
 import { CARD_ACTIONS, COMMENT_ACTIONS } from "~/utils/constants"
@@ -11,6 +11,7 @@ type Props = {
   }
   actionName: CARD_ACTIONS | COMMENT_ACTIONS
   btnProps: BtnProps
+  formProps?: Except<FormProps, "method">
 }
 
 export const ActionButton: React.FC<Props> = ({
@@ -18,9 +19,10 @@ export const ActionButton: React.FC<Props> = ({
   actionName,
   children,
   btnProps,
+  formProps = {},
 }) => {
   return (
-    <Form method="post">
+    <Form method="post" {...formProps}>
       {Object.entries(formPayload).map(([key, value]) => (
         <input type="hidden" name={key} value={value} key={key} />
       ))}
@@ -40,6 +42,25 @@ interface PostActionButtonProps extends Props {
 }
 
 export const PostActionButton: React.FC<PostActionButtonProps> = ({
+  children,
+  btnProps,
+  ...rest
+}) => {
+  return (
+    <ActionButton btnProps={btnProps} {...rest}>
+      {children}
+    </ActionButton>
+  )
+}
+
+interface CommentActionButtonProps extends Props {
+  formPayload: {
+    commentId: string
+    [name: string]: string | number | readonly string[] | undefined
+  }
+}
+
+export const CommentActionButton: React.FC<CommentActionButtonProps> = ({
   children,
   btnProps,
   ...rest

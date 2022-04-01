@@ -10,6 +10,8 @@ import {
   OkResponse,
 } from "~/utils/response-helpers.server"
 import {
+  handleCommentLikeAction,
+  handleCommentUndoLikeAction,
   handleCreateComment,
   HandleFormSubmissionFn,
 } from "./comment-action-handlers.server"
@@ -27,7 +29,7 @@ export const handlePostRelatedActions: ProtectedActionFunction = async ({
 
   switch (_action) {
     case CARD_ACTIONS.LIKE:
-      return handleLikeAction({
+      return handlePostLikeAction({
         form: { ...formValues, userId: user.id },
         request,
       })
@@ -44,6 +46,18 @@ export const handlePostRelatedActions: ProtectedActionFunction = async ({
         request,
       })
 
+    case COMMENT_ACTIONS.LIKE_COMMENT:
+      return handleCommentLikeAction({
+        form: { ...formValues, userId: user.id },
+        request,
+      })
+
+    case COMMENT_ACTIONS.UNDO_LIKE:
+      return handleCommentUndoLikeAction({
+        form: { ...formValues, userId: user.id },
+        request,
+      })
+
     default:
       break
   }
@@ -56,7 +70,7 @@ type Props = {
   request: Request
 }
 
-export const handleLikeAction: HandleFormSubmissionFn<
+export const handlePostLikeAction: HandleFormSubmissionFn<
   typeof LikeActionSchema
 > = ({ form }: Props) => {
   return handleFormSubmission({

@@ -27,6 +27,11 @@ export const LikeActionSchema = z.object({
   userId: z.string(),
 })
 
+export const CommentLikeActionSchema = z.object({
+  commentId: z.string(),
+  userId: z.string(),
+})
+
 export const AddCommentActionSchema = z.object({
   postId: z.string().refine(async postId => {
     const post = await db.post.findUnique({
