@@ -123,8 +123,8 @@ const Interaction = () => {
   return (
     <Layout>
       <PostContextProvider initState={postData}>
-        <div className="grid w-full grid-cols-8 xl:grid-cols-7">
-          <div className="col-span-5 space-y-7 px-8 xl:col-span-5">
+        <div className="grid w-full grid-cols-1 gap-y-8 md:grid-cols-8 md:gap-y-0 xl:grid-cols-7">
+          <div className="col-span-1 space-y-7 px-4 md:col-span-5 md:px-8 xl:col-span-5">
             <div className="flex items-start justify-between">
               <div>
                 <div className="text-2xl font-bold text-gray-800">
@@ -187,7 +187,7 @@ const Interaction = () => {
             </div>
           </div>
           <div className="col-span-3 xl:col-span-2">
-            <div className="w-full space-y-7 px-8">
+            <div className="w-full space-y-7 px-4 md:px-8">
               <div className="flex items-center justify-between">
                 <Avatar
                   slug={postData.CreatedBy.profileSlug}

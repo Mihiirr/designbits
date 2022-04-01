@@ -104,8 +104,8 @@ const CategoriesNav = () => {
           to={to}
           className={({ isActive }) =>
             classNames(
-              "flex items-center mx-4 px-2 py-2.5 text-gray-500 hover:text-gray-700 font-medium hover:bg-indigo-50 rounded-md space-x-2",
-              isActive ? "bg-indigo-100 text-indigo-700 font-semibold" : "",
+              "mx-4 flex items-center space-x-2 rounded-md px-2 py-2.5 font-medium text-gray-500 hover:bg-indigo-50 hover:text-gray-700",
+              isActive ? "bg-indigo-100 font-semibold text-indigo-700" : "",
             )
           }
         >
