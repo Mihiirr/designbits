@@ -259,18 +259,18 @@ const Interaction = () => {
               <CommentsSection />
               <div className="my-4 space-y-5">
                 {postData.PostComments.map(comment => (
-                  <div key={comment.id}>
-                    <div className="mb-1.5 flex items-center space-x-3">
+                  <div key={comment.id} className="flex items-start space-x-3">
+                    <div className="mb-1 flex items-center space-x-3">
                       <img
-                        className="inline-block h-6 w-6 rounded-full"
+                        className="mt-1 inline-block h-6 w-6 rounded-full"
                         src={comment.CreatedBy.profilePicture || ""}
                         alt="profile"
                       />
-                      <p className="text-sm font-semibold text-gray-800 group-hover:text-gray-900">
-                        {comment.CreatedBy.name}
-                      </p>
                     </div>
-                    <div className="ml-9 text-sm text-gray-600">
+                    <div className="flex-1 text-sm text-gray-600">
+                      <div className="mb-1 text-sm font-semibold text-gray-800 group-hover:text-gray-900">
+                        {comment.CreatedBy.name}
+                      </div>
                       {getHTML(
                         JSON.parse(comment.comment as string) as unknown as (
                           | CustomElement

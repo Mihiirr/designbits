@@ -224,6 +224,9 @@ async function findPostPageData({ postSlug, userId }: FindPostPageDataProps) {
             },
           },
         },
+        orderBy: {
+          createdAt: "desc",
+        },
         where: {
           parentCommentId: null,
         },
