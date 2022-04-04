@@ -250,20 +250,4 @@ async function findPostPageData({ postSlug, userId }: FindPostPageDataProps) {
   })
 }
 
-async function findPostReactedByUser({ userId }: props) {
-  const { default: pProps } = await import("p-props")
-
-  return pProps({
-    postsWithCurrentUserReactionData: findPostsReactedByUser({
-      userId,
-    }),
-    totalReactionsOnPost: findPostReactionsCount(),
-  }) as unknown as {
-    postsWithCurrentUserReactionData: AsyncReturnType<
-      typeof findPostsReactedByUser
-    >
-    totalReactionsOnPost: TotalReactionsOnPost
-  }
-}
-
-export { findInteractionsForCategory, findPostPageData, findPostReactedByUser }
+export { findInteractionsForCategory, findPostPageData }
