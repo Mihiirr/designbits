@@ -11,7 +11,7 @@ import {
   ActionFunction,
   redirect,
 } from "remix"
-import { handlePostRelatedActions } from "~/action-handlers/card-action-handlers.server"
+import { handlePostRelatedActions } from "~/api-handlers/card-api-handlers.server"
 import Avatar from "~/components/Avatar"
 import Button from "~/components/Button"
 import CommentsSection from "~/components/Comments/CommentsSection"
@@ -42,7 +42,7 @@ import escapeHtml from "escape-html"
 import { Text } from "slate"
 import { CustomElement, CustomText } from "~/types/editor"
 import Platform from "~/components/Post/Platform"
-import ReplyIcon from "~/components/icons/Reply"
+import ReplyButton from "~/components/Comments/ReplyButton"
 
 export let loader: LoaderFunction = async ({ params, request }) => {
   const postSlug = params.id
@@ -118,7 +118,7 @@ const serializeNode = (node: CustomElement | CustomText): JSX.Element => {
   }
 }
 
-const getHTML = (nodes: (CustomElement | CustomText)[]) => {
+export const getHTML = (nodes: (CustomElement | CustomText)[]) => {
   return <>{nodes?.map(n => serializeNode(n))}</>
 }
 
@@ -305,9 +305,7 @@ const Interaction = () => {
                             <span>{postData?.reactionCount}</span>
                           )}
                         </CommentActionButton>
-                        <button className="flex items-center rounded-sm p-1 hover:bg-gray-400/20">
-                          <ReplyIcon height={16} width={16} />
-                        </button>
+                        <ReplyButton parentCommentId={comment.id} />
                       </div>
                     </div>
                   </div>

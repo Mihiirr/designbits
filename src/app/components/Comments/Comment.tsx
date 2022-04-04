@@ -31,7 +31,8 @@ const MentionExample: React.FC<{
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>
   uniqueKey: string
   postId: string
-}> = ({ setIsEditing, uniqueKey, postId }) => {
+  parentCommentId?: string | null
+}> = ({ setIsEditing, uniqueKey, postId, parentCommentId = null }) => {
   const [savedCommentFromLS, saveCommentToLS] = useLocalStorage<
     (Descendant | MentionElement)[]
   >(`comment-${uniqueKey}`, initialValue)
@@ -135,6 +136,7 @@ const MentionExample: React.FC<{
           formPayload={{
             postId: postId,
             comment: JSON.stringify(value),
+            ...(parentCommentId ? { parentCommentId } : {}),
           }}
           btnProps={{
             className:

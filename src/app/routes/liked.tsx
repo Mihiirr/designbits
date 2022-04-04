@@ -1,7 +1,7 @@
 import { UserRole } from "@prisma/client"
 import Layout from "~/components/Layout"
 import { LoaderFunction, ActionFunction, useLoaderData } from "remix"
-import { handlePostRelatedActions } from "~/action-handlers/card-action-handlers.server"
+import { handlePostRelatedActions } from "~/api-handlers/card-api-handlers.server"
 import InteractionCard from "~/components/Post"
 import { getLoggedInUser } from "~/services/auth/session.server"
 import {

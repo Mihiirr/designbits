@@ -14,58 +14,55 @@ import {
   handleCommentUndoLikeAction,
   handleCreateComment,
   HandleFormSubmissionFn,
-} from "./comment-action-handlers.server"
+} from "./comment-api-handlers.server"
 
-export const handlePostRelatedActions: ProtectedActionFunction = async ({
-  request,
-  user,
-}) => {
-  const formData = await request.formData()
-  const { _action, ...formValues } = Object.fromEntries(
-    formData,
-  ) as CardActionFormData
+export const handlePostRelatedActions: ProtectedActionFunction =
+  async params => {
+    const { request, user } = params
+    const formData = await request.formData()
+    const { _action, ...formValues } = Object.fromEntries(
+      formData,
+    ) as CardActionFormData
 
-  console.log(formValues)
+    switch (_action) {
+      case CARD_ACTIONS.LIKE:
+        return handlePostLikeAction({
+          form: { ...formValues, userId: user.id },
+          request,
+        })
 
-  switch (_action) {
-    case CARD_ACTIONS.LIKE:
-      return handlePostLikeAction({
-        form: { ...formValues, userId: user.id },
-        request,
-      })
+      case CARD_ACTIONS.UNDO_LIKE:
+        return handleUndoLikeAction({
+          form: { ...formValues, userId: user.id },
+          request,
+        })
 
-    case CARD_ACTIONS.UNDO_LIKE:
-      return handleUndoLikeAction({
-        form: { ...formValues, userId: user.id },
-        request,
-      })
+      case COMMENT_ACTIONS.CREATE_COMMENT:
+        return handleCreateComment({
+          form: { ...formValues, userId: user.id },
+          request,
+        })
 
-    case COMMENT_ACTIONS.CREATE_COMMENT:
-      return handleCreateComment({
-        form: { ...formValues, userId: user.id },
-        request,
-      })
+      case COMMENT_ACTIONS.LIKE_COMMENT:
+        return handleCommentLikeAction({
+          form: { ...formValues, userId: user.id },
+          request,
+        })
 
-    case COMMENT_ACTIONS.LIKE_COMMENT:
-      return handleCommentLikeAction({
-        form: { ...formValues, userId: user.id },
-        request,
-      })
+      case COMMENT_ACTIONS.UNDO_LIKE:
+        return handleCommentUndoLikeAction({
+          form: { ...formValues, userId: user.id },
+          request,
+        })
 
-    case COMMENT_ACTIONS.UNDO_LIKE:
-      return handleCommentUndoLikeAction({
-        form: { ...formValues, userId: user.id },
-        request,
-      })
-
-    default:
-      break
+      default:
+        break
+    }
   }
-}
 
 type Props = {
   form: {
-    [k: string]: FormDataEntryValue
+    [k: string]: FormDataEntryValue | null
   }
   request: Request
 }
