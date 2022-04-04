@@ -14,10 +14,7 @@ import {
   SourceWithLogos,
 } from "~/types/formatters"
 import { ASSETS_CDN_LINK } from "~/utils/constants"
-import {
-  findInteractionsForCategory,
-  findPostReactedByUser,
-} from "./queries/post.server"
+import { findInteractionsForCategory } from "./queries/post.server"
 
 const sourcePriority = ["video/webm", "video/mp4"]
 const qualityPriority: VideoSize[] = [
@@ -43,10 +40,6 @@ type RawInteractionsPostData = AsyncReturnType<
   typeof findInteractionsForCategory
 >
 
-type RawInteractionsPostWithUserReactionsData = AsyncReturnType<
-  typeof findPostReactedByUser
->
-
 type RawTotalReactionsOnPost =
   RawInteractionsPostData["totalReactionsOnPost"][0]
 type Copy<T> = { [K in keyof T]: T[K] }
@@ -67,9 +60,7 @@ export type FormattedInteractionsPostData = ReturnType<
   typeof formatInteractionPostsData
 >[0]
 
-function formatInteractionPostsData(
-  data: RawInteractionsPostData | RawInteractionsPostWithUserReactionsData,
-) {
+function formatInteractionPostsData(data: RawInteractionsPostData) {
   const { postsWithCurrentUserReactionData, totalReactionsOnPost } = data
 
   const reactionsCountByPostId = formatTotalReactionsData(totalReactionsOnPost)
