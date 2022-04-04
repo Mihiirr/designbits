@@ -235,10 +235,13 @@ const Interaction = () => {
                   <Platform platform={postData.platform} />
                 </div>
               </div>
-              <div className="flex space-x-2 text-sm">
+              <div className="flex flex-wrap text-sm">
                 {postData.tags.map(tag => (
                   <div
-                    className={clsx("rounded py-1 px-2", tag.classname)}
+                    className={clsx(
+                      "mr-2 mb-2 whitespace-nowrap rounded bg-opacity-80 py-1 px-2",
+                      tag.classname,
+                    )}
                     key={tag.id}
                   >
                     {tag.name}
