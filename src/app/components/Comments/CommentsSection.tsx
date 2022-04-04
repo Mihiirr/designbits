@@ -25,7 +25,7 @@ const CommentInputPlaceholder = ({ onFocus }: CommentInputProps) => {
 
 const CommentsSection = (props: Props) => {
   const {
-    rootState: { user },
+    rootState: { user, postSlug },
     openAuthModal,
   } = useRootContext()
   const { postData } = usePostData()
@@ -59,7 +59,9 @@ const CommentsSection = (props: Props) => {
           )}
         </div>
       ) : (
-        <CommentInputPlaceholder onFocus={openAuthModal} />
+        <CommentInputPlaceholder
+          onFocus={() => openAuthModal(postSlug ?? "")}
+        />
       )}
     </div>
   )
