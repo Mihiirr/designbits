@@ -68,8 +68,10 @@ export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
     redirectTo: "",
   })
   const { success: formIsValid } = LoginSchema.safeParse(formValues)
-  const { closeAuthModal } = useRootContext()
-  const [searchParams] = useSearchParams()
+  const {
+    closeAuthModal,
+    rootState: { postSlug },
+  } = useRootContext()
   const childVariants = {
     initial: { opacity: 0, y: 25 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
@@ -153,7 +155,7 @@ export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
                     data={data}
                     formIsValid={formIsValid}
                     formValues={formValues}
-                    searchParams={searchParams.get("redirectTo")}
+                    searchParams={`/interaction/${postSlug}`}
                   />
                 </div>
               </div>

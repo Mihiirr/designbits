@@ -7,7 +7,7 @@ import {
   useReducer,
 } from "react"
 
-type State = { user: User | null; isAuthModalOpen: boolean }
+type State = { user: User | null; isAuthModalOpen: boolean; postSlug?: string }
 type RootContextProviderProps = {
   children: React.ReactNode
   initState: State
@@ -16,7 +16,7 @@ type RootContextProviderProps = {
 const RootContext = createContext<
   | {
       rootState: State
-      openAuthModal: () => void
+      openAuthModal: (postSlug: string) => void
       closeAuthModal: () => void
     }
   | undefined
@@ -29,6 +29,9 @@ enum AuthModalActions {
 
 type Action = {
   type: AuthModalActions
+  payload?: {
+    postSlug?: string
+  }
 }
 
 function rootStateReducer(state: State, action: Action) {
@@ -37,6 +40,7 @@ function rootStateReducer(state: State, action: Action) {
       return {
         ...state,
         isAuthModalOpen: true,
+        postSlug: action.payload?.postSlug,
       }
     }
     case AuthModalActions.CLOSE_AUTH_MODAL: {
@@ -54,8 +58,8 @@ function RootContextProvider({
 }: RootContextProviderProps) {
   const [rootState, dispatch] = useReducer(rootStateReducer, initState)
 
-  const openAuthModal = useCallback(() => {
-    dispatch({ type: AuthModalActions.OPEN_AUTH_MODAL })
+  const openAuthModal = useCallback(postSlug => {
+    dispatch({ type: AuthModalActions.OPEN_AUTH_MODAL, payload: { postSlug } })
   }, [])
   const closeAuthModal = useCallback(() => {
     dispatch({ type: AuthModalActions.CLOSE_AUTH_MODAL })

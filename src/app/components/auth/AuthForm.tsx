@@ -27,6 +27,7 @@ const AuthForm = (props: Props) => {
         }}
         onSubmit={() => setSubmitted(true)}
         action="/auth/login"
+        replace
         method="post"
         className="mb-10 lg:mb-12"
       >
@@ -37,7 +38,9 @@ const AuthForm = (props: Props) => {
             name="redirectTo"
             type="text"
             readOnly
-            defaultValue={props.searchParams || "/explore/all"}
+            defaultValue={
+              props.searchParams ? props.searchParams : "/explore/all"
+            }
           />
         </div>
         <div className="mb-6">

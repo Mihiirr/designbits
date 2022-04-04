@@ -178,10 +178,12 @@ async function getUser(request: Request) {
 
 async function getUserSessionFromMagicLink(request: Request) {
   const loginInfoSession = await getLoginInfoSession(request)
-  const email = await validateMagicLink(
+  const { email, redirectTo } = await validateMagicLink(
     request.url,
     loginInfoSession.getMagicLink(),
   )
+
+  loginInfoSession.setRedirectTo(redirectTo || "")
 
   const user = await getUserByEmail(email)
   if (!user) return null

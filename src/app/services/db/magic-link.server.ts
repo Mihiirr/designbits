@@ -49,11 +49,12 @@ export async function validateMagicLink(
   const sessionLinkCode = sessionMagicLink
     ? getMagicLinkCode(sessionMagicLink)
     : null
-  let emailAddress, linkCreationDateString, validateSessionMagicLink
+  let emailAddress, linkCreationDateString, validateSessionMagicLink, redirectTo
   try {
     const decryptedString = decrypt(linkCode)
     const payload = JSON.parse(decryptedString) as MagicLinkPayload
     emailAddress = payload.email
+    redirectTo = payload.redirectTo
     linkCreationDateString = payload.creationDate
     validateSessionMagicLink = payload.validateSessionMagicLink
   } catch (error: unknown) {
@@ -91,5 +92,5 @@ export async function validateMagicLink(
   if (Date.now() > expirationTime) {
     throw new Error("Magic link expired. Please request a new one.")
   }
-  return emailAddress
+  return { email: emailAddress, redirectTo }
 }

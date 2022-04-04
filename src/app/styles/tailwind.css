@@ -2552,11 +2552,6 @@ select {
   --tw-shadow: var(--tw-shadow-colored);
 }
 
-.shadow-gray-900 {
-  --tw-shadow-color: #111827;
-  --tw-shadow: var(--tw-shadow-colored);
-}
-
 .outline {
   outline-style: solid;
 }
@@ -2759,12 +2754,7 @@ select {
   background-color: rgb(199 210 254 / var(--tw-bg-opacity));
 }
 
-<<<<<<< HEAD ======= .hover\:bg-red-700:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(185 28 28 / var(--tw-bg-opacity));
-}
-
->>>>>>>tirth/auth-modal .hover\:text-gray-700:hover {
+.hover\:text-gray-700:hover {
   --tw-text-opacity: 1;
   color: rgb(55 65 81 / var(--tw-text-opacity));
 }

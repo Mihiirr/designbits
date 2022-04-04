@@ -37,6 +37,7 @@ interface PostActionButtonProps extends Props {
   formPayload: {
     postId: string
     [name: string]: string | number | readonly string[] | undefined
+    postSlug?: string
   }
   requiresLogin?: boolean
   btnProps: BtnProps
@@ -49,7 +50,7 @@ export const PostActionButton: React.FC<PostActionButtonProps> = ({
   ...rest
 }) => {
   const {
-    rootState: { user, isAuthModalOpen },
+    rootState: { user, isAuthModalOpen, postSlug },
     openAuthModal,
   } = useRootContext()
 
@@ -58,9 +59,9 @@ export const PostActionButton: React.FC<PostActionButtonProps> = ({
   const onClickHandler = useCallback(() => {
     console.log("setting modal open")
     if (!isLoggedIn && !isAuthModalOpen) {
-      openAuthModal()
+      openAuthModal(rest.formPayload.postSlug ?? "")
     }
-  }, [isLoggedIn, isAuthModalOpen, openAuthModal])
+  }, [isLoggedIn, isAuthModalOpen, postSlug, openAuthModal])
 
   return isLoggedIn ? (
     <ActionButton btnProps={btnProps} {...rest}>
