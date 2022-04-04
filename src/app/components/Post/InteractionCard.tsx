@@ -90,7 +90,7 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
             locale: enUS,
             includeSeconds: true,
             addSuffix: true,
-          })}
+          }).replace("hour", "hr")}
         </span>
         <span>&middot;</span>
         <span>{"6k"}</span>

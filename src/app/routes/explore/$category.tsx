@@ -5,9 +5,8 @@ import {
   LoaderFunction,
   MetaFunction,
   useLoaderData,
-  useSearchParams,
 } from "remix"
-import { handlePostRelatedActions } from "~/action-handlers/card-action-handlers.server"
+import { handlePostRelatedActions } from "~/api-handlers/card-api-handlers.server"
 import { navItems } from "~/components/CategoriesNav"
 import FilterIcon from "~/components/icons/Filter"
 import InteractionCard from "~/components/Post"

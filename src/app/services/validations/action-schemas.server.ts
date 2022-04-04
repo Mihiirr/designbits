@@ -32,6 +32,11 @@ export const CommentLikeActionSchema = z.object({
   userId: z.string(),
 })
 
+export const FetchCommentRepliesSchema = z.object({
+  parentCommentId: z.string(),
+  userId: z.string().nullable(),
+})
+
 export const AddCommentActionSchema = z.object({
   postId: z.string().refine(async postId => {
     const post = await db.post.findUnique({
@@ -46,4 +51,5 @@ export const AddCommentActionSchema = z.object({
   }),
   userId: z.string(),
   comment: z.string(),
+  parentCommentId: z.string().nullable(),
 })
