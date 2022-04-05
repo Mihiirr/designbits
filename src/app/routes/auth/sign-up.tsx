@@ -144,8 +144,6 @@ const SignUp = (props: Props) => {
   const actionData = useActionData<SignUpActionData>()
   const [searchParams] = useSearchParams()
 
-  console.log({ data: loaderData, actionData })
-
   return (
     <AuthLayout
       title="Log in to your account."

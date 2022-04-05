@@ -49,9 +49,9 @@ const ReplyButton = ({ parentCommentId }: Props) => {
         <ReplyIcon height={16} width={16} />
       </button>
       {value && (
-        <div className="my-2 space-y-5">
-          <ReplySection ref={commentRef} parentCommentId={parentCommentId} />
-          {fetcher.data?.data?.length &&
+        <div className="my-2 space-y-5" ref={commentRef}>
+          <ReplySection parentCommentId={parentCommentId} />
+          {fetcher.data?.data?.length > 0 &&
             fetcher.data?.data?.map((comment: any) => (
               <div key={comment.id} className="flex items-start space-x-3">
                 <div className="mb-1 flex items-center space-x-3">

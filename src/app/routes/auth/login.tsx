@@ -48,7 +48,6 @@ export const loader: LoaderFunction = async ({ request }) => {
   if (user) return redirect("/explore/all")
 
   const loginSession = await getLoginInfoSession(request)
-  console.log(loginSession, loginSession.getEmail())
 
   const data: LoaderData = {
     email: loginSession.getEmail(),
@@ -91,7 +90,6 @@ export const action: ActionFunction = async ({ request }) => {
       payload: validatedData,
       domainUrl,
     })
-    console.log({ domainUrl, magicLink })
     loginSession.setMagicLink(magicLink)
     return redirect(`/auth/login`, {
       headers: await loginSession.getHeaders(),
