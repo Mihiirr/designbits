@@ -29,8 +29,8 @@ async function getLoginInfoSession(request: Request) {
   return {
     getEmail: () => session.get("email") as string | undefined,
     setEmail: (email: string) => session.set("email", email),
-    setRedirectTo: () => session.get("redirectTo") as string | undefined,
-    getRedirectTo: (redirectTo: string) =>
+    getRedirectTo: () => session.get("redirectTo") as string | undefined,
+    setRedirectTo: (redirectTo: string) =>
       session.set("redirectTo", redirectTo),
 
     // NOTE: the magic link needs to be encrypted in the session because the

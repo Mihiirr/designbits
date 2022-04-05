@@ -157,7 +157,7 @@ type LoaderData = SuccessResponse<User | null, null>
 // https://remix.run/api/conventions#route-filenames
 export default function App() {
   const loaderData = useLoaderData<LoaderData>()
-  const rootContextData = { user: loaderData.data }
+  const rootContextData = { user: loaderData.data, isAuthModalOpen: false }
   return (
     <RootContextProvider initState={rootContextData}>
       <Document>

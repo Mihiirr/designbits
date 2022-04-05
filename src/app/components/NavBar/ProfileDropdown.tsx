@@ -4,6 +4,7 @@ import { RemixLinkProps } from "@remix-run/react/components"
 import { Fragment } from "react"
 import { Link } from "remix"
 import classNames from "~/utils/classnames"
+import UserAvatar from "./UserAvatar"
 
 type Props = {
   user: User
@@ -18,14 +19,18 @@ const ProfileDropdown = ({ user, navigationMenu }: Props) => {
   return (
     <Menu as="div" className="relative">
       <div>
-        <Menu.Button className="flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+        <Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
           <span className="sr-only">Open user menu</span>
-          <img
-            className="w-8 h-8 rounded-full"
-            src={user?.profilePicture ?? ""}
-            alt=""
-            referrerPolicy="no-referrer"
-          />
+          {user?.profilePicture ? (
+            <img
+              className="h-8 w-8 rounded-full"
+              src={user?.profilePicture}
+              alt=""
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <>{user.name && <UserAvatar userName={user?.name} />}</>
+          )}
         </Menu.Button>
       </div>
       <Transition
@@ -37,7 +42,7 @@ const ProfileDropdown = ({ user, navigationMenu }: Props) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 py-1 mt-2 w-48 bg-white rounded-md focus:outline-none ring-1 ring-black/5 shadow-lg origin-top-right">
+        <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none">
           {navigationMenu.map(item => (
             <Menu.Item key={item.name}>
               {({ active }) => (
@@ -46,7 +51,7 @@ const ProfileDropdown = ({ user, navigationMenu }: Props) => {
                   prefetch={item.prefetch || "none"}
                   className={classNames(
                     active ? "bg-gray-100" : "",
-                    "block px-4 py-2 text-gray-700 text-sm",
+                    "block px-4 py-2 text-sm text-gray-700",
                   )}
                 >
                   {item.name}
