@@ -20,7 +20,7 @@ const VideoPlayer = ({ videoSources, backgroundColorClass }: Props) => {
         videoElement.duration === 0
           ? 0
           : (videoElement.currentTime / videoElement.duration) * 100
-      console.log(newValue)
+
       setProgress(newValue)
     }, 100),
     [],
