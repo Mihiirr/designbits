@@ -11,20 +11,30 @@ import { navItems } from "~/components/CategoriesNav"
 import FilterIcon from "~/components/icons/Filter"
 import Posts from "~/components/Posts"
 import SortDropdown from "~/components/SortDropdown"
+import { getLoginInfoSession } from "~/services/auth/login.server"
 import { getLoggedInUser } from "~/services/auth/session.server"
+import { formatInteractionPostsData } from "~/services/db/formatters.server"
 import {
-  formatInteractionPostsData,
-  FormattedInteractionsPostData,
-} from "~/services/db/formatters.server"
-import { findInteractionsForCategory } from "~/services/db/queries/post.server"
+  findInteractionsForCategory,
+  PostsOrderBy,
+} from "~/services/db/queries/post.server"
 import { apiHandler } from "~/utils/api-handler"
+import { OkResponse } from "~/utils/response-helpers.server"
 
 interface Props {}
-
-interface LoaderData {
-  category: string
-  interactions: FormattedInteractionsPostData[]
+type ErrorMessage = string
+type NoError = null
+export interface ResponseData<T> extends Response {
+  ok: boolean
+  data: T
+  errors: { [field: string]: ErrorMessage | NoError } | null
 }
+
+type LoaderData = ResponseData<{
+  category: string
+  interactions: ReturnType<typeof formatInteractionPostsData>
+  orderBy: PostsOrderBy
+}>
 
 const categoryMap = groupBy(navItems, "id")
 
@@ -32,20 +42,33 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const categoryId = params.category
   const url = new URL(request.url)
   const sortBy = url.searchParams.get("sort")
-  const orderBy =
+  let orderBy: PostsOrderBy | undefined =
     sortBy === "recently-added" || sortBy === "popular" ? sortBy : undefined
 
   if (!categoryId) {
     return
   }
+  const session = await getLoginInfoSession(request)
   const user = await getLoggedInUser(request)
+  if (orderBy) {
+    session.setSortPreference(orderBy)
+  } else {
+    orderBy = session.getSortPreference()
+  }
 
   const interactions = formatInteractionPostsData(
-    await findInteractionsForCategory({ userId: user?.id, orderBy }),
+    await findInteractionsForCategory({
+      userId: user?.id,
+      orderBy,
+    }),
     orderBy,
   )
 
-  return { category: categoryMap[categoryId][0].name, interactions }
+  return OkResponse({
+    data: { category: categoryMap[categoryId][0].name, interactions, orderBy },
+    errors: [],
+    headers: await session.getHeaders(),
+  })
 }
 
 export const action: ActionFunction = apiHandler({
@@ -57,7 +80,8 @@ export const action: ActionFunction = apiHandler({
 })
 
 const CategoryPage: React.FC<Props> = () => {
-  const { category, interactions } = useLoaderData<LoaderData>()
+  const { data } = useLoaderData<LoaderData>()
+  const { category, interactions, orderBy } = data ?? {}
   return (
     <>
       <header>
@@ -76,7 +100,7 @@ const CategoryPage: React.FC<Props> = () => {
                 />
                 <span>Filter</span>
               </button>
-              <SortDropdown />
+              <SortDropdown initValue={orderBy} />
             </div>
           </div>
         </div>

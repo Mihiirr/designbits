@@ -269,6 +269,7 @@ export async function findPostsToCreateAndUpdate(
         "title",
         "description",
         "tags",
+        "industries",
         "platform",
         "device",
       ]

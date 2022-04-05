@@ -51,6 +51,7 @@ export enum HttpStatus {
 type ResponseFnProps = {
   data: any
   errors: any
+  headers?: HeadersInit | undefined
 }
 type RedirectFnProps = {
   url: string
@@ -76,6 +77,7 @@ export function CreatedResponse<T extends ZodObject<ZodRawShape>>({
 export function OkResponse<T extends ZodObject<ZodRawShape>>({
   data,
   errors,
+  headers,
 }: ResponseFnProps) {
   return json(
     {
@@ -85,6 +87,7 @@ export function OkResponse<T extends ZodObject<ZodRawShape>>({
     },
     {
       status: HttpStatus.OK,
+      ...(headers && { headers }),
     },
   ) as TypedResponse<T>
 }
