@@ -51,5 +51,5 @@ export const AddCommentActionSchema = z.object({
   }),
   userId: z.string(),
   comment: z.string(),
-  parentCommentId: z.string().nullable(),
+  parentCommentId: z.string().nullable().optional(),
 })

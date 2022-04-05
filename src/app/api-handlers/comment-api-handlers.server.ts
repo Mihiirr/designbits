@@ -25,39 +25,6 @@ type Props = {
   request: Request
 }
 
-export const handleCommentRelatedActions: ProtectedActionFunction = async ({
-  request,
-  user,
-}) => {
-  const formData = await request.formData()
-  const { _action, ...formValues } = Object.fromEntries(
-    formData,
-  ) as CommentActionFormData
-
-  switch (_action) {
-    case COMMENT_ACTIONS.CREATE_COMMENT:
-      return handleCreateComment({
-        form: { ...formValues, userId: user.id },
-        request,
-      })
-
-    case COMMENT_ACTIONS.LIKE_COMMENT:
-      return handleCommentLikeAction({
-        form: { ...formValues, userId: user.id },
-        request,
-      })
-
-    case COMMENT_ACTIONS.UNDO_LIKE:
-      return handleCommentUndoLikeAction({
-        form: { ...formValues, userId: user.id },
-        request,
-      })
-
-    default:
-      break
-  }
-}
-
 export const fetchCommentReplies: ProtectedActionFunction = async ({
   request,
 }) => {

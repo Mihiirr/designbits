@@ -55,7 +55,7 @@ const AuthForm: React.FC<Props> = ({ redirectTo = "/explore/all" }) => {
           })
         }}
         onSubmit={handleSubmit}
-        className="mb-10 lg:mb-12"
+        className="mb-4 lg:mb-6"
       >
         <div className="hidden">
           <Label htmlFor="redirect-to">redirect to</Label>
@@ -113,6 +113,7 @@ const AuthForm: React.FC<Props> = ({ redirectTo = "/explore/all" }) => {
           ) : null}
         </div>
       </fetcher.Form>
+      <div className="my-6 px-1 text-sm text-gray-800">Or</div>
       <Form action="/auth/google" method="post">
         <Button variant="secondary" type="submit">
           <GoogleIcon />

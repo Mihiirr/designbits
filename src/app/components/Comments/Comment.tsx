@@ -19,6 +19,7 @@ import useMentionPlugin from "./useMentionPlugin"
 import { useLocalStorage } from "usehooks-ts"
 import { PostActionButton } from "../ActionButton"
 import { COMMENT_ACTIONS } from "~/utils/constants"
+import { isEqual } from "lodash"
 
 const HOTKEYS = {
   "mod+b": "bold",
@@ -98,11 +99,6 @@ const MentionExample: React.FC<{
     [editor.operations, saveCommentToLS, showHideMentionDropdown],
   )
 
-  const onReset = useCallback(() => {
-    setValue(initialValue)
-    saveCommentToLS(initialValue)
-  }, [saveCommentToLS])
-
   return (
     <div className="w-full" ref={ref}>
       <Slate editor={editor} value={value} onChange={onChange}>
@@ -139,14 +135,15 @@ const MentionExample: React.FC<{
             ...(parentCommentId ? { parentCommentId } : {}),
           }}
           btnProps={{
+            disabled: isEqual(value, initialValue),
             className:
-              "flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1",
+              "disabled:opacity-50 flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1",
           }}
         >
           Send
         </PostActionButton>
         <button
-          onClick={onReset}
+          onClick={handleClickOutside}
           className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
         >
           Cancel

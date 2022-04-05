@@ -1471,6 +1471,11 @@ select {
   margin-bottom: 0.5rem;
 }
 
+.my-6 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
 .mx-8 {
   margin-left: 2rem;
   margin-right: 2rem;
@@ -2247,24 +2252,6 @@ select {
     var(--tw-gradient-to, rgb(31 41 55 / 0));
 }
 
-.from-sky-400 {
-  --tw-gradient-from: #38bdf8;
-  --tw-gradient-stops: var(--tw-gradient-from),
-    var(--tw-gradient-to, rgb(56 189 248 / 0));
-}
-
-.from-gray-700 {
-  --tw-gradient-from: #374151;
-  --tw-gradient-stops: var(--tw-gradient-from),
-    var(--tw-gradient-to, rgb(55 65 81 / 0));
-}
-
-.from-gray-50 {
-  --tw-gradient-from: #f9fafb;
-  --tw-gradient-stops: var(--tw-gradient-from),
-    var(--tw-gradient-to, rgb(249 250 251 / 0));
-}
-
 .from-yellow-200 {
   --tw-gradient-from: #fef08a;
   --tw-gradient-stops: var(--tw-gradient-from),
@@ -2281,26 +2268,6 @@ select {
     var(--tw-gradient-to, rgb(0 0 0 / 0));
 }
 
-.via-rose-400 {
-  --tw-gradient-stops: var(--tw-gradient-from), #fb7185,
-    var(--tw-gradient-to, rgb(251 113 133 / 0));
-}
-
-.via-gray-900 {
-  --tw-gradient-stops: var(--tw-gradient-from), #111827,
-    var(--tw-gradient-to, rgb(17 24 39 / 0));
-}
-
-.via-gray-100 {
-  --tw-gradient-stops: var(--tw-gradient-from), #f3f4f6,
-    var(--tw-gradient-to, rgb(243 244 246 / 0));
-}
-
-.via-yellow-50 {
-  --tw-gradient-stops: var(--tw-gradient-from), #fefce8,
-    var(--tw-gradient-to, rgb(254 252 232 / 0));
-}
-
 .via-pink-200 {
   --tw-gradient-stops: var(--tw-gradient-from), #fbcfe8,
     var(--tw-gradient-to, rgb(251 207 232 / 0));
@@ -2310,20 +2277,8 @@ select {
   --tw-gradient-to: #fff;
 }
 
-.to-lime-400 {
-  --tw-gradient-to: #a3e635;
-}
-
-.to-black {
-  --tw-gradient-to: #000;
-}
-
-.to-pink-500 {
-  --tw-gradient-to: #ec4899;
-}
-
-.to-blue-500 {
-  --tw-gradient-to: #3b82f6;
+.to-blue-200 {
+  --tw-gradient-to: #bfdbfe;
 }
 
 .object-cover {
@@ -3074,6 +3029,14 @@ select {
   opacity: 0.5;
 }
 
+.disabled\:opacity-10:disabled {
+  opacity: 0.1;
+}
+
+.disabled\:opacity-80:disabled {
+  opacity: 0.8;
+}
+
 .group:hover .group-hover\:-translate-y-full {
   --tw-translate-y: -100%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
@@ -3352,8 +3315,8 @@ select {
 }
 
 @media (min-width: 1024px) {
-  .lg\:mb-12 {
-    margin-bottom: 3rem;
+  .lg\:mb-6 {
+    margin-bottom: 1.5rem;
   }
 
   .lg\:block {

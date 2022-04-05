@@ -28,7 +28,7 @@ export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
           as="div"
           className="fixed inset-0 z-10 flex items-center justify-center overflow-y-auto "
         >
-          <div className="flex flex-col py-8 px-4 text-center">
+          <div className="flex flex-col px-4 text-center">
             <Dialog.Overlay />
             <div
               className="fixed inset-0 transition-opacity"
@@ -68,7 +68,7 @@ export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
               </span>
 
               <div
-                className="inline-block h-1/2 overflow-hidden rounded-lg bg-white bg-gradient-to-tl from-yellow-200 via-pink-200 to-blue-500 p-1 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle"
+                className="inline-block h-1/2 overflow-hidden rounded-lg bg-white bg-gradient-to-tl from-yellow-200 via-pink-200 to-blue-200 p-1 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="modal-headline"
@@ -76,7 +76,7 @@ export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
                 <div className="flex h-4 w-full justify-end">
                   <button
                     className="flex h-7 w-7 items-center justify-center rounded-md font-medium text-gray-700 focus:outline-none"
-                    onClick={() => closeAuthModal()}
+                    onClick={closeAuthModal}
                   >
                     <XIcon
                       height={16}
