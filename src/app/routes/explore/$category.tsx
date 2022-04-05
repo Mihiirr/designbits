@@ -9,7 +9,7 @@ import {
 import { handlePostRelatedActions } from "~/api-handlers/card-api-handlers.server"
 import { navItems } from "~/components/CategoriesNav"
 import FilterIcon from "~/components/icons/Filter"
-import InteractionCard from "~/components/Post"
+import Posts from "~/components/Posts"
 import SortDropdown from "~/components/SortDropdown"
 import { getLoggedInUser } from "~/services/auth/session.server"
 import {
@@ -42,6 +42,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   const interactions = formatInteractionPostsData(
     await findInteractionsForCategory({ userId: user?.id, orderBy }),
+    orderBy,
   )
 
   return { category: categoryMap[categoryId][0].name, interactions }
@@ -82,7 +83,7 @@ const CategoryPage: React.FC<Props> = () => {
       </header>
       <main>
         <div className="sm:px-6 lg:px-8">
-          <InteractionCard interactions={interactions} />
+          <Posts interactions={interactions} />
         </div>
       </main>
     </>

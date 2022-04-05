@@ -34,8 +34,6 @@ export const handleCommentRelatedActions: ProtectedActionFunction = async ({
     formData,
   ) as CommentActionFormData
 
-  console.log(formValues)
-
   switch (_action) {
     case COMMENT_ACTIONS.CREATE_COMMENT:
       return handleCreateComment({
@@ -68,8 +66,6 @@ export const fetchCommentReplies: ProtectedActionFunction = async ({
     formData,
   ) as CommentActionFormData
   const user = await getLoggedInUser(request)
-
-  console.log(formValues)
 
   return handleFetchCommentReplies({
     form: { ...formValues, userId: user?.id || null },
@@ -191,7 +187,6 @@ export const handleCommentUndoLikeAction: HandleFormSubmissionFn<
 export const handleFetchCommentReplies: HandleFormSubmissionFn<
   typeof FetchCommentRepliesSchema
 > = ({ form }: Props) => {
-  console.log({ form })
   return handleFormSubmission({
     form,
     validationSchema: FetchCommentRepliesSchema,
@@ -233,8 +228,6 @@ export const handleFetchCommentReplies: HandleFormSubmissionFn<
           createdAt: "desc",
         },
       })
-
-      console.log(commentReplies, "commentReplies ================")
 
       return OkResponse({
         data: commentReplies,

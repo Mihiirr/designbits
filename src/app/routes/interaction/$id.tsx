@@ -41,7 +41,7 @@ import clsx from "clsx"
 import escapeHtml from "escape-html"
 import { Text } from "slate"
 import { CustomElement, CustomText } from "~/types/editor"
-import Platform from "~/components/Post/Platform"
+import Platform from "~/components/Posts/Platform"
 import ReplyButton from "~/components/Comments/ReplyButton"
 
 export let loader: LoaderFunction = async ({ params, request }) => {
@@ -238,6 +238,7 @@ const Interaction = () => {
               <div className="flex flex-wrap text-sm">
                 {postData.tags.map(tag => (
                   <div
+                    // eslint-disable-next-line tailwindcss/migration-from-tailwind-2
                     className={clsx(
                       "mr-2 mb-2 whitespace-nowrap rounded bg-opacity-80 py-1 px-2",
                       tag.classname,
@@ -284,7 +285,7 @@ const Interaction = () => {
                         <CommentActionButton
                           btnProps={{
                             className:
-                              "flex items-center rounded-sm p-1 hover:bg-gray-400/20",
+                              "flex items-center rounded-sm p-1 hover:bg-gray-400/20 space-x-1",
                           }}
                           formPayload={{
                             commentId: comment.id,
@@ -304,11 +305,14 @@ const Interaction = () => {
                                 : "outline"
                             }
                           />
-                          {postData?.reactionCount !== 0 && (
-                            <span>{postData?.reactionCount}</span>
+                          {comment?.reactionsCount !== 0 && (
+                            <span>{comment?.reactionsCount}</span>
                           )}
                         </CommentActionButton>
-                        <ReplyButton parentCommentId={comment.id} />
+                        <ReplyButton
+                          replyCount={comment?.replyCount}
+                          parentCommentId={comment.id}
+                        />
                       </div>
                     </div>
                   </div>
