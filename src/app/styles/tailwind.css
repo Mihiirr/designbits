@@ -1560,6 +1560,10 @@ select {
   margin-left: 0.5rem;
 }
 
+.mb-12 {
+  margin-bottom: 3rem;
+}
+
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -2160,6 +2164,11 @@ select {
   background-color: rgb(107 114 128 / var(--tw-bg-opacity));
 }
 
+.bg-yellow-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 252 232 / var(--tw-bg-opacity));
+}
+
 .bg-gray-800\/10 {
   background-color: rgb(31 41 55 / 0.1);
 }
@@ -2238,6 +2247,30 @@ select {
     var(--tw-gradient-to, rgb(31 41 55 / 0));
 }
 
+.from-sky-400 {
+  --tw-gradient-from: #38bdf8;
+  --tw-gradient-stops: var(--tw-gradient-from),
+    var(--tw-gradient-to, rgb(56 189 248 / 0));
+}
+
+.from-gray-700 {
+  --tw-gradient-from: #374151;
+  --tw-gradient-stops: var(--tw-gradient-from),
+    var(--tw-gradient-to, rgb(55 65 81 / 0));
+}
+
+.from-gray-50 {
+  --tw-gradient-from: #f9fafb;
+  --tw-gradient-stops: var(--tw-gradient-from),
+    var(--tw-gradient-to, rgb(249 250 251 / 0));
+}
+
+.from-yellow-200 {
+  --tw-gradient-from: #fef08a;
+  --tw-gradient-stops: var(--tw-gradient-from),
+    var(--tw-gradient-to, rgb(254 240 138 / 0));
+}
+
 .via-white {
   --tw-gradient-stops: var(--tw-gradient-from), #fff,
     var(--tw-gradient-to, rgb(255 255 255 / 0));
@@ -2248,8 +2281,49 @@ select {
     var(--tw-gradient-to, rgb(0 0 0 / 0));
 }
 
+.via-rose-400 {
+  --tw-gradient-stops: var(--tw-gradient-from), #fb7185,
+    var(--tw-gradient-to, rgb(251 113 133 / 0));
+}
+
+.via-gray-900 {
+  --tw-gradient-stops: var(--tw-gradient-from), #111827,
+    var(--tw-gradient-to, rgb(17 24 39 / 0));
+}
+
+.via-gray-100 {
+  --tw-gradient-stops: var(--tw-gradient-from), #f3f4f6,
+    var(--tw-gradient-to, rgb(243 244 246 / 0));
+}
+
+.via-yellow-50 {
+  --tw-gradient-stops: var(--tw-gradient-from), #fefce8,
+    var(--tw-gradient-to, rgb(254 252 232 / 0));
+}
+
+.via-pink-200 {
+  --tw-gradient-stops: var(--tw-gradient-from), #fbcfe8,
+    var(--tw-gradient-to, rgb(251 207 232 / 0));
+}
+
 .to-white {
   --tw-gradient-to: #fff;
+}
+
+.to-lime-400 {
+  --tw-gradient-to: #a3e635;
+}
+
+.to-black {
+  --tw-gradient-to: #000;
+}
+
+.to-pink-500 {
+  --tw-gradient-to: #ec4899;
+}
+
+.to-blue-500 {
+  --tw-gradient-to: #3b82f6;
 }
 
 .object-cover {
@@ -2626,6 +2700,10 @@ select {
 .underline {
   -webkit-text-decoration-line: underline;
   text-decoration-line: underline;
+}
+
+.opacity-50 {
+  opacity: 0.5;
 }
 
 .opacity-100 {
@@ -3072,6 +3150,11 @@ select {
 .dark .dark\:bg-gray-900 {
   --tw-bg-opacity: 1;
   background-color: rgb(17 24 39 / var(--tw-bg-opacity));
+}
+
+.dark .dark\:text-slate-200 {
+  --tw-text-opacity: 1;
+  color: rgb(226 232 240 / var(--tw-text-opacity));
 }
 
 .dark .dark\:text-slate-500 {

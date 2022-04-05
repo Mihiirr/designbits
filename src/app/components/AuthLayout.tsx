@@ -15,11 +15,11 @@ const childVariants = {
 const AuthLayout: React.FC<Props> = ({ title, authForm, subtitle }) => {
   return (
     <>
-      <div className="flex w-full min-h-full">
-        <div className="flex flex-col flex-1 justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+      <div className="flex min-h-full w-full">
+        <div className="flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
             <motion.div
-              className="flex flex-col flex-auto"
+              className="flex flex-auto flex-col"
               initial="initial"
               animate="visible"
               variants={{
@@ -33,7 +33,7 @@ const AuthLayout: React.FC<Props> = ({ title, authForm, subtitle }) => {
 
               {subtitle ? (
                 <motion.div variants={childVariants}>
-                  <H2 as="p" variant="secondary" className="mt-3">
+                  <H2 as="p" variant="secondary" className="mt-3 opacity-50">
                     {subtitle}
                   </H2>
                 </motion.div>
@@ -41,14 +41,14 @@ const AuthLayout: React.FC<Props> = ({ title, authForm, subtitle }) => {
               {authForm ? (
                 <motion.div
                   variants={childVariants}
-                  className="flex flex-col mt-14 space-y-4"
+                  className="mt-14 flex flex-col space-y-4"
                 >
                   {authForm}
                 </motion.div>
               ) : null}
               <motion.div
                 variants={childVariants}
-                className="flex flex-col mt-14 space-y-4"
+                className="mt-14 flex flex-col space-y-4"
               >
                 <Paragraph
                   className="col-span-full mb-10 md:col-span-4"
@@ -64,9 +64,9 @@ const AuthLayout: React.FC<Props> = ({ title, authForm, subtitle }) => {
             </motion.div>
           </div>{" "}
         </div>
-        <div className="hidden relative flex-1 w-0 lg:block">
+        <div className="relative hidden w-0 flex-1 lg:block">
           <img
-            className="object-cover absolute inset-0 w-full h-full"
+            className="absolute inset-0 h-full w-full object-cover"
             src="https://res.cloudinary.com/kentcdodds-com/image/upload/w_1800,q_auto,f_auto/kentcdodds.com/illustrations/kody-flying_blue"
             alt=""
           />

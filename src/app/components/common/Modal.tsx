@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useRootContext } from "~/context/root"
 import { H3, H4 } from "../Typography"
 import AuthForm from "../auth/AuthForm"
+import { XIcon } from "@heroicons/react/outline"
 
 type ModalProps = {
   isOpen?: boolean
@@ -25,7 +26,7 @@ export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
           open={isOpen}
           onClose={setIsOpen}
           as="div"
-          className="fixed inset-0 z-10 flex items-center justify-center overflow-y-auto"
+          className="fixed inset-0 z-10 flex items-center justify-center overflow-y-auto "
         >
           <div className="flex flex-col py-8 px-4 text-center">
             <Dialog.Overlay />
@@ -37,7 +38,7 @@ export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
             </div>
 
             <motion.div
-              className="z-10 flex min-h-screen w-96 items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0"
+              className="z-10 flex min-h-screen w-96 items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0 "
               initial={{
                 opacity: 0,
                 scale: 0.75,
@@ -67,27 +68,36 @@ export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
               </span>
 
               <div
-                className="inline-block h-1/2 overflow-hidden rounded-lg bg-white p-1 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle"
+                className="inline-block h-1/2 overflow-hidden rounded-lg bg-white bg-gradient-to-tl from-yellow-200 via-pink-200 to-blue-500 p-1 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="modal-headline"
               >
                 <div className="flex h-4 w-full justify-end">
                   <button
-                    className="flex h-7 w-7 items-center justify-center rounded-md border border-gray-300 bg-white font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    className="flex h-7 w-7 items-center justify-center rounded-md font-medium text-gray-700 focus:outline-none"
                     onClick={() => closeAuthModal()}
                   >
-                    X
+                    <XIcon
+                      height={16}
+                      width={16}
+                      aria-hidden
+                      role="presentation"
+                    />
                   </button>
                 </div>
 
                 <div className="p-7">
-                  <div className="mb-4 text-left">
+                  <div className="mb-12 text-left">
                     <motion.div variants={childVariants}>
                       <H3 as="h2">Log in to your account.</H3>
                     </motion.div>
                     <motion.div variants={childVariants}>
-                      <H4 as="p" variant="secondary" className="mt-3">
+                      <H4
+                        as="p"
+                        variant="secondary"
+                        className="mt-3 opacity-50"
+                      >
                         Or sign up for an account.
                       </H4>
                     </motion.div>
