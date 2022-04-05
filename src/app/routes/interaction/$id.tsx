@@ -238,6 +238,7 @@ const Interaction = () => {
               <div className="flex flex-wrap text-sm">
                 {postData.tags.map(tag => (
                   <div
+                    // eslint-disable-next-line tailwindcss/migration-from-tailwind-2
                     className={clsx(
                       "mr-2 mb-2 whitespace-nowrap rounded bg-opacity-80 py-1 px-2",
                       tag.classname,

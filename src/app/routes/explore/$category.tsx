@@ -42,6 +42,7 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   const interactions = formatInteractionPostsData(
     await findInteractionsForCategory({ userId: user?.id, orderBy }),
+    orderBy,
   )
 
   return { category: categoryMap[categoryId][0].name, interactions }

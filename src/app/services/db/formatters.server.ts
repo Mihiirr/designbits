@@ -17,6 +17,7 @@ import { ASSETS_CDN_LINK } from "~/utils/constants"
 import {
   findInteractionsForCategory,
   findPostPageData,
+  PostsOrderBy,
 } from "./queries/post.server"
 
 const sourcePriority = ["video/webm", "video/mp4"]
@@ -63,13 +64,23 @@ export type FormattedInteractionsPostData = ReturnType<
   typeof formatInteractionPostsData
 >[0]
 
-function formatInteractionPostsData(data: RawInteractionsPostData) {
+function formatInteractionPostsData(
+  data: RawInteractionsPostData,
+  orderBy: PostsOrderBy = "recently-added",
+) {
   const { postsWithCurrentUserReactionData, totalReactionsOnPost } = data
 
   const reactionsCountByPostId = formatTotalReactionsData(totalReactionsOnPost)
-  return postsWithCurrentUserReactionData.map(interactionPost => {
-    const { PostReactions, PostComments, Source, VideoSources, ...rest } =
-      interactionPost
+  const postsData = postsWithCurrentUserReactionData.map(interactionPost => {
+    const {
+      PostReactions,
+      PostComments,
+      Source,
+      VideoSources,
+      _count,
+      ...rest
+    } = interactionPost
+    const { PostComments: commentsCount } = _count
     return {
       ...rest,
       VideoSources: VideoSources.sort(videoSourcesSorter),
@@ -77,8 +88,20 @@ function formatInteractionPostsData(data: RawInteractionsPostData) {
       reactionsCount: reactionsCountByPostId?.[interactionPost.id],
       reactedByLoggedInUser: PostReactions?.length ? true : false,
       commentedByLoggedInUser: PostComments?.length ? true : false,
+      _count,
+      popularity:
+        (commentsCount || 0) * 2 +
+        (reactionsCountByPostId?.[interactionPost.id] || 0),
     }
   })
+  return orderBy === "recently-added"
+    ? postsData
+    : postsData.sort((a, b) => {
+        if (a.popularity === b.popularity) {
+          return 0
+        }
+        return a.popularity < b.popularity ? 1 : -1
+      })
 }
 
 function videoSourcesSorter(
