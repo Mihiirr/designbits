@@ -18,7 +18,7 @@ import {
 } from "./fetch-notion-data"
 import { usersData } from "./interactions"
 import * as path from "path"
-import { Post, VideoSize, VideoSource } from "@prisma/client"
+import { Post, TAG_COLORS, VideoSize, VideoSource } from "@prisma/client"
 import { outputConfigs } from "./process-video"
 
 export type DownloadImagesFnResponse = {
@@ -197,6 +197,13 @@ export async function seedPostsData() {
               slug: slug(post.title),
               title: post.title,
               platform: post.platform,
+              Industries: {
+                connect: post.industries?.map(industry => {
+                  return {
+                    notionTagId: industry.id,
+                  }
+                }),
+              },
               device: post.device,
               Source: {
                 connect: {
@@ -486,14 +493,55 @@ export async function seedPostsData() {
   }
 }
 
-export async function seedTagsData() {
-  const processedData = await fetchDatabaseObject()
-  console.log(processedData)
-
+export async function seedIndustriesData(
+  industriesData:
+    | {
+        name: string
+        color: TAG_COLORS
+        notionTagId: string | undefined
+      }[]
+    | null,
+) {
   try {
-    if (processedData !== null) {
+    if (industriesData !== null) {
       return (
-        pMap(processedData, async tag => {
+        pMap(industriesData, async industry => {
+          return db.industry.upsert({
+            create: {
+              name: industry.name,
+              color: industry.color,
+              notionTagId: industry.notionTagId,
+            },
+            update: {
+              name: industry.name,
+              color: industry.color,
+            },
+            where: {
+              notionTagId: industry.notionTagId,
+            },
+          })
+        }),
+        {
+          concurrency: 2,
+        }
+      )
+    }
+  } catch (error) {}
+}
+
+export async function seedTagsData(
+  tagsData:
+    | {
+        name: string
+        color: TAG_COLORS
+        notionTagId: string | undefined
+      }[]
+    | null,
+) {
+  try {
+    if (tagsData !== null) {
+      return (
+        pMap(tagsData, async tag => {
           return db.tag.upsert({
             create: {
               name: tag.name,
@@ -517,6 +565,14 @@ export async function seedTagsData() {
   } catch (error) {}
 }
 
+export async function seedMultiSelectOptions() {
+  const { tagsData, industriesData } = await fetchDatabaseObject()
+
+  await seedTagsData(tagsData).catch(console.log)
+  await seedIndustriesData(industriesData).catch(console.log)
+}
+
 // seedSourcesData()
 seedPostsData()
 // seedTagsData()
+// seedMultiSelectOptions()
