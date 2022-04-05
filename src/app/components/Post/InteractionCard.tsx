@@ -103,6 +103,7 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
           }}
           formPayload={{
             postId: post.id,
+            postSlug: post.slug,
           }}
           actionName={
             post.reactedByLoggedInUser

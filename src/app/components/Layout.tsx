@@ -15,6 +15,7 @@ import { NavLink } from "remix"
 import { useRootContext } from "~/context/root"
 import ProfileDropdown from "./NavBar/ProfileDropdown"
 import { RemixLinkProps } from "@remix-run/react/components"
+import { Modal } from "./common/Modal"
 
 const userNavigation: {
   name: string
@@ -44,7 +45,8 @@ const navigation = [
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const {
-    rootState: { user },
+    rootState: { user, isAuthModalOpen, postSlug },
+    openAuthModal,
   } = useRootContext()
   return (
     <>
@@ -186,7 +188,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </>
           )}
         </Disclosure>
-
+        <Modal
+          isOpen={isAuthModalOpen}
+          setIsOpen={() => openAuthModal(postSlug ?? "")}
+        />
         <div className="flex py-10">{children}</div>
       </div>
     </>

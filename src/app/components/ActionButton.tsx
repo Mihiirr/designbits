@@ -1,6 +1,7 @@
-import React, { ButtonHTMLAttributes } from "react"
+import React, { ButtonHTMLAttributes, useCallback } from "react"
 import { Form, FormProps } from "remix"
 import { Except } from "type-fest"
+import { useRootContext } from "~/context/root"
 
 import { CARD_ACTIONS, COMMENT_ACTIONS } from "~/utils/constants"
 
@@ -37,22 +38,42 @@ export const ActionButton: React.FC<Props> = ({
 interface PostActionButtonProps extends Props {
   formPayload: {
     postId: string
+    postSlug?: string
     [name: string]: string | number | readonly string[] | undefined
   }
+  requiresLogin?: boolean
+  btnProps: BtnProps
 }
 
 export const PostActionButton: React.FC<PostActionButtonProps> = ({
   children,
+  requiresLogin = true,
   btnProps,
   ...rest
 }) => {
-  return (
+  const {
+    rootState: { user, isAuthModalOpen, postSlug },
+    openAuthModal,
+  } = useRootContext()
+  const isLoggedIn = requiresLogin && !!user
+
+  const onClickHandler = useCallback(() => {
+    console.log("setting modal open")
+    if (!isLoggedIn && !isAuthModalOpen) {
+      openAuthModal(rest.formPayload.postSlug ?? "")
+    }
+  }, [isLoggedIn, isAuthModalOpen, postSlug, openAuthModal])
+
+  return isLoggedIn ? (
     <ActionButton btnProps={btnProps} {...rest}>
       {children}
     </ActionButton>
+  ) : (
+    <button onClick={onClickHandler} {...btnProps}>
+      {children}
+    </button>
   )
 }
-
 interface CommentActionButtonProps extends Props {
   formPayload: {
     commentId: string

@@ -14,7 +14,7 @@
     "build:css": "tailwindcss -o ./src/app/styles/tailwind.css",
     "start": "remix-serve build",
     "connect:databases": "concurrently -c \"#10b981.bold,#bada55.bold\" \"yarn:connect:database:*\"",
-    "connect:database:develop": "pscale connect --org tirth designbits develop --port ${DATABASE_PORT:-3309}",
+    "connect:database:develop": "pscale connect --org tirth designbits develop --port 3309",
     "connect:database:shadow": "pscale connect --org tirth designbits shadow --port ${SHADOW_DATABASE_PORT:-3310}",
     "connect:database:main": "pscale connect --org tirth designbits main --port ${SHADOW_DATABASE_PORT:-3306}",
     "lint": "eslint --fix --cache --cache-location ./node_modules/.cache/.eslintcache --ext js,jsx,ts,tsx .",

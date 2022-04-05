@@ -1,50 +1,83 @@
 import { User } from "@prisma/client"
-import * as React from "react"
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useReducer,
+} from "react"
 
-type Dispatch = React.Dispatch<React.SetStateAction<State>>
-type State = { user: User | null }
+type State = { user: User | null; isAuthModalOpen: boolean; postSlug?: string }
 type RootContextProviderProps = {
   children: React.ReactNode
-  initState: {
-    user: User | null
+  initState: State
+}
+
+const RootContext = createContext<
+  | {
+      rootState: State
+      openAuthModal: (postSlug: string) => void
+      closeAuthModal: () => void
+    }
+  | undefined
+>(undefined)
+
+enum AuthModalActions {
+  OPEN_AUTH_MODAL,
+  CLOSE_AUTH_MODAL,
+}
+
+type Action = {
+  type: AuthModalActions
+  payload?: {
+    postSlug?: string
   }
 }
 
-const RootContext = React.createContext<
-  { rootState: State; setRootState: Dispatch } | undefined
->(undefined)
-
-// function rootStateReducer(state: State, action: Action) {
-//   switch (action.type) {
-//     case "increment": {
-//       return { user: state.user }
-//     }
-//     default: {
-//       throw new Error(`Unhandled action type: ${action.type}`)
-//     }
-//   }
-// }
+function rootStateReducer(state: State, action: Action) {
+  switch (action.type) {
+    case AuthModalActions.OPEN_AUTH_MODAL: {
+      return {
+        ...state,
+        isAuthModalOpen: true,
+        postSlug: action.payload?.postSlug,
+      }
+    }
+    case AuthModalActions.CLOSE_AUTH_MODAL: {
+      return { ...state, isAuthModalOpen: false }
+    }
+    default: {
+      throw new Error(`Unhandled action type: ${action}`)
+    }
+  }
+}
 
 function RootContextProvider({
   children,
   initState,
 }: RootContextProviderProps) {
-  const [rootState, setRootState] = React.useState(initState)
-  // NOTE: you *might* need to memoize this value
-  // Learn more in http://kcd.im/optimize-context
-  const value = { rootState, setRootState }
+  const [rootState, dispatch] = useReducer(rootStateReducer, initState)
+
+  const openAuthModal = useCallback(postSlug => {
+    dispatch({ type: AuthModalActions.OPEN_AUTH_MODAL, payload: { postSlug } })
+  }, [])
+  const closeAuthModal = useCallback(() => {
+    dispatch({ type: AuthModalActions.CLOSE_AUTH_MODAL })
+  }, [])
+
+  const value = useMemo(
+    () => ({ rootState, openAuthModal, closeAuthModal }),
+    [rootState, openAuthModal, closeAuthModal],
+  )
+
   return <RootContext.Provider value={value}>{children}</RootContext.Provider>
 }
 
 function useRootContext() {
-  const context = React.useContext(RootContext) || {
-    rootState: {
-      user: null,
-    },
+  const context = useContext(RootContext)
+  if (context === undefined) {
+    throw new Error("useRootContext must be used within a RootContextProvider")
   }
-  // if (context === undefined) {
-  //   throw new Error("useRootContext must be used within a RootContextProvider")
-  // }
   return context
 }
 
