@@ -249,6 +249,13 @@ export async function seedPostsData() {
               }
             }),
           },
+          Industries: {
+            connect: post.industries?.map(industry => {
+              return {
+                notionTagId: industry.id,
+              }
+            }),
+          },
           notionSourceId: post.notionSourceId,
           updatedAt: post.updatedAt,
           slug: slug(post.title),
@@ -318,7 +325,10 @@ export async function seedPostsData() {
       console.log(
         "generating formats:" +
           JSON.stringify(
-            formatsToGenerate.map(format => `${format.ext}-${format.size}`),
+            formatsToGenerate.map(
+              format =>
+                `${format.ext}-${format.size.width}x${format.size.height}`,
+            ),
           ),
       )
       console.log({

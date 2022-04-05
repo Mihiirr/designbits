@@ -1,21 +1,26 @@
-import { Fragment, useState } from "react"
+import { Fragment, useRef, useState } from "react"
 import { Listbox, Transition } from "@headlessui/react"
 import SortByIcon from "~/components/icons/SortBy"
 import { useSearchParams } from "remix"
+import { useLocalStorage } from "usehooks-ts"
+import { PostsOrderBy } from "~/services/db/queries/post.server"
 
 const sortConfig = [
   { label: "Recently Added", id: "recently-added" },
   { label: "Popular", id: "popular" },
 ]
 
-type Props = {}
+type Props = {
+  initValue?: PostsOrderBy
+}
 
-const SortDropdown: React.FC<Props> = () => {
+const SortDropdown: React.FC<Props> = ({ initValue }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [selected, setSelected] = useState(
     () =>
-      sortConfig.find(opt => opt.id === searchParams.get("sort")) ||
-      sortConfig[0],
+      sortConfig.find(
+        opt => opt.id === (searchParams.get("sort") || initValue),
+      ) || sortConfig[0],
   )
 
   return (

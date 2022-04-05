@@ -198,6 +198,23 @@ export const processVideo = async (
   }[]
 > => {
   return new Promise(async (resolve, reject) => {
+    const outputFolder = path.join(path.dirname(inputPath), "processed")
+    const fileName = path.parse(inputPath).name
+
+    if (process.env.SKIP_PROCESSING) {
+      return resolve(
+        outputFormats.map(({ size, ext, sizeName }) => {
+          const outFileName = `${fileName}-${size.width}x${size.height}.${ext}`
+          console.log(`created: ${postTitle} ` + outFileName)
+          return {
+            fileName: outFileName,
+            sizeName,
+            format: ext,
+          }
+        }),
+      )
+    }
+
     const {
       durationInSeconds: videoDurationInSeconds,
       height: inputHeight,
@@ -208,26 +225,8 @@ export const processVideo = async (
       return reject(new Error("Could not get video duration"))
     }
 
-    const outputFolder = path.join(path.dirname(inputPath), "processed")
-    const fileName = path.parse(inputPath).name
-
     if (!fs.existsSync(outputFolder)) {
       fs.mkdirSync(outputFolder)
-    }
-
-    if (process.env.SKIP_PROCESSING) {
-      resolve(
-        outputFormats.map(({ size, ext, sizeName }) => {
-          const outFileName = `${fileName}-${size.width}x${size.height}.${ext}`
-          console.log(`created: ${postTitle} ` + outFileName)
-          getSize(size.height, size.width, inputHeight, inputWidth)
-          return {
-            fileName: outFileName,
-            sizeName,
-            format: ext,
-          }
-        }),
-      )
     }
 
     const outputCommands = (
