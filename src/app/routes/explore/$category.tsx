@@ -1,3 +1,4 @@
+import { XIcon } from "@heroicons/react/outline"
 import { UserRole } from "@prisma/client"
 import groupBy from "lodash.groupby"
 import {
@@ -6,6 +7,7 @@ import {
   MetaFunction,
   useLoaderData,
 } from "remix"
+import { useBoolean } from "usehooks-ts"
 import { handlePostRelatedActions } from "~/api-handlers/card-api-handlers.server"
 import { navItems } from "~/components/CategoriesNav"
 import FilterIcon from "~/components/icons/Filter"
@@ -82,6 +84,7 @@ export const action: ActionFunction = apiHandler({
 const CategoryPage: React.FC<Props> = () => {
   const { data } = useLoaderData<LoaderData>()
   const { category, interactions, orderBy } = data ?? {}
+  const { value: isFiltersShown, toggle: toggleFilters } = useBoolean(false)
   return (
     <>
       <header>
@@ -91,18 +94,38 @@ const CategoryPage: React.FC<Props> = () => {
               {category}
             </h1>
             <div className="flex space-x-4 text-sm text-gray-600">
-              <button className="flex w-full items-center justify-center space-x-2 rounded-md px-4 py-1.5 hover:bg-indigo-200/20 focus-visible:ring-2 focus-visible:ring-white/75">
-                <FilterIcon
-                  height={20}
-                  width={20}
-                  role="presentation"
-                  aria-hidden
-                />
-                <span>Filter</span>
+              <button
+                className="flex w-full items-center justify-center space-x-2 rounded-md px-4 py-1.5 hover:bg-indigo-200/20 focus-visible:ring-2 focus-visible:ring-white/75"
+                onClick={toggleFilters}
+              >
+                {isFiltersShown ? (
+                  <>
+                    <XIcon
+                      height={20}
+                      width={20}
+                      role="presentation"
+                      aria-hidden
+                    />
+                    <span>Clear Filters</span>
+                  </>
+                ) : (
+                  <>
+                    <FilterIcon
+                      height={20}
+                      width={20}
+                      role="presentation"
+                      aria-hidden
+                    />
+                    <span>Filters</span>
+                  </>
+                )}
               </button>
               <SortDropdown initValue={orderBy} />
             </div>
           </div>
+          {isFiltersShown && (
+            <div className="my-2 bg-yellow-50 p-2">FilterPane</div>
+          )}
         </div>
       </header>
       <main>

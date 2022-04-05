@@ -68,9 +68,6 @@ const AuthForm: React.FC<Props> = ({ redirectTo = "/explore/all" }) => {
           />
         </div>
         <div className="mb-6">
-          <div className="mb-4 flex flex-wrap items-baseline justify-between">
-            <Label htmlFor="email-address">Email address</Label>
-          </div>
           <Input
             ref={inputRef}
             autoFocus
@@ -81,7 +78,7 @@ const AuthForm: React.FC<Props> = ({ redirectTo = "/explore/all" }) => {
             autoComplete="email"
             defaultValue={data?.email}
             required
-            placeholder="Email address"
+            placeholder="Enter your email address"
           />
         </div>
 
