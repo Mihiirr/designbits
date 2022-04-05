@@ -130,6 +130,10 @@ export async function fetchPostsData() {
           page.properties?.Platform?.type === "select"
             ? page.properties?.Platform?.select?.name
             : null,
+        industries:
+          page.properties?.Industries?.type === "multi_select"
+            ? page.properties?.Industries?.multi_select
+            : null,
         device:
           page.properties?.Device?.type === "select"
             ? page.properties?.Device?.select?.name
@@ -157,6 +161,7 @@ export async function fetchPostsData() {
           notionSourceId: parsedData.notionSourceId,
           tags: parsedData.tags,
           platform: platformName,
+          industries: parsedData.industries,
           device: deviceName,
         }
       }
@@ -214,8 +219,7 @@ export async function fetchDatabaseObject() {
   const response: GetDatabaseResponse = await notion.databases.retrieve({
     database_id: PostsDatabaseID,
   })
-
-  const processedData =
+  const tagsData =
     response.properties.Tags.type === "multi_select"
       ? response.properties.Tags.multi_select.options.map(option => ({
           name: option.name,
@@ -223,5 +227,15 @@ export async function fetchDatabaseObject() {
           notionTagId: option.id,
         }))
       : null
-  return processedData
+
+  const industriesData =
+    response.properties.Industry.type === "multi_select"
+      ? response.properties.Industry.multi_select.options.map(option => ({
+          name: option.name,
+          color: colorsMap[option.color || "default"] || TAG_COLORS.BLUE,
+          notionTagId: option.id,
+        }))
+      : null
+
+  return { tagsData, industriesData }
 }
