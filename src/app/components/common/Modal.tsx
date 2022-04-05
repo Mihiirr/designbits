@@ -1,67 +1,15 @@
 import { Dialog } from "@headlessui/react"
 import { motion, AnimatePresence } from "framer-motion"
-import { useState } from "react"
-import { json, LoaderFunction, redirect, useLoaderData } from "remix"
 import { useRootContext } from "~/context/root"
 import { H3, H4 } from "../Typography"
-import { z, ZodError } from "zod"
 import AuthForm from "../auth/AuthForm"
-import { getLoginInfoSession } from "~/services/auth/login.server"
-import { getUser } from "~/services/auth/session.server"
-import { RequireAtLeastOne } from "type-fest"
-import { LoginFields } from "~/types/auth"
 
 type ModalProps = {
   isOpen?: boolean
   setIsOpen: (isAuthModalOpen: boolean) => void
 }
 
-const LoginSchema = z.object({
-  email: z.string().email().max(256),
-  redirectTo: z.string().nullable(),
-})
-
-export type LoginActionData = {
-  error: RequireAtLeastOne<
-    ZodError<LoginFields>["formErrors"],
-    "fieldErrors" | "formErrors"
-  >
-  fields: Partial<LoginFields>
-}
-
-type LoaderData = {
-  email?: string
-  error?: string
-}
-
-export const loader: LoaderFunction = async ({ request }) => {
-  const user = await getUser(request)
-  if (user) return redirect("/explore/all")
-
-  const loginSession = await getLoginInfoSession(request)
-  console.log(loginSession, loginSession.getEmail())
-
-  const data: LoaderData = {
-    email: loginSession.getEmail(),
-    error: loginSession.getError(),
-  }
-
-  const headers = new Headers({
-    "Cache-Control": "private, max-age=3600",
-    Vary: "Cookie",
-  })
-  await loginSession.getHeaders(headers)
-
-  return json(data, { headers })
-}
-
 export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
-  const data = useLoaderData<LoaderData>()
-  const [formValues, setFormValues] = useState({
-    email: "",
-    redirectTo: "",
-  })
-  const { success: formIsValid } = LoginSchema.safeParse(formValues)
   const {
     closeAuthModal,
     rootState: { postSlug },
@@ -119,7 +67,7 @@ export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
               </span>
 
               <div
-                className="stext-left inline-block h-1/2 overflow-hidden rounded-lg bg-white p-1 align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle"
+                className="inline-block h-1/2 overflow-hidden rounded-lg bg-white p-1 text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="modal-headline"
@@ -144,13 +92,7 @@ export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
                       </H4>
                     </motion.div>
                   </div>
-                  <AuthForm
-                    setFormValues={setFormValues}
-                    data={data}
-                    formIsValid={formIsValid}
-                    formValues={formValues}
-                    searchParams={`/interaction/${postSlug}`}
-                  />
+                  <AuthForm redirectTo={`/interaction/${postSlug}`} />
                 </div>
               </div>
             </motion.div>

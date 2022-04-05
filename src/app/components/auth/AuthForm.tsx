@@ -1,34 +1,60 @@
-import { useRef, useState } from "react"
-import { Form } from "remix"
+import { useCallback, useRef, useState } from "react"
+import { Form, useFetcher, useTransition } from "remix"
+import { z } from "zod"
 import Button from "../Button"
 import { Label, Input, InputError } from "../form-elements"
 import GoogleIcon from "../icons/Google"
 
+const LoginSchema = z.object({
+  email: z.string().email().max(256),
+  redirectTo: z.string().nullable(),
+})
+
 type Props = {
-  setFormValues: any
-  data: any
-  formValues: any
-  formIsValid: any
-  searchParams: any
+  redirectTo?: string | null
 }
 
-const AuthForm = (props: Props) => {
-  const [submitted, setSubmitted] = useState(false)
+const AuthForm: React.FC<Props> = ({ redirectTo = "/explore/all" }) => {
+  const fetcher = useFetcher()
+  const data = fetcher.data
+
   const inputRef = useRef<HTMLInputElement>(null)
+  const [formValues, setFormValues] = useState({
+    email: data?.email ?? "",
+    redirectTo: data?.redirectTo ?? "",
+  })
+
+  const { success: formIsValid } = LoginSchema.safeParse(formValues)
+
+  const handleSubmit = useCallback(async event => {
+    event.preventDefault()
+    fetcher.submit(event.currentTarget, {
+      action: "/auth/login",
+      method: "post",
+      replace: true,
+    })
+  }, [])
+
+  const transition = useTransition()
+
+  const btnText =
+    transition.state === "submitting"
+      ? "Sending email..."
+      : transition.state === "loading"
+      ? "Sent!"
+      : "Email a login link"
+
   return (
     <>
-      <Form
+      <fetcher.Form
         onChange={event => {
           const form = event.currentTarget
-          props.setFormValues({
+          setFormValues({
             email: form.email.value,
             redirectTo: form.redirectTo.value,
           })
         }}
-        onSubmit={() => setSubmitted(true)}
-        action="/auth/login"
-        replace
-        method="post"
+        onSubmit={handleSubmit}
         className="mb-10 lg:mb-12"
       >
         <div className="hidden">
@@ -38,9 +64,7 @@ const AuthForm = (props: Props) => {
             name="redirectTo"
             type="text"
             readOnly
-            defaultValue={
-              props.searchParams ? props.searchParams : "/explore/all"
-            }
+            defaultValue={redirectTo || "/explore/all"}
           />
         </div>
         <div className="mb-6">
@@ -50,35 +74,36 @@ const AuthForm = (props: Props) => {
           <Input
             ref={inputRef}
             autoFocus
-            aria-describedby={
-              props.data?.error ? "error-message" : "success-message"
-            }
+            aria-describedby={data?.error ? "error-message" : "success-message"}
             id="email-address"
             name="email"
             type="email"
             autoComplete="email"
-            defaultValue={props.formValues?.email}
+            defaultValue={data?.email}
             required
             placeholder="Email address"
           />
         </div>
 
         <div className="flex flex-wrap gap-4">
-          <Button type="submit" disabled={!props.formIsValid || submitted}>
-            Email a login link
+          <Button
+            type="submit"
+            disabled={!formIsValid || fetcher.type === "done"}
+          >
+            {btnText}
           </Button>
         </div>
 
         <div className="sr-only" aria-live="polite">
-          {props.formIsValid
+          {formIsValid
             ? "Sign in form is now valid and ready to submit"
             : "Sign in form is now invalid."}
         </div>
 
         <div className="mt-2">
-          {props.data?.error ? (
-            <InputError id="error-message">{props.data?.error}</InputError>
-          ) : props.data?.email ? (
+          {data?.error ? (
+            <InputError id="error-message">{data?.error}</InputError>
+          ) : data?.email ? (
             <p
               id="success-message"
               className="text-lg text-gray-500 dark:text-slate-500"
@@ -86,11 +111,11 @@ const AuthForm = (props: Props) => {
               <span role="img" aria-label="sparkles">
                 ✨
               </span>
-              {` A magic link has been sent to ${props.data?.email}.`}
+              {` A magic link has been sent to ${data?.email}.`}
             </p>
           ) : null}
         </div>
-      </Form>
+      </fetcher.Form>
       <Form action="/auth/google" method="post">
         <Button variant="secondary" type="submit">
           <GoogleIcon />

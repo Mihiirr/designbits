@@ -49,10 +49,11 @@ export const PostActionButton: React.FC<PostActionButtonProps> = ({
   children,
   requiresLogin = true,
   btnProps,
+  formPayload,
   ...rest
 }) => {
   const {
-    rootState: { user, isAuthModalOpen, postSlug },
+    rootState: { user, isAuthModalOpen },
     openAuthModal,
   } = useRootContext()
   const isLoggedIn = requiresLogin && !!user
@@ -60,12 +61,12 @@ export const PostActionButton: React.FC<PostActionButtonProps> = ({
   const onClickHandler = useCallback(() => {
     console.log("setting modal open")
     if (!isLoggedIn && !isAuthModalOpen) {
-      openAuthModal(rest.formPayload.postSlug ?? "")
+      openAuthModal(formPayload.postSlug)
     }
-  }, [isLoggedIn, isAuthModalOpen, postSlug, openAuthModal])
+  }, [isLoggedIn, isAuthModalOpen, openAuthModal, formPayload.postSlug])
 
   return isLoggedIn ? (
-    <ActionButton btnProps={btnProps} {...rest}>
+    <ActionButton btnProps={btnProps} formPayload={formPayload} {...rest}>
       {children}
     </ActionButton>
   ) : (

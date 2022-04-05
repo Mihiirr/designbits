@@ -4,7 +4,6 @@ import {
   LoaderFunction,
   MetaFunction,
   redirect,
-  useLoaderData,
   useSearchParams,
 } from "remix"
 import type { ActionFunction } from "remix"
@@ -18,7 +17,6 @@ import {
   reuseUsefulLoaderHeaders,
 } from "~/utils/misc"
 import { getUser, sendToken } from "~/services/auth/session.server"
-import { useState } from "react"
 import type { LoginFields } from "~/types/auth"
 import AuthForm from "~/components/auth/AuthForm"
 
@@ -101,12 +99,6 @@ export const action: ActionFunction = async ({ request }) => {
 }
 
 const Login = () => {
-  const data = useLoaderData<LoaderData>()
-  const [formValues, setFormValues] = useState({
-    email: data.email ?? "",
-    redirectTo: data.email ?? "",
-  })
-  const { success: formIsValid } = LoginSchema.safeParse(formValues)
   const [searchParams] = useSearchParams()
   return (
     <AuthLayout
@@ -114,13 +106,7 @@ const Login = () => {
       subtitle="Or sign up for an account."
       authForm={
         <>
-          <AuthForm
-            searchParams={searchParams.get("redirectTo")}
-            setFormValues={setFormValues}
-            data={data}
-            formValues={formValues}
-            formIsValid={formIsValid}
-          />
+          <AuthForm redirectTo={searchParams.get("redirectTo")} />
         </>
       }
     />

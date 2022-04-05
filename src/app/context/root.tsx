@@ -16,7 +16,7 @@ type RootContextProviderProps = {
 const RootContext = createContext<
   | {
       rootState: State
-      openAuthModal: (postSlug: string) => void
+      openAuthModal: (postSlug?: string) => void
       closeAuthModal: () => void
     }
   | undefined
@@ -58,7 +58,7 @@ function RootContextProvider({
 }: RootContextProviderProps) {
   const [rootState, dispatch] = useReducer(rootStateReducer, initState)
 
-  const openAuthModal = useCallback(postSlug => {
+  const openAuthModal = useCallback((postSlug?: string) => {
     dispatch({ type: AuthModalActions.OPEN_AUTH_MODAL, payload: { postSlug } })
   }, [])
   const closeAuthModal = useCallback(() => {
