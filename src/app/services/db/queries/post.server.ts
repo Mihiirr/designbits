@@ -221,6 +221,7 @@ async function findPostPageData({ postSlug, userId }: FindPostPageDataProps) {
           _count: {
             select: {
               CommentReactions: true,
+              ReplyComments: true,
             },
           },
         },

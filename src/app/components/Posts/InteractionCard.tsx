@@ -59,11 +59,6 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
                   className: "h-5 w-5 rounded-md",
                 }}
               />
-              {/* <img
-                src={post.Source.SourceLogos[0].url}
-                alt={post.Source.name}
-                className="h-5 w-5 rounded-full"
-              /> */}
               <span>{post.Source.name}</span>
             </Link>
           </div>
@@ -133,7 +128,9 @@ const InteractionCard: React.FC<Props> = ({ post, index }) => {
             height={16}
             width={16}
           />
-          <span>{post._count.PostComments}</span>
+          {post._count.PostComments > 0 && (
+            <span>{post._count.PostComments}</span>
+          )}
         </div>
         {/* </PostActionButton> */}
       </div>

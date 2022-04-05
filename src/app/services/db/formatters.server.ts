@@ -14,7 +14,10 @@ import {
   SourceWithLogos,
 } from "~/types/formatters"
 import { ASSETS_CDN_LINK } from "~/utils/constants"
-import { findInteractionsForCategory } from "./queries/post.server"
+import {
+  findInteractionsForCategory,
+  findPostPageData,
+} from "./queries/post.server"
 
 const sourcePriority = ["video/webm", "video/mp4"]
 const qualityPriority: VideoSize[] = [
@@ -147,26 +150,31 @@ const tagsToClassnameMap: {
   [TAG_COLORS.LIGHT_GRAY]: "bg-slate-200 text-slate-700",
 }
 
-interface PostComment {
-  id: string
-  CreatedBy: {
-    id: string
-    name: string | null
-    profilePicture: string | null
-  }
-  createdAt: Date
-  _count: {
-    CommentReactions: number
-  }
-  comment: Prisma.JsonValue
-  CommentReactions: CommentReaction[]
-}
+// interface PostComment {
+//   id: string
+//   CreatedBy: {
+//     id: string
+//     name: string | null
+//     profilePicture: string | null
+//   }
+//   createdAt: Date
+//   _count: {
+//     CommentReactions: number
+//   }
+//   comment: Prisma.JsonValue
+//   CommentReactions: CommentReaction[]
+// }
 
-function formatPostComments(comments: PostComment[]) {
-  return comments.map(({ CommentReactions, ...rest }) => {
+type PostComments = NonNullable<
+  Awaited<ReturnType<typeof findPostPageData>>
+>["PostComments"]
+
+function formatPostComments(comments: PostComments) {
+  return comments.map(({ CommentReactions, _count, ...rest }) => {
     return {
       reactedByLoggedInUser: CommentReactions?.length ? true : false,
-      CommentReactions,
+      reactionsCount: _count?.CommentReactions,
+      replyCount: _count?.ReplyComments,
       ...rest,
     }
   })

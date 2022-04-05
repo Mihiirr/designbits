@@ -9,12 +9,14 @@ import { CommentActionButton } from "../ActionButton"
 import { getHTML } from "~/routes/interaction/$id"
 import { CustomElement, CustomText } from "~/types/editor"
 import ReplySection from "./ReplySection"
+import Comment from "../icons/Comment"
 
 type Props = {
   parentCommentId: string
+  replyCount?: number
 }
 
-const ReplyButton = ({ parentCommentId }: Props) => {
+const ReplyButton = ({ parentCommentId, replyCount = 0 }: Props) => {
   const fetcher = useFetcher()
 
   const { value, setFalse, toggle } = useBoolean(false)
@@ -40,13 +42,14 @@ const ReplyButton = ({ parentCommentId }: Props) => {
   return (
     <div className="w-full">
       <button
-        className="flex items-center rounded-sm p-1 hover:bg-gray-400/20"
+        className="flex items-center space-x-1 rounded-sm p-1 hover:bg-gray-400/20"
         onClick={() => {
           toggle()
         }}
         ref={btnRef}
       >
-        <ReplyIcon height={16} width={16} />
+        <Comment height={16} width={16} />
+        {replyCount > 0 && <span>{replyCount}</span>}
       </button>
       {value && (
         <div className="my-2 space-y-5" ref={commentRef}>
@@ -75,7 +78,7 @@ const ReplyButton = ({ parentCommentId }: Props) => {
                     <CommentActionButton
                       btnProps={{
                         className:
-                          "flex items-center rounded-sm p-1 hover:bg-gray-400/20",
+                          "flex items-center rounded-sm p-1 hover:bg-gray-400/20 space-x-1",
                       }}
                       formPayload={{
                         commentId: comment.id,
