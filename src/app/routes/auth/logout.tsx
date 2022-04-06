@@ -1,10 +1,12 @@
-import { LoaderFunction, redirect } from "remix"
+import { ActionFunction, redirect } from "remix"
 import { getSession } from "~/services/auth/session.server"
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request }) => {
   const session = await getSession(request)
 
   await session?.signOut()
 
-  return redirect("/auth/login")
+  return redirect("/explore/all", {
+    headers: await session.getHeaders(),
+  })
 }

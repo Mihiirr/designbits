@@ -2,7 +2,7 @@ import { Menu, Transition } from "@headlessui/react"
 import { User } from "@prisma/client"
 import { RemixLinkProps } from "@remix-run/react/components"
 import { Fragment } from "react"
-import { Link } from "remix"
+import { Form, Link } from "remix"
 import classNames from "~/utils/classnames"
 import UserAvatar from "./UserAvatar"
 
@@ -48,7 +48,6 @@ const ProfileDropdown = ({ user, navigationMenu }: Props) => {
               {({ active }) => (
                 <Link
                   to={item.href}
-                  prefetch={item.prefetch || "none"}
                   className={classNames(
                     active ? "bg-gray-100" : "",
                     "block px-4 py-2 text-sm text-gray-700",
@@ -59,6 +58,21 @@ const ProfileDropdown = ({ user, navigationMenu }: Props) => {
               )}
             </Menu.Item>
           ))}
+          <Menu.Item>
+            {({ active }) => (
+              <Form action="/auth/logout" method="post" replace reloadDocument>
+                <button
+                  type="submit"
+                  className={classNames(
+                    active ? "bg-gray-100" : "",
+                    "block w-full px-4 py-2 text-left text-sm text-gray-700",
+                  )}
+                >
+                  Sign out
+                </button>
+              </Form>
+            )}
+          </Menu.Item>
         </Menu.Items>
       </Transition>
     </Menu>
