@@ -10,6 +10,7 @@ import {
 import { useBoolean } from "usehooks-ts"
 import { handlePostRelatedActions } from "~/api-handlers/card-api-handlers.server"
 import { navItems } from "~/components/CategoriesNav"
+import FilterPane from "~/components/Filters/FilterPane"
 import FilterIcon from "~/components/icons/Filter"
 import Posts from "~/components/Posts"
 import SortDropdown from "~/components/SortDropdown"
@@ -123,9 +124,7 @@ const CategoryPage: React.FC<Props> = () => {
               <SortDropdown initValue={orderBy} />
             </div>
           </div>
-          {isFiltersShown && (
-            <div className="my-2 bg-yellow-50 p-2">FilterPane</div>
-          )}
+          <FilterPane isFiltersShown={true} />
         </div>
       </header>
       <main>

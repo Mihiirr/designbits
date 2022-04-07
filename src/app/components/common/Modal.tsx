@@ -4,6 +4,7 @@ import { useRootContext } from "~/context/root"
 import { H3, H4 } from "../Typography"
 import AuthForm from "../auth/AuthForm"
 import { XIcon } from "@heroicons/react/outline"
+import { useEffect, useRef } from "react"
 
 type ModalProps = {
   isOpen?: boolean
@@ -19,6 +20,13 @@ export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
     initial: { opacity: 0, y: 25 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   }
+  const titleRef = useRef<HTMLHeadingElement>(null)
+
+  useEffect(() => {
+    if (isOpen) {
+      titleRef.current?.focus()
+    }
+  }, [isOpen])
   return (
     <AnimatePresence>
       {isOpen && (
@@ -90,7 +98,9 @@ export const Modal = ({ isOpen, setIsOpen }: ModalProps) => {
                 <div className="p-7">
                   <div className="mb-12 text-left">
                     <motion.div variants={childVariants}>
-                      <H3 as="h2">Log in to your account.</H3>
+                      <H3 as="h2" ref={titleRef} tabIndex={-1}>
+                        Log in to your account.
+                      </H3>
                     </motion.div>
                     <motion.div variants={childVariants}>
                       <H4

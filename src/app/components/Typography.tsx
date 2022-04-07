@@ -4,16 +4,7 @@ import clsx from "clsx"
 type TitleProps = {
   variant?: "primary" | "secondary"
   as?: React.ElementType
-  className?: string
-  id?: string
-} & (
-  | { children: React.ReactNode }
-  | {
-      dangerouslySetInnerHTML: {
-        __html: string
-      }
-    }
-)
+} & React.HTMLAttributes<HTMLHeadingElement>
 
 const fontSize = {
   h1: "leading-tight text-4xl md:text-5xl",
@@ -29,45 +20,49 @@ const titleColors = {
   secondary: "text-gray-800",
 }
 
-function Title({
-  variant = "primary",
-  size,
-  as,
-  className,
-  ...rest
-}: TitleProps & { size: keyof typeof fontSize }) {
+const Title = React.forwardRef(function Title(
+  {
+    variant = "primary",
+    size,
+    as,
+    className,
+    ...rest
+  }: TitleProps & { size: keyof typeof fontSize },
+  ref,
+) {
   const Tag = as ?? size
   return (
     <Tag
+      ref={ref}
       className={clsx(fontSize[size], titleColors[variant], className)}
       {...rest}
     />
   )
-}
+})
 
-function H1(props: TitleProps) {
-  return <Title {...props} size="h1" />
-}
+const H1 = React.forwardRef(function H1(props: TitleProps, ref) {
+  return <Title ref={ref} {...props} size="h1" />
+})
 
-function H2(props: TitleProps) {
-  return <Title {...props} size="h2" />
-}
+const H2 = React.forwardRef(function H2(props: TitleProps, ref) {
+  return <Title ref={ref} {...props} size="h2" />
+})
 
-function H3(props: TitleProps) {
-  return <Title {...props} size="h3" />
-}
+const H3 = React.forwardRef(function H3(props: TitleProps, ref) {
+  return <Title ref={ref} {...props} size="h3" />
+})
 
-function H4(props: TitleProps) {
-  return <Title {...props} size="h4" />
-}
+const H4 = React.forwardRef(function H4(props: TitleProps, ref) {
+  return <Title ref={ref} {...props} size="h4" />
+})
 
-function H5(props: TitleProps) {
-  return <Title {...props} size="h5" />
-}
+const H5 = React.forwardRef(function H5(props: TitleProps, ref) {
+  return <Title ref={ref} {...props} size="h5" />
+})
 
-function H6(props: TitleProps) {
-  return <Title {...props} size="h6" />
-}
+const H6 = React.forwardRef(function H6(props: TitleProps, ref) {
+  return <Title ref={ref} {...props} size="h6" />
+})
 
 type ParagraphProps = {
   className?: string
@@ -88,11 +83,11 @@ function Paragraph({
 }: ParagraphProps) {
   return React.createElement(as, {
     className: clsx(
-      "max-w-full text-lg text-blueGray-500",
+      "max-w-full text-lg text-slate-500",
       textColorClassName,
       className,
       {
-        "prose prose-light dark:prose-dark": prose,
+        prose: prose,
       },
     ),
     ...rest,

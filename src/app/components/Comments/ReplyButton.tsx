@@ -96,6 +96,7 @@ const ReplyButton = ({ parentCommentId, replyCount = 0 }: Props) => {
                           comment?.reactedByLoggedInUser ? "filled" : "outline"
                         }
                       />
+                      <span>{comment.reactionsCount}</span>
                     </CommentActionButton>
                   </div>
                 </div>
