@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion"
 import React from "react"
 import DeviceFilter from "./DeviceFilter"
+import IndustryFilter from "./IndustryFilter"
 import PlatfromFilter from "./PlatfromFilter"
 
 type Props = {
@@ -19,7 +20,7 @@ const FilterPane: React.FC<Props> = ({ isFiltersShown }) => {
         >
           <DeviceFilter />
           <PlatfromFilter />
-          <DeviceFilter />
+          <IndustryFilter />
         </motion.div>
       )}
     </AnimatePresence>
