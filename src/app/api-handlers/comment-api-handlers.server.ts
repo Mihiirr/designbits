@@ -1,4 +1,3 @@
-import { ActionFunction } from "remix"
 import { ZodObject, ZodRawShape } from "zod"
 import { getLoggedInUser } from "~/services/auth/session.server"
 import { db } from "~/services/db/client.server"
@@ -9,7 +8,6 @@ import {
 } from "~/services/validations/action-schemas.server"
 import { CommentActionFormData } from "~/types/utilities"
 import { ProtectedActionFunction } from "~/utils/api-handler"
-import { COMMENT_ACTIONS } from "~/utils/constants"
 import {
   handleFormSubmission,
   TypedResponse,
@@ -197,7 +195,13 @@ export const handleFetchCommentReplies: HandleFormSubmissionFn<
       })
 
       return OkResponse({
-        data: commentReplies,
+        data: commentReplies.map(({ CommentReactions, _count, ...rest }) => {
+          return {
+            reactedByLoggedInUser: CommentReactions?.length ? true : false,
+            reactionsCount: _count?.CommentReactions,
+            ...rest,
+          }
+        }),
         errors: null,
       })
     },
