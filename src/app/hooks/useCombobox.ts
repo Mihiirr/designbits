@@ -102,6 +102,7 @@ export function useCombobox(
   const {
     value: isListBoxOpen,
     setFalse: closeListBox,
+    setTrue: openListBox,
     toggle: toggleListBoxOpen,
   } = useBoolean(false)
   const [{ selectedOptions, activeOptionIndex }, dispatch] = useReducer(
@@ -219,11 +220,20 @@ export function useCombobox(
         setSearchText("")
       } else {
         closeListBox()
-        comboboxRef.current?.focus()
+        btnRef.current?.focus()
       }
     },
     {
       target: inputRef,
+    },
+  )
+  useKeyPress(
+    "downarrow",
+    event => {
+      openListBox()
+    },
+    {
+      target: btnRef,
     },
   )
 

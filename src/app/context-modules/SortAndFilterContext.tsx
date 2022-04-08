@@ -45,7 +45,7 @@ type SET_SORT_PREFERENCE_ACTION = {
 type RESET_FILTER_ACTION = {
   type: "RESET_FILTER"
   payload: {
-    filterKey: keyof State["filters"]
+    filterKey: keyof State["filters"] | (keyof State["filters"])[]
   }
 }
 
@@ -54,7 +54,9 @@ type Action =
   | SET_SORT_PREFERENCE_ACTION
   | RESET_FILTER_ACTION
 type SetFilters = (filters: SET_FILTERS_ACTION["payload"]) => void
-type ResetFilter = (filterKey: keyof State["filters"]) => void
+type ResetFilter = (
+  filterKey: keyof State["filters"] | (keyof State["filters"])[],
+) => void
 type SetSortPreference = (sort: SET_SORT_PREFERENCE_ACTION["payload"]) => void
 
 type State = {
@@ -111,6 +113,7 @@ const SortAndFilterStateContext = createContext<
       setFilters: SetFilters
       setSortPreference: SetSortPreference
       resetFilter: ResetFilter
+      hasSelectedFilters: boolean
     }
   | undefined
 >(undefined)
@@ -154,15 +157,16 @@ function updateSearchParams(
     newState.filters.industries || {},
   ).filter(([, isSelected]) => isSelected)
 
-  let industriesValue = searchParams.get("industries")
-  if (action.type === "SET_FILTERS") {
-    if (selectedIndustries.length === action.payload.industries?.totalOptions) {
-      industriesValue = "all"
-    } else {
-      industriesValue = selectedIndustries
-        .map(([platformId]) => platformId)
-        .join(",&")
-    }
+  let industriesValue = ""
+  industriesValue = selectedIndustries
+    .map(([platformId]) => platformId)
+    .join(",&")
+
+  if (
+    action.type === "SET_FILTERS" &&
+    selectedIndustries.length === action.payload.industries?.totalOptions
+  ) {
+    industriesValue = "all"
   }
 
   if (industriesValue) {
@@ -226,7 +230,15 @@ function sortAndFilterStateReducer(
     }
     case "RESET_FILTER": {
       const newState = { ...state }
-      newState.filters[action.payload.filterKey] = undefined
+      const filterKey = action.payload.filterKey
+      if (Array.isArray(filterKey)) {
+        filterKey.forEach(key => {
+          newState.filters[key] = undefined
+        })
+      } else {
+        newState.filters[filterKey] = undefined
+      }
+      console.log({ newState })
       updateSearchParams(newState, action, searchParams, setSearchParams)
       return newState
     }
@@ -339,6 +351,22 @@ function SortAndFilterProvider({
     [],
   )
 
+  const hasSelectedFilters = Object.entries(state.filters).some(
+    ([filterKey, filterValue]) => {
+      switch (filterKey) {
+        case "device":
+          return !!filterValue
+        case "platforms":
+        case "industries":
+          return (
+            filterValue &&
+            Object.values(filterValue as SelectedOptions).some(v => v)
+          )
+      }
+      return false
+    },
+  )
+
   const value = useMemo(() => {
     return {
       filters: state.filters,
@@ -346,8 +374,16 @@ function SortAndFilterProvider({
       setFilters,
       resetFilter,
       setSortPreference,
+      hasSelectedFilters,
     }
-  }, [state.filters, state.sort, setFilters, resetFilter, setSortPreference])
+  }, [
+    state.filters,
+    state.sort,
+    setFilters,
+    resetFilter,
+    setSortPreference,
+    hasSelectedFilters,
+  ])
 
   return (
     <SortAndFilterStateContext.Provider value={value}>

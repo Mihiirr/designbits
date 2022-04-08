@@ -8,14 +8,15 @@ const Industries = (props: Props) => {
   return <div>Oops... You should not see this.</div>
 }
 
-export const loader: LoaderFunction = async ({ request }) => {
-  const url = new URL(request.url)
-  const searchText = url.searchParams.get("search-text")
+export const loader: LoaderFunction = async () => {
   const industries = await db.industry.findMany({
     select: {
       id: true,
       name: true,
       slug: true,
+    },
+    orderBy: {
+      name: "asc",
     },
   })
 

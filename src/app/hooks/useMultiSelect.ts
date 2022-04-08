@@ -93,6 +93,7 @@ export function useMultiSelect(
   const {
     value: isListBoxOpen,
     setFalse: closeListBox,
+    setTrue: openListBox,
     toggle: toggleListBoxOpen,
   } = useBoolean(false)
   const [{ selectedOptions, activeOptionIndex }, dispatch] = useReducer(
@@ -174,9 +175,19 @@ export function useMultiSelect(
     "esc",
     event => {
       closeListBox()
+      btnRef.current?.focus()
     },
     {
       target: ulRef,
+    },
+  )
+  useKeyPress(
+    "downarrow",
+    event => {
+      openListBox()
+    },
+    {
+      target: btnRef,
     },
   )
 

@@ -1,4 +1,3 @@
-import { XIcon } from "@heroicons/react/outline"
 import { Device, Platfrom, UserRole } from "@prisma/client"
 import groupBy from "lodash.groupby"
 import {
@@ -7,13 +6,10 @@ import {
   MetaFunction,
   useLoaderData,
 } from "remix"
-import { useBoolean } from "usehooks-ts"
 import { handlePostRelatedActions } from "~/api-handlers/card-api-handlers.server"
 import { navItems } from "~/components/CategoriesNav"
-import FilterPane from "~/components/Filters/FilterPane"
-import FilterIcon from "~/components/icons/Filter"
+import Header from "~/components/Comments/Header"
 import Posts from "~/components/Posts"
-import SortDropdown from "~/components/SortDropdown"
 import { SortAndFilterProvider } from "~/context-modules/SortAndFilterContext"
 import { getLoginInfoSession } from "~/services/auth/login.server"
 import { getLoggedInUser } from "~/services/auth/session.server"
@@ -113,49 +109,11 @@ export const action: ActionFunction = apiHandler({
 const CategoryPage: React.FC<Props> = () => {
   const { data } = useLoaderData<LoaderData>()
   const { category, interactions, orderBy } = data ?? {}
-  const { value: isFiltersShown, toggle: toggleFilters } = useBoolean(false)
+
   return (
     <>
       <SortAndFilterProvider initSortBy={data.orderBy}>
-        <header>
-          <div className="px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold leading-tight text-gray-900">
-                {category}
-              </h1>
-              <div className="flex space-x-4 text-sm text-gray-600">
-                <button
-                  className="flex w-full items-center justify-center space-x-2 rounded-md px-4 py-1.5 hover:bg-indigo-200/20 focus-visible:ring-2 focus-visible:ring-white/75"
-                  onClick={toggleFilters}
-                >
-                  {isFiltersShown ? (
-                    <>
-                      <XIcon
-                        height={20}
-                        width={20}
-                        role="presentation"
-                        aria-hidden
-                      />
-                      <span>Clear Filters</span>
-                    </>
-                  ) : (
-                    <>
-                      <FilterIcon
-                        height={20}
-                        width={20}
-                        role="presentation"
-                        aria-hidden
-                      />
-                      <span>Filters</span>
-                    </>
-                  )}
-                </button>
-                <SortDropdown initValue={orderBy} />
-              </div>
-            </div>
-            <FilterPane isFiltersShown={true} />
-          </div>
-        </header>
+        <Header category={category} orderBy={orderBy} />
       </SortAndFilterProvider>
       <main>
         <div className="sm:px-6 lg:px-8">
