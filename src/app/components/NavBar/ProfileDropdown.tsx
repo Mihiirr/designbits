@@ -59,7 +59,9 @@ const ProfileDropdown = ({ user, navigationMenu }: Props) => {
               )}
             </Menu.Item>
           ))}
-          <SignoutButton />
+          <Menu.Item>
+            {({ active }) => <SignoutButton active={active} />}
+          </Menu.Item>
         </Menu.Items>
       </Transition>
     </Menu>
