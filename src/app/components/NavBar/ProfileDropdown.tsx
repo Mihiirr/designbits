@@ -4,6 +4,7 @@ import { RemixLinkProps } from "@remix-run/react/components"
 import { Fragment } from "react"
 import { Form, Link } from "remix"
 import classNames from "~/utils/classnames"
+import SignoutButton from "../SignoutButton"
 import UserAvatar from "./UserAvatar"
 
 type Props = {
@@ -58,21 +59,7 @@ const ProfileDropdown = ({ user, navigationMenu }: Props) => {
               )}
             </Menu.Item>
           ))}
-          <Menu.Item>
-            {({ active }) => (
-              <Form action="/auth/logout" method="post" replace reloadDocument>
-                <button
-                  type="submit"
-                  className={classNames(
-                    active ? "bg-gray-100" : "",
-                    "block w-full px-4 py-2 text-left text-sm text-gray-700",
-                  )}
-                >
-                  Sign out
-                </button>
-              </Form>
-            )}
-          </Menu.Item>
+          <SignoutButton />
         </Menu.Items>
       </Transition>
     </Menu>
