@@ -116,7 +116,7 @@ const CategoryPage: React.FC<Props> = () => {
   const { value: isFiltersShown, toggle: toggleFilters } = useBoolean(false)
   return (
     <>
-      <SortAndFilterProvider>
+      <SortAndFilterProvider initSortBy={data.orderBy}>
         <header>
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between">

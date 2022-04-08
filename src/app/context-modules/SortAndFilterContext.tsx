@@ -62,7 +62,10 @@ type State = {
     id: string
   }
 }
-type SortAndFilterProviderProps = { children: React.ReactNode }
+type SortAndFilterProviderProps = {
+  children: React.ReactNode
+  initSortBy?: string
+}
 
 export const sortConfig = [
   { label: "Recently Added", id: "recently-added" },
@@ -224,7 +227,13 @@ function sortAndFilterStateReducer(
   }
 }
 
-function getInitState(searchParams: URLSearchParams) {
+function getInitState({
+  searchParams,
+  initSortBy = "",
+}: {
+  searchParams: URLSearchParams
+  initSortBy?: string
+}) {
   let deviceFilter, platformFilter, industryFilter
   // Find device filter value
   const deviceFilterParam = searchParams.get("device")
@@ -272,7 +281,8 @@ function getInitState(searchParams: URLSearchParams) {
 
   // Find Sort preference
   const sortPreference =
-    sortConfig.find(opt => opt.id === searchParams.get("sort")) || sortConfig[0]
+    sortConfig.find(opt => opt.id === searchParams.get("sort") || initSortBy) ||
+    sortConfig[0]
 
   return {
     filters: {
@@ -284,12 +294,15 @@ function getInitState(searchParams: URLSearchParams) {
   }
 }
 
-function SortAndFilterProvider({ children }: SortAndFilterProviderProps) {
+function SortAndFilterProvider({
+  children,
+  initSortBy,
+}: SortAndFilterProviderProps) {
   const [searchParams, setSearchParams] = useSearchParams()
   const [state, dispatch] = useReducer(
     (state: State, action: Action) =>
       sortAndFilterStateReducer(state, action, searchParams, setSearchParams),
-    searchParams,
+    { searchParams, initSortBy },
     getInitState,
   )
 
