@@ -18,7 +18,7 @@ import CommentsSection from "~/components/Comments/CommentsSection"
 import LikeIcon from "~/components/icons/Like"
 import InteractionFeedback from "~/components/InteractionFeedback"
 import Layout from "~/components/Layout"
-import { PostContextProvider } from "~/context/postContext"
+import { PostContextProvider } from "~/context-modules/PostContext"
 import {
   ASSETS_CDN_LINK,
   CARD_ACTIONS,

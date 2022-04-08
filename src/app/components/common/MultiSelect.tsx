@@ -1,4 +1,4 @@
-import React from "react"
+import React, { RefObject } from "react"
 
 import clsx from "clsx"
 import { useMemo } from "react"
@@ -10,15 +10,19 @@ const getSelectedOptionsText = (
   },
   options: Option[],
 ) => {
-  return options
+  const labels = options
     .filter(option => selectedOptions[option.id])
     .map(option => option.label)
-    .join(", ")
+
+  if (labels.length === options.length) {
+    return "All Platforms"
+  }
+  return labels.join(", ")
 }
 
 type Props = {
   options: Option[]
-  initSelectedOptions: SelectedOptions
+  initSelectedOptions?: SelectedOptions
   onChange: (
     targetOption: Option,
     action: "ADDED_TO_SELECTION" | "REMOVED_FROM_SELECTION",
@@ -29,7 +33,7 @@ type Props = {
 
 const MultiSelect = ({
   options,
-  initSelectedOptions,
+  initSelectedOptions = {},
   onChange,
   renderSelectedOptions = getSelectedOptionsText,
 }: Props) => {
@@ -54,7 +58,7 @@ const MultiSelect = ({
   return (
     <div className="relative mt-1">
       <button
-        ref={btnRef}
+        ref={btnRef as RefObject<HTMLButtonElement>}
         className={clsx(
           "relative w-full cursor-default rounded-lg border py-2 pl-3 pr-10 text-left shadow-sm hover:bg-blue-50 focus:outline-none focus-visible:border-indigo-500 focus-visible:bg-blue-50 sm:text-sm",
           selectedOptionText !== ""
@@ -69,7 +73,7 @@ const MultiSelect = ({
         aria-controls="platform-filter"
       >
         <span className={clsx("block truncate")}>
-          {selectedOptionText ? selectedOptionText : "Platforms"}
+          {selectedOptionText ? selectedOptionText : "All Platforms"}
         </span>
         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
           <svg

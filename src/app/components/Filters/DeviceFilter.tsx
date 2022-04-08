@@ -1,29 +1,40 @@
-import React from "react"
+import React, { useCallback } from "react"
 
 import { Fragment, useState } from "react"
 import { Listbox, Transition } from "@headlessui/react"
 import { SelectorIcon } from "@heroicons/react/solid"
 import { Device } from "@prisma/client"
+import { useSearchParams } from "remix"
+import {
+  devices,
+  useSortAndFilter,
+} from "~/context-modules/SortAndFilterContext"
 
 type Props = {}
 
-const devices = [
-  { id: Device.MOBILE, label: "Mobile" },
-  { id: Device.TABLET, label: "Tablet" },
-  { id: Device.DESKTOP, label: "Desktop" },
-]
-
 const DeviceFilter = (props: Props) => {
-  const [selected, setSelected] = useState<{
-    label: string
-  }>()
+  const {
+    filters: { device: selectedDevice },
+    setFilters,
+  } = useSortAndFilter()
+
+  const handleChange = useCallback(
+    (selectedOption: typeof selectedDevice) => {
+      setFilters({
+        device: {
+          value: selectedOption,
+        },
+      })
+    },
+    [setFilters],
+  )
 
   return (
-    <Listbox value={selected} onChange={setSelected}>
+    <Listbox value={selectedDevice} onChange={handleChange}>
       <div className="relative mt-1">
         <Listbox.Button className="relative w-full cursor-default rounded-lg border border-gray-300 bg-gray-50 py-2 pl-3 pr-10 text-left shadow-sm hover:bg-blue-50 focus:outline-none focus-visible:border-indigo-500 focus-visible:bg-blue-50 sm:text-sm">
           <span className="block truncate">
-            {selected ? selected.label : "Devices"}
+            {selectedDevice ? selectedDevice.label : "Devices"}
           </span>
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
             <SelectorIcon

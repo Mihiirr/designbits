@@ -1,7 +1,7 @@
 import React, { ButtonHTMLAttributes, useCallback } from "react"
 import { Form, FormProps } from "remix"
 import { Except } from "type-fest"
-import { useRootContext } from "~/context/root"
+import { useRootContext } from "~/context-modules/RootContext"
 
 import { CARD_ACTIONS, COMMENT_ACTIONS } from "~/utils/constants"
 

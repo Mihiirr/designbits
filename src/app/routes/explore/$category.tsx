@@ -1,5 +1,5 @@
 import { XIcon } from "@heroicons/react/outline"
-import { UserRole } from "@prisma/client"
+import { Device, Platfrom, UserRole } from "@prisma/client"
 import groupBy from "lodash.groupby"
 import {
   ActionFunction,
@@ -14,6 +14,7 @@ import FilterPane from "~/components/Filters/FilterPane"
 import FilterIcon from "~/components/icons/Filter"
 import Posts from "~/components/Posts"
 import SortDropdown from "~/components/SortDropdown"
+import { SortAndFilterProvider } from "~/context-modules/SortAndFilterContext"
 import { getLoginInfoSession } from "~/services/auth/login.server"
 import { getLoggedInUser } from "~/services/auth/session.server"
 import { formatInteractionPostsData } from "~/services/db/formatters.server"
@@ -45,9 +46,29 @@ export const loader: LoaderFunction = async ({ params, request }) => {
   const categoryId = params.category
   const url = new URL(request.url)
   const sortBy = url.searchParams.get("sort")
+  const deviceFilter = url.searchParams.get("device")
+  const platformsFilterStr =
+    url.searchParams.get("platforms")?.split(",&") || []
+  const indistriesFilterStr =
+    url.searchParams.get("industries")?.split(",&") || []
+
+  const platformFilter =
+    platformsFilterStr?.[0] !== "all"
+      ? Object.entries(Platfrom)
+          .filter(([platformId]) =>
+            platformsFilterStr.includes(platformId.toLowerCase()),
+          )
+          ?.map(([platformId]) => Platfrom[platformId as keyof typeof Platfrom])
+      : []
+  const industriesFilter =
+    indistriesFilterStr?.[0] !== "all" ? indistriesFilterStr : []
+
+  console.log({ platformFilter })
+
   let orderBy: PostsOrderBy | undefined =
     sortBy === "recently-added" || sortBy === "popular" ? sortBy : undefined
 
+  console.log({ deviceFilter })
   if (!categoryId) {
     return
   }
@@ -63,6 +84,13 @@ export const loader: LoaderFunction = async ({ params, request }) => {
     await findInteractionsForCategory({
       userId: user?.id,
       orderBy,
+      filters: {
+        device: Object.keys(Device).filter(
+          deviceKey => deviceKey.toLowerCase() === deviceFilter?.toLowerCase(),
+        )?.[0] as Device,
+        platforms: platformFilter,
+        industries: industriesFilter,
+      },
     }),
     orderBy,
   )
@@ -88,45 +116,47 @@ const CategoryPage: React.FC<Props> = () => {
   const { value: isFiltersShown, toggle: toggleFilters } = useBoolean(false)
   return (
     <>
-      <header>
-        <div className="px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold leading-tight text-gray-900">
-              {category}
-            </h1>
-            <div className="flex space-x-4 text-sm text-gray-600">
-              <button
-                className="flex w-full items-center justify-center space-x-2 rounded-md px-4 py-1.5 hover:bg-indigo-200/20 focus-visible:ring-2 focus-visible:ring-white/75"
-                onClick={toggleFilters}
-              >
-                {isFiltersShown ? (
-                  <>
-                    <XIcon
-                      height={20}
-                      width={20}
-                      role="presentation"
-                      aria-hidden
-                    />
-                    <span>Clear Filters</span>
-                  </>
-                ) : (
-                  <>
-                    <FilterIcon
-                      height={20}
-                      width={20}
-                      role="presentation"
-                      aria-hidden
-                    />
-                    <span>Filters</span>
-                  </>
-                )}
-              </button>
-              <SortDropdown initValue={orderBy} />
+      <SortAndFilterProvider>
+        <header>
+          <div className="px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold leading-tight text-gray-900">
+                {category}
+              </h1>
+              <div className="flex space-x-4 text-sm text-gray-600">
+                <button
+                  className="flex w-full items-center justify-center space-x-2 rounded-md px-4 py-1.5 hover:bg-indigo-200/20 focus-visible:ring-2 focus-visible:ring-white/75"
+                  onClick={toggleFilters}
+                >
+                  {isFiltersShown ? (
+                    <>
+                      <XIcon
+                        height={20}
+                        width={20}
+                        role="presentation"
+                        aria-hidden
+                      />
+                      <span>Clear Filters</span>
+                    </>
+                  ) : (
+                    <>
+                      <FilterIcon
+                        height={20}
+                        width={20}
+                        role="presentation"
+                        aria-hidden
+                      />
+                      <span>Filters</span>
+                    </>
+                  )}
+                </button>
+                <SortDropdown initValue={orderBy} />
+              </div>
             </div>
+            <FilterPane isFiltersShown={true} />
           </div>
-          <FilterPane isFiltersShown={true} />
-        </div>
-      </header>
+        </header>
+      </SortAndFilterProvider>
       <main>
         <div className="sm:px-6 lg:px-8">
           <Posts interactions={interactions} />

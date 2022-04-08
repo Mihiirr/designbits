@@ -229,8 +229,8 @@ export async function fetchDatabaseObject() {
       : null
 
   const industriesData =
-    response.properties.Industry.type === "multi_select"
-      ? response.properties.Industry.multi_select.options.map(option => ({
+    response.properties.Industries.type === "multi_select"
+      ? response.properties.Industries.multi_select.options.map(option => ({
           name: option.name,
           color: colorsMap[option.color || "default"] || TAG_COLORS.BLUE,
           notionTagId: option.id,
