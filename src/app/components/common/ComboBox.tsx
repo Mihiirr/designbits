@@ -2,6 +2,7 @@ import clsx from "clsx"
 import { useMemo } from "react"
 import { Option, SelectedOptions } from "~/hooks/useMultiSelect"
 import { useCombobox } from "~/hooks/useCombobox"
+import { XIcon } from "@heroicons/react/outline"
 
 const getSelectedOptionsText = (
   selectedOptions: {
@@ -41,8 +42,8 @@ type Props = {
   options: Option[]
   initSelectedOptions?: SelectedOptions
   onChange: (
-    targetOption: Option,
-    action: "ADDED_TO_SELECTION" | "REMOVED_FROM_SELECTION",
+    targetOption: Option | undefined,
+    action: "ADDED_TO_SELECTION" | "REMOVED_FROM_SELECTION" | "RESET_SELECTION",
     selectedOptions: SelectedOptions,
   ) => void
   renderSelectedOptions?: typeof getSelectedOptionsText
@@ -60,6 +61,7 @@ const ComboBox = ({
     selectedOptions,
     addOptionToSelection,
     removeOptionFromSelection,
+    resetSelection,
     toggleListBoxOpen,
     isListBoxOpen,
     activeOptionIndex,
@@ -91,10 +93,9 @@ const ComboBox = ({
         aria-owns={`listbox-options-${id}`}
         aria-haspopup="listbox"
         aria-controls={`listbox-options-${id}`}
-        tabIndex={0}
-        onClick={toggleListBoxOpen}
+        tabIndex={-1}
         className={clsx(
-          "relative w-full cursor-default rounded-lg border py-2 pl-3 pr-10 text-left shadow-sm hover:bg-blue-50 focus:outline-none focus-visible:border-indigo-500 focus-visible:bg-blue-50 sm:text-sm",
+          "relative flex w-full cursor-default rounded-lg border shadow-sm hover:bg-blue-50 focus:outline-none focus-visible:border-indigo-500 focus-visible:bg-blue-50 sm:text-sm",
           selectedOptionText !== ""
             ? " bg-indigo-50 outline-none"
             : "border-gray-300 bg-gray-50",
@@ -103,29 +104,43 @@ const ComboBox = ({
       >
         <button
           ref={btnRef}
-          tabIndex={-1}
+          className="flex-1 py-2 pl-3 pr-10 text-left"
+          onClick={toggleListBoxOpen}
           id={`combobox-dropdown-button-${id}`}
           aria-label={`show ${label} options`}
         >
           <span className="block select-none truncate">
             {selectedOptionText ? selectedOptionText : "All Industries"}
           </span>
-          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-              className="h-5 w-5 text-gray-400"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              ></path>
-            </svg>
-          </span>
+          {!selectedOptionText && (
+            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+                className="h-5 w-5 text-gray-400"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                ></path>
+              </svg>
+            </span>
+          )}
         </button>
+        {selectedOptionText && (
+          <button
+            title="clear filter"
+            className="flex items-center px-2 text-gray-400 hover:text-indigo-600"
+            onClick={() => {
+              resetSelection()
+            }}
+          >
+            <XIcon className="h-5 w-5 " aria-hidden="true" />
+          </button>
+        )}
       </div>
       <span id={`listbox-options-label-${id}`} className="sr-only">
         {label} options
@@ -206,8 +221,7 @@ const ComboBox = ({
                         checked={isSelected}
                         tabIndex={-1}
                         readOnly
-                        disabled
-                        className="h-4 w-4 rounded border-gray-300 focus:ring-0"
+                        className="h-4 w-4 rounded border-gray-300 focus:ring-0 focus:ring-offset-0"
                         aria-hidden
                       />
                       <div className="block truncate font-normal">{label}</div>

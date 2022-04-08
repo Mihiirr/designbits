@@ -16,6 +16,7 @@ enum SelectionActionType {
   SELECT_OPTION = "SELECT_OPTION",
   DESELECT_OPTION = "DESELECT_OPTION",
   SET_OPTION_ACTIVE = "SET_OPTION_ACTIVE",
+  RESET_SELECTION = "RESET_SELECTION",
 }
 
 // An interface for our actions
@@ -29,6 +30,9 @@ type SelectionAction =
   | {
       type: SelectionActionType.SET_OPTION_ACTIVE
       optionIndex: number
+    }
+  | {
+      type: SelectionActionType.RESET_SELECTION
     }
 
 // An interface for our state
@@ -57,6 +61,12 @@ function selectionReducer(state: SelectionState, action: SelectionAction) {
           [action.optionId]: false,
         },
       }
+
+    case SelectionActionType.RESET_SELECTION:
+      return {
+        ...state,
+        selectedOptions: {},
+      }
     case SelectionActionType.SET_OPTION_ACTIVE:
       return {
         ...state,
@@ -71,8 +81,8 @@ export function useMultiSelect(
   options: Option[],
   initSelectedOptions: SelectedOptions,
   onChange: (
-    targetOption: Option,
-    action: "ADDED_TO_SELECTION" | "REMOVED_FROM_SELECTION",
+    targetOption: Option | undefined,
+    action: "ADDED_TO_SELECTION" | "REMOVED_FROM_SELECTION" | "RESET_SELECTION",
     selectedOptions: SelectedOptions,
   ) => void,
 ) {
@@ -107,6 +117,11 @@ export function useMultiSelect(
       ...selectedOptions,
       [option.id]: false,
     })
+  }
+
+  const resetSelection = () => {
+    dispatch({ type: SelectionActionType.RESET_SELECTION })
+    onChange(undefined, "RESET_SELECTION", {})
   }
 
   const setActiveOptionIndex = (optionIndex: number) =>
@@ -178,6 +193,7 @@ export function useMultiSelect(
   return {
     addOptionToSelection,
     removeOptionFromSelection,
+    resetSelection,
     selectedOptions,
     isListBoxOpen,
     closeListBox,

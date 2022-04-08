@@ -42,8 +42,19 @@ type SET_SORT_PREFERENCE_ACTION = {
   }
 }
 
-type Action = SET_FILTERS_ACTION | SET_SORT_PREFERENCE_ACTION
+type RESET_FILTER_ACTION = {
+  type: "RESET_FILTER"
+  payload: {
+    filterKey: keyof State["filters"]
+  }
+}
+
+type Action =
+  | SET_FILTERS_ACTION
+  | SET_SORT_PREFERENCE_ACTION
+  | RESET_FILTER_ACTION
 type SetFilters = (filters: SET_FILTERS_ACTION["payload"]) => void
+type ResetFilter = (filterKey: keyof State["filters"]) => void
 type SetSortPreference = (sort: SET_SORT_PREFERENCE_ACTION["payload"]) => void
 
 type State = {
@@ -99,6 +110,7 @@ const SortAndFilterStateContext = createContext<
       sort: State["sort"]
       setFilters: SetFilters
       setSortPreference: SetSortPreference
+      resetFilter: ResetFilter
     }
   | undefined
 >(undefined)
@@ -212,6 +224,12 @@ function sortAndFilterStateReducer(
 
       return newState
     }
+    case "RESET_FILTER": {
+      const newState = { ...state }
+      newState.filters[action.payload.filterKey] = undefined
+      updateSearchParams(newState, action, searchParams, setSearchParams)
+      return newState
+    }
     case "SET_SORT_PREFERENCE": {
       const newState = {
         ...state,
@@ -311,6 +329,11 @@ function SortAndFilterProvider({
     [],
   )
 
+  const resetFilter = useCallback<ResetFilter>(
+    filterKey => dispatch({ type: "RESET_FILTER", payload: { filterKey } }),
+    [],
+  )
+
   const setSortPreference = useCallback<SetSortPreference>(
     sort => dispatch({ type: "SET_SORT_PREFERENCE", payload: sort }),
     [],
@@ -321,9 +344,10 @@ function SortAndFilterProvider({
       filters: state.filters,
       sort: state.sort,
       setFilters,
+      resetFilter,
       setSortPreference,
     }
-  }, [state.filters, state.sort, setFilters, setSortPreference])
+  }, [state.filters, state.sort, setFilters, resetFilter, setSortPreference])
 
   return (
     <SortAndFilterStateContext.Provider value={value}>

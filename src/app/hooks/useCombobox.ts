@@ -24,6 +24,7 @@ enum SelectionActionType {
   SELECT_OPTION = "SELECT_OPTION",
   DESELECT_OPTION = "DESELECT_OPTION",
   SET_OPTION_ACTIVE = "SET_OPTION_ACTIVE",
+  RESET_SELECTION = "RESET_SELECTION",
 }
 
 // An interface for our actions
@@ -37,6 +38,9 @@ type SelectionAction =
   | {
       type: SelectionActionType.SET_OPTION_ACTIVE
       optionIndex: number
+    }
+  | {
+      type: SelectionActionType.RESET_SELECTION
     }
 
 // An interface for our state
@@ -70,6 +74,11 @@ function selectionReducer(state: SelectionState, action: SelectionAction) {
         ...state,
         activeOptionIndex: action.optionIndex,
       }
+    case SelectionActionType.RESET_SELECTION:
+      return {
+        ...state,
+        selectedOptions: {},
+      }
     default:
       return state
   }
@@ -79,8 +88,8 @@ export function useCombobox(
   options: Option[],
   initSelectedOptions: SelectedOptions,
   onChange: (
-    targetOption: Option,
-    action: "ADDED_TO_SELECTION" | "REMOVED_FROM_SELECTION",
+    targetOption: Option | undefined,
+    action: "ADDED_TO_SELECTION" | "REMOVED_FROM_SELECTION" | "RESET_SELECTION",
     selectedOptions: SelectedOptions,
   ) => void,
 ) {
@@ -118,6 +127,11 @@ export function useCombobox(
       ...selectedOptions,
       [option.id]: false,
     })
+  }
+
+  const resetSelection = () => {
+    dispatch({ type: SelectionActionType.RESET_SELECTION })
+    onChange(undefined, "RESET_SELECTION", {})
   }
 
   const filteredOptions = useMemo(() => {
@@ -213,17 +227,6 @@ export function useCombobox(
     },
   )
 
-  useKeyPress(
-    ["enter", "space"],
-    () => {
-      toggleListBoxOpen()
-    },
-    {
-      target: comboboxRef,
-      exactMatch: true,
-    },
-  )
-
   useEffect(() => {
     if (isListBoxOpen) {
       inputRef.current?.focus()
@@ -251,5 +254,6 @@ export function useCombobox(
     searchText,
     setSearchText,
     filteredOptions,
+    resetSelection,
   }
 }
