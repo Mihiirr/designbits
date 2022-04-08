@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Form, useFetcher, useTransition } from "remix"
 import { z } from "zod"
 import Button from "../Button"
@@ -15,8 +15,15 @@ type Props = {
 }
 
 const AuthForm: React.FC<Props> = ({ redirectTo = "/explore/all" }) => {
-  const fetcher = useFetcher()
-  const data = fetcher.data
+  const loginSubmit = useFetcher()
+  const loginSessionFetcher = useFetcher()
+  const data = loginSessionFetcher.data
+
+  useEffect(() => {
+    if (loginSubmit?.type === "done") {
+      loginSessionFetcher.load("/auth/login")
+    }
+  }, [loginSubmit?.type])
 
   const inputRef = useRef<HTMLInputElement>(null)
   const [formValues, setFormValues] = useState({
@@ -28,7 +35,7 @@ const AuthForm: React.FC<Props> = ({ redirectTo = "/explore/all" }) => {
 
   const handleSubmit = useCallback(async event => {
     event.preventDefault()
-    fetcher.submit(event.currentTarget, {
+    loginSubmit.submit(event.currentTarget, {
       action: "/auth/login",
       method: "post",
       replace: true,
@@ -46,7 +53,7 @@ const AuthForm: React.FC<Props> = ({ redirectTo = "/explore/all" }) => {
 
   return (
     <>
-      <fetcher.Form
+      <loginSubmit.Form
         onChange={event => {
           const form = event.currentTarget
           setFormValues({
@@ -85,7 +92,7 @@ const AuthForm: React.FC<Props> = ({ redirectTo = "/explore/all" }) => {
         <div className="flex flex-wrap gap-4">
           <Button
             type="submit"
-            disabled={!formIsValid || fetcher.type === "done"}
+            disabled={!formIsValid || loginSubmit.type === "done"}
           >
             {btnText}
           </Button>
@@ -97,13 +104,13 @@ const AuthForm: React.FC<Props> = ({ redirectTo = "/explore/all" }) => {
             : "Sign in form is now invalid."}
         </div>
 
-        <div className="mt-2">
+        <div className="mt-3">
           {data?.error ? (
             <InputError id="error-message">{data?.error}</InputError>
           ) : data?.email ? (
             <p
               id="success-message"
-              className="text-lg text-gray-500 dark:text-slate-500"
+              className="text-sm text-gray-500 dark:text-slate-500"
             >
               <span role="img" aria-label="sparkles">
                 ✨
@@ -112,7 +119,7 @@ const AuthForm: React.FC<Props> = ({ redirectTo = "/explore/all" }) => {
             </p>
           ) : null}
         </div>
-      </fetcher.Form>
+      </loginSubmit.Form>
       <div className="my-6 px-1 text-sm text-gray-800">Or</div>
       <Form action="/auth/google" method="post">
         <Button variant="secondary" type="submit">

@@ -21,7 +21,9 @@ const userNavigation: {
   name: string
   href: string
   prefetch?: RemixLinkProps["prefetch"]
-}[] = [{ name: "Sign out", href: "/auth/logout", prefetch: "none" }]
+}[] = [
+  // { name: "Sign out", href: "/auth/logout", prefetch: "none" },
+]
 
 const iconProps = {
   height: "24",
