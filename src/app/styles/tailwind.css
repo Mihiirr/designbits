@@ -2412,6 +2412,10 @@ select {
   padding: 2rem;
 }
 
+.p-4 {
+  padding: 1rem;
+}
+
 .p-36 {
   padding: 9rem;
 }
@@ -2496,11 +2500,6 @@ select {
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
-}
-
-.py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
 }
 
 .py-20 {

@@ -235,7 +235,7 @@ export const ExploreLanding = (props: ExploreLandingProps) => {
       <div className="mt-4 flex h-8 w-full items-center overflow-x-scroll text-indigo-700 sm:overflow-hidden">
         <Link
           to="#"
-          className="mr-8 inline-block h-8 w-auto items-center justify-center whitespace-nowrap rounded-full bg-indigo-100 px-4"
+          className="mr-8 flex h-8 w-auto items-center justify-center whitespace-nowrap rounded-full bg-indigo-100 px-4"
         >
           {props.btn1}
         </Link>
