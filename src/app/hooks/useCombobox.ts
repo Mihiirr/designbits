@@ -1,5 +1,13 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { useKeyPress } from "ahooks"
-import { useEffect, useReducer, useRef } from "react"
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from "react"
 import { useBoolean } from "usehooks-ts"
 import useOnClickOutside from "./useOnClickOutside"
 
@@ -61,23 +69,22 @@ function selectionReducer(state: SelectionState, action: SelectionAction) {
           [action.optionId]: false,
         },
       }
-
-    case SelectionActionType.RESET_SELECTION:
-      return {
-        ...state,
-        selectedOptions: {},
-      }
     case SelectionActionType.SET_OPTION_ACTIVE:
       return {
         ...state,
         activeOptionIndex: action.optionIndex,
+      }
+    case SelectionActionType.RESET_SELECTION:
+      return {
+        ...state,
+        selectedOptions: {},
       }
     default:
       return state
   }
 }
 
-export function useMultiSelect(
+export function useCombobox(
   options: Option[],
   initSelectedOptions: SelectedOptions,
   onChange: (
@@ -89,6 +96,8 @@ export function useMultiSelect(
   const optionsRefs = useRef<{ [key: string]: HTMLLIElement | null }>({})
   const ulRef = useRef<HTMLUListElement>(null)
   const btnRef = useRef<HTMLButtonElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const comboboxRef = useRef<HTMLDivElement>(null)
 
   const {
     value: isListBoxOpen,
@@ -103,6 +112,7 @@ export function useMultiSelect(
       activeOptionIndex: 0,
     },
   )
+  const [searchText, setSearchText] = useState("")
 
   const addOptionToSelection = (option: Option) => {
     dispatch({ type: SelectionActionType.SELECT_OPTION, optionId: option.id })
@@ -125,17 +135,48 @@ export function useMultiSelect(
     onChange(undefined, "RESET_SELECTION", {})
   }
 
-  const setActiveOptionIndex = (optionIndex: number) =>
-    dispatch({ type: SelectionActionType.SET_OPTION_ACTIVE, optionIndex })
+  const filteredOptions = useMemo(() => {
+    if (searchText === "") {
+      return options
+    }
+    return options.filter((option: { label: string }) =>
+      option.label.toLowerCase().includes(searchText.toLowerCase()),
+    )
+  }, [searchText, options])
+
+  useEffect(() => {
+    setActiveOptionIndex(0)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredOptions.length])
+
+  const setActiveOptionIndex: (
+    optionIndex: number,
+    direction?: "up" | "down",
+  ) => void = useCallback(
+    (optionIndex: number, direction?: "up" | "down") => {
+      optionsRefs.current?.[filteredOptions[optionIndex]?.id]?.scrollIntoView({
+        behavior: "smooth",
+        inline: "start",
+        block: "nearest",
+      })
+
+      dispatch({ type: SelectionActionType.SET_OPTION_ACTIVE, optionIndex })
+    },
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    [filteredOptions],
+  )
 
   useKeyPress(
     ["uparrow", "shift.tab"],
     event => {
       event.preventDefault()
-      setActiveOptionIndex(activeOptionIndex > 0 ? activeOptionIndex - 1 : 0)
+      setActiveOptionIndex(
+        activeOptionIndex > 0 ? activeOptionIndex - 1 : 0,
+        "up",
+      )
     },
     {
-      target: ulRef,
+      target: inputRef,
       exactMatch: true,
     },
   )
@@ -145,13 +186,14 @@ export function useMultiSelect(
     event => {
       event.preventDefault()
       setActiveOptionIndex(
-        activeOptionIndex < options.length - 1
+        activeOptionIndex < filteredOptions.length - 1
           ? activeOptionIndex + 1
-          : options.length - 1,
+          : filteredOptions.length - 1,
+        "down",
       )
     },
     {
-      target: ulRef,
+      target: inputRef,
       exactMatch: true,
     },
   )
@@ -160,25 +202,29 @@ export function useMultiSelect(
     "enter",
     event => {
       event.preventDefault()
-      const option = options[activeOptionIndex]
+      const option = filteredOptions[activeOptionIndex]
       const isSelected = selectedOptions[option.id] || false
       isSelected
         ? removeOptionFromSelection(option)
         : addOptionToSelection(option)
     },
     {
-      target: ulRef,
+      target: inputRef,
     },
   )
 
   useKeyPress(
     "esc",
     event => {
-      closeListBox()
-      btnRef.current?.focus()
+      if (inputRef.current && inputRef.current.value.length > 0) {
+        setSearchText("")
+      } else {
+        closeListBox()
+        btnRef.current?.focus()
+      }
     },
     {
-      target: ulRef,
+      target: inputRef,
     },
   )
   useKeyPress(
@@ -193,18 +239,17 @@ export function useMultiSelect(
 
   useEffect(() => {
     if (isListBoxOpen) {
-      ulRef.current?.focus()
+      inputRef.current?.focus()
     }
-  }, [isListBoxOpen, ulRef])
+  }, [isListBoxOpen])
 
-  useOnClickOutside([btnRef, ulRef], () => {
+  useOnClickOutside([btnRef, ulRef, inputRef], () => {
     closeListBox()
   })
 
   return {
     addOptionToSelection,
     removeOptionFromSelection,
-    resetSelection,
     selectedOptions,
     isListBoxOpen,
     closeListBox,
@@ -214,5 +259,11 @@ export function useMultiSelect(
     ulRef,
     btnRef,
     optionsRefs,
+    inputRef,
+    comboboxRef,
+    searchText,
+    setSearchText,
+    filteredOptions,
+    resetSelection,
   }
 }

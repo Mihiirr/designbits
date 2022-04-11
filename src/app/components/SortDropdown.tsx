@@ -1,40 +1,32 @@
-import { Fragment, useRef, useState } from "react"
+import { Fragment, useCallback } from "react"
 import { Listbox, Transition } from "@headlessui/react"
 import SortByIcon from "~/components/icons/SortBy"
-import { useSearchParams } from "remix"
-import { useLocalStorage } from "usehooks-ts"
 import { PostsOrderBy } from "~/services/db/queries/post.server"
-
-const sortConfig = [
-  { label: "Recently Added", id: "recently-added" },
-  { label: "Popular", id: "popular" },
-]
+import {
+  sortConfig,
+  useSortAndFilter,
+} from "~/context-modules/SortAndFilterContext"
 
 type Props = {
   initValue?: PostsOrderBy
 }
 
 const SortDropdown: React.FC<Props> = ({ initValue }) => {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [selected, setSelected] = useState(
-    () =>
-      sortConfig.find(
-        opt => opt.id === (searchParams.get("sort") || initValue),
-      ) || sortConfig[0],
+  const { setSortPreference, sort } = useSortAndFilter()
+
+  const handleChange = useCallback(
+    val => {
+      setSortPreference({ sort: val })
+    },
+    [setSortPreference],
   )
 
   return (
-    <Listbox
-      value={selected}
-      onChange={val => {
-        setSearchParams({ sort: val.id })
-        setSelected(val)
-      }}
-    >
+    <Listbox value={sort} onChange={handleChange}>
       <div className="relative">
         <Listbox.Button className="flex w-full items-center justify-center space-x-2 rounded-md px-4 py-1.5 hover:bg-indigo-200/20 focus-visible:ring-2 focus-visible:ring-white/75">
           <SortByIcon role="presentation" aria-hidden />
-          <div className="whitespace-nowrap">{selected.label}</div>
+          <div className="whitespace-nowrap">{sort.label}</div>
         </Listbox.Button>
         <Transition
           as={Fragment}

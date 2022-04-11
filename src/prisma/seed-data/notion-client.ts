@@ -519,11 +519,13 @@ export async function seedIndustriesData(
           return db.industry.upsert({
             create: {
               name: industry.name,
+              slug: slug(industry.name),
               color: industry.color,
               notionTagId: industry.notionTagId,
             },
             update: {
               name: industry.name,
+              slug: slug(industry.name),
               color: industry.color,
             },
             where: {

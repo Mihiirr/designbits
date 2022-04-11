@@ -1,7 +1,7 @@
 import clsx from "clsx"
 import { useState } from "react"
-import { usePostData } from "~/context/postContext"
-import { useRootContext } from "~/context/root"
+import { usePostData } from "~/context-modules/PostContext"
+import { useRootContext } from "~/context-modules/RootContext"
 import Comment from "./Comment"
 
 type Props = {}

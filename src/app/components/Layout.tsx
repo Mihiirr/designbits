@@ -12,7 +12,7 @@ import SearchBox from "./SearchBox"
 import Button from "./Button"
 import UploadIcon from "./icons/Upload"
 import { NavLink } from "remix"
-import { useRootContext } from "~/context/root"
+import { useRootContext } from "~/context-modules/RootContext"
 import ProfileDropdown from "./NavBar/ProfileDropdown"
 import { RemixLinkProps } from "@remix-run/react/components"
 import { Modal } from "./common/Modal"
@@ -21,7 +21,9 @@ const userNavigation: {
   name: string
   href: string
   prefetch?: RemixLinkProps["prefetch"]
-}[] = [{ name: "Sign out", href: "/auth/logout", prefetch: "none" }]
+}[] = [
+  // { name: "Sign out", href: "/auth/logout", prefetch: "none" },
+]
 
 const iconProps = {
   height: "24",
