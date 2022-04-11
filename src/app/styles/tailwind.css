@@ -2905,16 +2905,8 @@ select {
   outline-width: 2px;
 }
 
-.outline-\[3px\] {
-  outline-width: 3px;
-}
-
 .outline-offset-2 {
   outline-offset: 2px;
-}
-
-.outline-offset-1 {
-  outline-offset: 1px;
 }
 
 .outline-offset-0 {
@@ -3185,14 +3177,6 @@ select {
 
 .focus\:outline:focus {
   outline-style: solid;
-}
-
-.focus\:outline-2:focus {
-  outline-width: 2px;
-}
-
-.focus\:outline-\[3px\]:focus {
-  outline-width: 3px;
 }
 
 .focus\:outline-indigo-300:focus {
