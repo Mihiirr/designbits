@@ -2,6 +2,7 @@ import { Disclosure } from "@headlessui/react"
 import { MenuIcon, XIcon } from "@heroicons/react/outline"
 import React from "react"
 import { Link } from "remix"
+import Button from "~/components/design-system/Button"
 import DesignBitsLogo from "~/components/Logo"
 
 type Props = {}
