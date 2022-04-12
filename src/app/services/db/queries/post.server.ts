@@ -1,4 +1,4 @@
-import { Post, User, VideoSize } from "@prisma/client"
+import { Device, Post, User, VideoSize, Platfrom } from "@prisma/client"
 import { AsyncReturnType } from "type-fest"
 import { db } from "~/services/db/client.server"
 
@@ -7,11 +7,17 @@ export type PostsOrderBy = "recently-added" | "popular"
 type props = {
   userId?: User["id"]
   orderBy?: PostsOrderBy
+  filters?: {
+    device?: Device
+    platforms?: Platfrom[]
+    industries?: string[]
+  }
 }
 
 async function findPostsIncludingUserReaction({
   userId,
   orderBy = "recently-added",
+  filters,
 }: props) {
   return db.post.findMany({
     include: {
@@ -62,6 +68,29 @@ async function findPostsIncludingUserReaction({
         },
       },
     },
+    where: {
+      device: {
+        equals: filters?.device,
+      },
+      ...(filters?.platforms?.length
+        ? {
+            platform: {
+              in: filters?.platforms,
+            },
+          }
+        : {}),
+      ...(filters?.industries?.length
+        ? {
+            Industries: {
+              some: {
+                slug: {
+                  in: filters?.industries,
+                },
+              },
+            },
+          }
+        : {}),
+    },
     ...(orderBy === "recently-added" && {
       orderBy: {
         createdAt: "desc",
@@ -85,13 +114,18 @@ type PostIncludingCurrentUserReactionData = AsyncReturnType<
   typeof findPostsIncludingUserReaction
 >
 
-async function findInteractionsForCategory({ userId, orderBy }: props) {
+async function findInteractionsForCategory({
+  userId,
+  orderBy,
+  filters,
+}: props) {
   const { default: pProps } = await import("p-props")
 
   return pProps({
     postsWithCurrentUserReactionData: findPostsIncludingUserReaction({
       userId,
       orderBy,
+      filters,
     }),
     totalReactionsOnPost: findPostReactionsCount(),
   }) as unknown as {

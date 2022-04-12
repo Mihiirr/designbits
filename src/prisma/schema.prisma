@@ -88,7 +88,7 @@ model Post {
   Tags           Tag[]
   Industries     Industry[]
   platform       Platfrom
-  device         Device         @default(DESKTOP)
+  device         Device
   PostReactions  PostReaction[]
   PostComments   Comment[]
   VideoSources   VideoSource[]
@@ -159,8 +159,9 @@ model Tag {
 }
 
 model Industry {
-  id          String     @id @default(cuid())
+  id          Int        @id @default(autoincrement())
   name        String     @unique
+  slug        String     @unique
   color       TAG_COLORS @default(LIGHT_GRAY)
   Posts       Post[]
   updatedAt   DateTime?  @default(now())

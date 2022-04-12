@@ -4,6 +4,7 @@ import { RemixLinkProps } from "@remix-run/react/components"
 import { Fragment } from "react"
 import { Link } from "remix"
 import classNames from "~/utils/classnames"
+import SignoutButton from "../SignoutButton"
 import UserAvatar from "./UserAvatar"
 
 type Props = {
@@ -48,7 +49,6 @@ const ProfileDropdown = ({ user, navigationMenu }: Props) => {
               {({ active }) => (
                 <Link
                   to={item.href}
-                  prefetch={item.prefetch || "none"}
                   className={classNames(
                     active ? "bg-gray-100" : "",
                     "block px-4 py-2 text-sm text-gray-700",
@@ -59,6 +59,9 @@ const ProfileDropdown = ({ user, navigationMenu }: Props) => {
               )}
             </Menu.Item>
           ))}
+          <Menu.Item>
+            {({ active }) => <SignoutButton active={active} />}
+          </Menu.Item>
         </Menu.Items>
       </Transition>
     </Menu>

@@ -1,6 +1,6 @@
 import { Dialog } from "@headlessui/react"
 import { motion, AnimatePresence } from "framer-motion"
-import { useRootContext } from "~/context/root"
+import { useRootContext } from "~/context-modules/RootContext"
 import { H3, H4 } from "../Typography"
 import AuthForm from "../auth/AuthForm"
 import { XIcon } from "@heroicons/react/outline"

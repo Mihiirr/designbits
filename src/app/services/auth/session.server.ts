@@ -116,11 +116,11 @@ async function getSession(request: Request) {
       const userSession = await createSession({ userId: user.id })
       session.set(sessionIdKey, userSession.id)
     },
-    signOut: () => {
+    signOut: async () => {
       const sessionId = getSessionId()
       if (sessionId) {
         unsetSessionId()
-        db.session
+        await db.session
           .delete({ where: { id: sessionId } })
           .catch((error: unknown) => {
             console.error(`Failure deleting user session: `, error)

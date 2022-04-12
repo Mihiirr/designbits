@@ -19,6 +19,7 @@ import {
 import { getUser, sendToken } from "~/services/auth/session.server"
 import type { LoginFields } from "~/types/auth"
 import AuthForm from "~/components/auth/AuthForm"
+import { OkResponse } from "~/utils/response-helpers.server"
 
 const LoginSchema = z.object({
   email: z.string().email().max(256),
@@ -86,7 +87,9 @@ export const action: ActionFunction = async ({ request }) => {
       domainUrl,
     })
     loginSession.setMagicLink(magicLink)
-    return redirect(`/auth/login`, {
+    return OkResponse({
+      data: {},
+      errors: [],
       headers: await loginSession.getHeaders(),
     })
   } catch (e: unknown) {

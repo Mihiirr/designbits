@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion"
 import React from "react"
 import DeviceFilter from "./DeviceFilter"
+import IndustryFilter from "./IndustryFilter"
 import PlatfromFilter from "./PlatfromFilter"
 
 type Props = {
@@ -15,11 +16,11 @@ const FilterPane: React.FC<Props> = ({ isFiltersShown }) => {
           initial={{ y: -10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -10, opacity: 0 }}
-          className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
+          className="mt-6 grid grid-cols-1 gap-x-6 md:grid-cols-2 md:gap-y-10 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
         >
           <DeviceFilter />
           <PlatfromFilter />
-          <DeviceFilter />
+          <IndustryFilter />
         </motion.div>
       )}
     </AnimatePresence>

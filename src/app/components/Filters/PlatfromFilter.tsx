@@ -1,42 +1,36 @@
-import { useEffect, useState } from "react"
-import { Option } from "~/hooks/useMultiSelect"
+import { useCallback } from "react"
+
+import {
+  platformOptions,
+  useSortAndFilter,
+} from "~/context-modules/SortAndFilterContext"
 import MultiSelect from "../common/MultiSelect"
 
 type Props = {}
 
-const options: Option[] = [
-  {
-    id: "web",
-    label: "Web",
-  },
-  {
-    id: "ios",
-    label: "iOS",
-  },
-  {
-    id: "android",
-    label: "Android",
-  },
-  {
-    id: "windows",
-    label: "Windows",
-  },
-]
-
 const PlatfromFilter = (props: Props) => {
-  const [selectedOptions, setSelectedOptions] = useState({})
+  const {
+    filters: { platforms: selectedOptions },
+    setFilters,
+  } = useSortAndFilter()
 
-  useEffect(() => {
-    console.log({ selectedOptions })
-  }, [selectedOptions])
+  const handleChange = useCallback(
+    (option, action, newSelectedOptions) => {
+      setFilters({
+        platforms: {
+          values: newSelectedOptions,
+          totalOptions: platformOptions.length,
+        },
+      })
+    },
+    [setFilters],
+  )
 
   return (
     <MultiSelect
       initSelectedOptions={selectedOptions}
-      options={options}
-      onChange={(option, action, selectedOptions) => {
-        setSelectedOptions(selectedOptions)
-      }}
+      options={platformOptions}
+      onChange={handleChange}
     />
   )
 }
